@@ -274,6 +274,18 @@
           <i class="fa-regular fa-calendar-check text-xs"></i>
           <span>Smart Calendar</span>
         </button>
+        <button onclick="switchAppTab('storage')" id="pill-storage" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-warehouse text-xs"></i>
+          <span>Store vs Sell (M15)</span>
+        </button>
+        <button onclick="switchAppTab('transport')" id="pill-transport" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-truck text-xs"></i>
+          <span>Net Mandi Transport (M16)</span>
+        </button>
+        <button onclick="switchAppTab('schemes')" id="pill-schemes" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-landmark text-xs"></i>
+          <span>Schemes & Subsidies (S1)</span>
+        </button>
       </div>
 
       <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Responsive: 2 cols on mobile, 4 cols on desktop) ===== -->
@@ -660,6 +672,186 @@
         </div>
       </div>
 
+      <!-- ===== TAB 7: STORE VS SELL (Module 15) ===== -->
+      <div id="subtab-storage" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">Cold Storage & Warehouse Break-Even</h3>
+              <p class="text-xs text-slate-300 font-light">Formula: P_future = (P_now + Storage + Interest + Handling) ÷ (1 − Shrinkage)</p>
+            </div>
+            <span class="text-[10px] text-amber-300 frosted-pill px-3 py-1 rounded-full border border-amber-500/30">
+              M15 • Anti-Distress Selling
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3 bg-space-900/60 p-4 rounded-2xl border border-white/5 text-xs">
+              <span class="font-bold text-white block mb-1">Storage Parameters</span>
+              <div>
+                <label class="text-slate-400 block mb-1">Current Harvest Rate (₹/Q)</label>
+                <input type="number" id="store_curr_price" value="4980" oninput="calcStoreVsSell()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Planned Holding Period (Months)</label>
+                <input type="number" id="store_months" value="3" oninput="calcStoreVsSell()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-slate-400 block mb-1">Rent (₹/Q/Month)</label>
+                  <input type="number" id="store_rent" value="35" oninput="calcStoreVsSell()" class="w-full frosted-pill rounded-xl p-2 text-white outline-none">
+                </div>
+                <div>
+                  <label class="text-slate-400 block mb-1">Shrinkage Loss (%)</label>
+                  <input type="number" id="store_shrink" value="2.5" step="0.5" oninput="calcStoreVsSell()" class="w-full frosted-pill rounded-xl p-2 text-white outline-none">
+                </div>
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-4 flex flex-col justify-between space-y-3 text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Required Break-Even Future Rate</span>
+                <span id="store_bep_future" class="font-serif-display text-3xl font-bold text-emerald-300">₹5,260 <span class="text-xs font-sans text-slate-400">/ Q</span></span>
+                <span class="text-[11px] text-emerald-400 block mt-1">Need minimum <strong id="store_pct_rise">+5.6% (+₹280/Q)</strong> price rally to profit</span>
+              </div>
+              <div class="space-y-1.5 border-t border-white/5 pt-2 text-slate-300">
+                <div class="flex justify-between"><span>Total Carrying Rent:</span> <span id="store_tot_rent" class="font-semibold text-white">₹105 / Q</span></div>
+                <div class="flex justify-between"><span>Shrinkage Allowance:</span> <span class="font-semibold text-amber-300">2.5%</span></div>
+                <div class="flex justify-between"><span>Handling & Bagging:</span> <span class="font-semibold text-white">₹25 / Q</span></div>
+              </div>
+              <div class="text-[10px] text-slate-400 border-t border-white/5 pt-2">
+                Verified Nearby: <strong>Kalamna Warehousing Corp (WDRA Certified)</strong> • 4.2 km
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 8: NET MANDI REALIZATION & LOGISTICS (Module 16) ===== -->
+      <div id="subtab-transport" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">Net Realized Mandi Comparison</h3>
+              <p class="text-xs text-slate-300 font-light">Headline rate minus transport freight, loading labor, and market cess across Vidarbha APMCs.</p>
+            </div>
+            <span class="text-[10px] text-cyan-300 frosted-pill px-3 py-1 rounded-full border border-cyan-500/30">
+              M16 • True Profit Optimization
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-xs">
+            <!-- Mandi 1: Kalamna -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-emerald-500/40 bg-emerald-950/20">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white text-sm">Nagpur (Kalamna)</span>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">Best Net</span>
+              </div>
+              <div class="font-serif-display text-2xl text-emerald-300 font-bold">₹4,895 <span class="text-xs font-sans text-slate-400">net / Q</span></div>
+              <div class="space-y-1 text-slate-300 text-[11px] pt-1 border-t border-white/5">
+                <div class="flex justify-between"><span>Headline Rate:</span> <strong>₹4,980</strong></div>
+                <div class="flex justify-between"><span>Distance:</span> <span>12 km</span></div>
+                <div class="flex justify-between text-rose-300"><span>Transport & Cess:</span> <span>-₹85 / Q</span></div>
+              </div>
+            </div>
+
+            <!-- Mandi 2: Hingna -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white text-sm">Hingna APMC</span>
+                <span class="text-[10px] text-slate-400">22 km</span>
+              </div>
+              <div class="font-serif-display text-2xl text-white font-bold">₹4,845 <span class="text-xs font-sans text-slate-400">net / Q</span></div>
+              <div class="space-y-1 text-slate-300 text-[11px] pt-1 border-t border-white/5">
+                <div class="flex justify-between"><span>Headline Rate:</span> <strong>₹4,960</strong></div>
+                <div class="flex justify-between"><span>Distance:</span> <span>22 km</span></div>
+                <div class="flex justify-between text-rose-300"><span>Transport & Cess:</span> <span>-₹115 / Q</span></div>
+              </div>
+            </div>
+
+            <!-- Mandi 3: Katol -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white text-sm">Katol APMC</span>
+                <span class="text-[10px] text-slate-400">58 km</span>
+              </div>
+              <div class="font-serif-display text-2xl text-white font-bold">₹4,790 <span class="text-xs font-sans text-slate-400">net / Q</span></div>
+              <div class="space-y-1 text-slate-300 text-[11px] pt-1 border-t border-white/5">
+                <div class="flex justify-between"><span>Headline Rate:</span> <strong>₹5,010</strong></div>
+                <div class="flex justify-between"><span>Distance:</span> <span>58 km</span></div>
+                <div class="flex justify-between text-rose-300"><span>Transport & Cess:</span> <span>-₹220 / Q</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400 pt-1">Insight: Katol has a higher headline price (+₹30/Q), but Kalamna yields <strong>+₹105/Q higher net in pocket</strong> after fuel costs.</p>
+        </div>
+      </div>
+
+      <!-- ===== TAB 9: SCHEMES & SUBSIDIES NAVIGATOR (Service S1) ===== -->
+      <div id="subtab-schemes" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">Government Schemes & Eligibility Engine</h3>
+              <p class="text-xs text-slate-300 font-light">Verified Central & Maharashtra Government benefits with official application criteria.</p>
+            </div>
+            <span class="text-[10px] text-emerald-300 frosted-pill px-3 py-1 rounded-full border border-emerald-500/30">
+              Verified: Nov 2026
+            </span>
+          </div>
+
+          <div class="space-y-3 pt-1">
+            <!-- Scheme 1 -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-emerald-500/30">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] text-emerald-400 uppercase font-semibold">Central • Income Support</span>
+                  <h4 class="font-bold text-white text-sm">PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)</h4>
+                </div>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">Likely Eligible</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">₹6,000/year direct bank transfer in 3 installments of ₹2,000 for landholding farmer families.</p>
+              <div class="flex justify-between items-center pt-1 border-t border-white/5 text-[10px] text-slate-400">
+                <span>Docs: Aadhaar, 7/12 Extract, Bank Account</span>
+                <a href="https://pmkisan.gov.in" target="_blank" class="text-emerald-300 font-semibold underline">pmkisan.gov.in →</a>
+              </div>
+            </div>
+
+            <!-- Scheme 2 -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-teal-500/30">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] text-teal-400 uppercase font-semibold">Maharashtra & Central • Solar</span>
+                  <h4 class="font-bold text-white text-sm">PM-KUSUM Solar Water Pump Scheme</h4>
+                </div>
+                <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2.5 py-0.5 rounded-full font-bold">Likely Eligible</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Up to 90% subsidy for off-grid 3HP / 5HP / 7.5HP solar agricultural pumps for borewells & dug wells.</p>
+              <div class="flex justify-between items-center pt-1 border-t border-white/5 text-[10px] text-slate-400">
+                <span>Docs: 7/12 & 8A Extract, Water source proof</span>
+                <a href="https://pmkusum.mnre.gov.in" target="_blank" class="text-teal-300 font-semibold underline">pmkusum.mnre.gov.in →</a>
+              </div>
+            </div>
+
+            <!-- Scheme 3 -->
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-indigo-500/30">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] text-indigo-400 uppercase font-semibold">Maharashtra State • Water Harvesting</span>
+                  <h4 class="font-bold text-white text-sm">Magel Tyala Shet-Tale (Farm Pond Scheme)</h4>
+                </div>
+                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2.5 py-0.5 rounded-full font-bold">Likely Eligible</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Direct financial assistance up to ₹75,000 for plastic-lined farm ponds to secure protective Rabi irrigation.</p>
+              <div class="flex justify-between items-center pt-1 border-t border-white/5 text-[10px] text-slate-400">
+                <span>Docs: MahaDBT farmer registration, 7/12 Extract</span>
+                <a href="https://mahadbt.maharashtra.gov.in" target="_blank" class="text-indigo-300 font-semibold underline">mahadbt.maharashtra.gov.in →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ===== FLOATING FROSTED BOTTOM NAVIGATION (Leafora Style) ===== -->
@@ -740,7 +932,7 @@
 
     function switchAppTab(tab) {
       // Hide all subtabs
-      ['overview', 'rotation', 'simulator', 'mandi', 'income', 'calendar'].forEach(t => {
+      ['overview', 'rotation', 'simulator', 'mandi', 'income', 'calendar', 'storage', 'transport', 'schemes'].forEach(t => {
         const el = document.getElementById('subtab-' + t);
         if (el) el.classList.add('hidden');
 
@@ -772,6 +964,28 @@
         activeBnav.classList.add('text-emerald-400');
         activeBnav.classList.remove('text-slate-400');
       }
+    }
+
+    // M15 Store vs Sell Calculation
+    function calcStoreVsSell() {
+      const pNow = parseFloat(document.getElementById('store_curr_price')?.value || 4980);
+      const months = parseFloat(document.getElementById('store_months')?.value || 3);
+      const rent = parseFloat(document.getElementById('store_rent')?.value || 35);
+      const shrink = parseFloat(document.getElementById('store_shrink')?.value || 2.5);
+
+      const totalRent = months * rent;
+      const handling = 25.0;
+      const interest = pNow * 0.008 * months; // 0.8% monthly cost of capital
+      const carryingCost = totalRent + handling + interest;
+      const shrinkFactor = 1.0 - (shrink / 100.0);
+
+      const bepFuture = Math.round((pNow + carryingCost) / shrinkFactor);
+      const diff = bepFuture - pNow;
+      const pctRise = ((diff / pNow) * 100).toFixed(1);
+
+      document.getElementById('store_bep_future').innerHTML = '₹' + bepFuture.toLocaleString('en-IN') + ' <span class="text-xs font-sans text-slate-400">/ Q</span>';
+      document.getElementById('store_tot_rent').innerText = '₹' + totalRent.toLocaleString('en-IN') + ' / Q';
+      document.getElementById('store_pct_rise').innerText = '+' + pctRise + '% (+₹' + diff + '/Q)';
     }
 
     // Interactive Rotation for Mobile UI
