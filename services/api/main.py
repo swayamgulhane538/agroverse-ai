@@ -13,6 +13,9 @@ app = FastAPI(
     version="2.0.0"
 )
 
+from fastapi.responses import FileResponse
+import os
+
 # Enable CORS for mobile and web dashboards
 app.add_middleware(
     CORSMiddleware,
@@ -21,6 +24,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/", include_in_schema=False)
+def serve_index():
+    for candidate in ["index.html", "public/index.html"]:
+        if os.path.exists(candidate):
+            return FileResponse(candidate)
+    return {"status": "healthy", "service": "AGROVERSE AI"}
 
 @app.get("/healthz")
 def health_check():
