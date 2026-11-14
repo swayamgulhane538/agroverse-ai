@@ -243,7 +243,13 @@
           <i class="fa-solid fa-sliders mr-1.5"></i> <span id="tab2_title">AI Farm Simulator (Climate Shock)</span>
         </button>
         <button onclick="switchTab('tab-mandi')" id="btn-tab-mandi" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          <i class="fa-solid fa-chart-line mr-1.5"></i> <span id="tab3_title">Live Mandi & MSP Benchmarks</span>
+          <i class="fa-solid fa-chart-line mr-1.5"></i> <span id="tab3_title">Live Mandi & MSP</span>
+        </button>
+        <button onclick="switchTab('tab-income')" id="btn-tab-income" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
+          <i class="fa-solid fa-calculator mr-1.5"></i> <span id="tab4_title">Income Optimizer</span>
+        </button>
+        <button onclick="switchTab('tab-charts')" id="btn-tab-charts" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
+          <i class="fa-solid fa-satellite-dish mr-1.5"></i> <span id="tab5_title">NASA Climate Trends</span>
         </button>
       </div>
 
@@ -435,6 +441,140 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: FARMER INCOME OPTIMIZER (Module 7) -->
+      <div id="tab-income" class="tab-content hidden space-y-4">
+        <div class="glass-card rounded-xl p-5 space-y-5">
+          <div class="border-b border-space-700/60 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-lg text-white">Farmer Cost-Benefit & Break-Even Calculator</h3>
+              <p class="text-xs text-slate-400">Deterministic calculation based on input costs, expected yield, and live mandi realizations.</p>
+            </div>
+            <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full self-start">
+              Module 7 • Financial Risk Analysis
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Cost Input Form -->
+            <div class="space-y-3 bg-space-900/60 p-4 rounded-xl border border-space-700 text-xs">
+              <h4 class="font-bold text-white text-sm mb-2 text-emerald-400">Crop & Expense Inputs (1 Hectare)</h4>
+              
+              <div>
+                <label class="text-slate-300 block mb-1">Select Crop</label>
+                <select id="inc_crop" onchange="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
+                  <option value="chickpea">Chickpea / Chana (Rabi Target)</option>
+                  <option value="wheat">Wheat (Irrigated)</option>
+                  <option value="soybean">Soybean (Kharif Baseline)</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-slate-300 block mb-1">Expected Yield (Q/ha)</label>
+                  <input type="number" id="inc_yield" value="18" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
+                </div>
+                <div>
+                  <label class="text-slate-300 block mb-1">Selling Price (₹/Q)</label>
+                  <input type="number" id="inc_price" value="5820" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
+                </div>
+              </div>
+
+              <div class="border-t border-space-700/60 pt-2 space-y-2">
+                <span class="text-slate-400 font-semibold block text-[11px]">Input Breakdown (₹/ha):</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-slate-400 block text-[10px]">Seed Cost</label>
+                    <input type="number" id="inc_seed" value="5000" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
+                  </div>
+                  <div>
+                    <label class="text-slate-400 block text-[10px]">Fertilizers</label>
+                    <input type="number" id="inc_fert" value="6500" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
+                  </div>
+                  <div>
+                    <label class="text-slate-400 block text-[10px]">Labor & Machinery</label>
+                    <input type="number" id="inc_labor" value="10000" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
+                  </div>
+                  <div>
+                    <label class="text-slate-400 block text-[10px]">Irrigation / Fuel</label>
+                    <input type="number" id="inc_irr" value="3500" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculation Output Cards -->
+            <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
+                <span class="text-xs text-slate-400">Total Investment (Cost)</span>
+                <span id="res_cost" class="text-3xl font-bold text-white">₹25,000</span>
+                <span class="text-[11px] text-slate-400">Cost per Quintal: <span id="res_cost_q" class="text-emerald-400 font-bold">₹1,389/Q</span></span>
+              </div>
+
+              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
+                <span class="text-xs text-slate-400">Gross Realization (Revenue)</span>
+                <span id="res_revenue" class="text-3xl font-bold text-emerald-400">₹1,04,760</span>
+                <span class="text-[11px] text-slate-400">At Mandi Modal: ₹5,820/Q</span>
+              </div>
+
+              <div class="bg-space-900/80 border border-emerald-500/40 rounded-xl p-4 flex flex-col justify-between bg-emerald-950/20">
+                <span class="text-xs text-emerald-300 font-semibold">Net Profit (Farmer Surplus)</span>
+                <span id="res_profit" class="text-3xl font-bold text-emerald-300">₹79,760</span>
+                <span class="text-[11px] text-emerald-400 font-medium">B:C Ratio: <span id="res_bcr" class="font-bold">4.19</span></span>
+              </div>
+
+              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
+                <span class="text-xs text-slate-400">Safety Margins (Risk Buffer)</span>
+                <div class="space-y-1 text-xs">
+                  <div class="flex justify-between text-slate-300"><span>Break-Even Price:</span> <span id="res_bep" class="font-bold text-amber-300">₹1,389 / Q</span></div>
+                  <div class="flex justify-between text-slate-300"><span>Break-Even Yield:</span> <span id="res_bey" class="font-bold text-cyan-300">4.3 Q / ha</span></div>
+                  <div class="flex justify-between text-slate-400 text-[10px]"><span>MSP Safety Net:</span> <span class="text-emerald-400">₹5,650 / Q</span></div>
+                </div>
+                <span class="text-[10px] text-emerald-400 pt-1 border-t border-space-700/60 font-medium">✅ High margin safety vs distress selling</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: NASA CLIMATE TRENDS (Chart.js Module 1) -->
+      <div id="tab-charts" class="tab-content hidden space-y-4">
+        <div class="glass-card rounded-xl p-5 space-y-5">
+          <div class="border-b border-space-700/60 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-lg text-white">NASA Earth Observation Timeseries (Nagpur 21.14°N, 79.08°E)</h3>
+              <p class="text-xs text-slate-400">NASA POWER daily temperatures & GPM IMERG 30-day precipitation history.</p>
+            </div>
+            <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 px-3 py-1 rounded-full self-start">
+              Resolution: 0.5° Grid (MERRA-2)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chart 1: Temperature Trend -->
+            <div class="bg-space-900/60 p-4 rounded-xl border border-space-700">
+              <h4 class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+                <span>Daily Max & Min Temperature (°C)</span>
+                <span class="text-[10px] text-blue-400">NASA POWER AG 2.0</span>
+              </h4>
+              <div class="h-60 relative">
+                <canvas id="tempChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 2: Rainfall & Soil Moisture Anomaly -->
+            <div class="bg-space-900/60 p-4 rounded-xl border border-space-700">
+              <h4 class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+                <span>Rainfall Cumulative & Root-Zone Moisture</span>
+                <span class="text-[10px] text-cyan-400">GPM IMERG + SMAP</span>
+              </h4>
+              <div class="h-60 relative">
+                <canvas id="rainChart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -684,9 +824,130 @@
       }
     }
 
+    // Income Optimizer Calculation (Module 7)
+    function calcIncome() {
+      const yieldHa = parseFloat(document.getElementById('inc_yield').value) || 0;
+      const priceQ = parseFloat(document.getElementById('inc_price').value) || 0;
+      
+      const seed = parseFloat(document.getElementById('inc_seed').value) || 0;
+      const fert = parseFloat(document.getElementById('inc_fert').value) || 0;
+      const labor = parseFloat(document.getElementById('inc_labor').value) || 0;
+      const irr = parseFloat(document.getElementById('inc_irr').value) || 0;
+
+      const totalCost = seed + fert + labor + irr;
+      const totalRevenue = yieldHa * priceQ;
+      const netProfit = totalRevenue - totalCost;
+      const costPerQ = yieldHa > 0 ? (totalCost / yieldHa) : 0;
+      const bcr = totalCost > 0 ? (totalRevenue / totalCost) : 0;
+      const bep = yieldHa > 0 ? (totalCost / yieldHa) : 0;
+      const bey = priceQ > 0 ? (totalCost / priceQ) : 0;
+
+      document.getElementById('res_cost').innerText = '₹' + totalCost.toLocaleString('en-IN');
+      document.getElementById('res_revenue').innerText = '₹' + totalRevenue.toLocaleString('en-IN');
+      document.getElementById('res_profit').innerText = '₹' + netProfit.toLocaleString('en-IN');
+      document.getElementById('res_cost_q').innerText = '₹' + Math.round(costPerQ).toLocaleString('en-IN') + '/Q';
+      document.getElementById('res_bcr').innerText = bcr.toFixed(2);
+      document.getElementById('res_bep').innerText = '₹' + Math.round(bep).toLocaleString('en-IN') + ' / Q';
+      document.getElementById('res_bey').innerText = bey.toFixed(1) + ' Q / ha';
+    }
+
+    // Initialize NASA Trend Charts
+    let chartsInit = false;
+    function initNasaCharts() {
+      if (chartsInit) return;
+      chartsInit = true;
+
+      // 1. Temperature Chart
+      const ctxTemp = document.getElementById('tempChart')?.getContext('2d');
+      if (ctxTemp) {
+        new Chart(ctxTemp, {
+          type: 'line',
+          data: {
+            labels: ['1 Nov', '3 Nov', '5 Nov', '7 Nov', '9 Nov', '11 Nov', '13 Nov'],
+            datasets: [
+              {
+                label: 'Max Temp (°C)',
+                data: [33.2, 32.5, 31.8, 32.1, 31.0, 30.5, 32.1],
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'Min Temp (°C)',
+                data: [19.5, 18.8, 17.5, 18.2, 17.8, 16.9, 18.2],
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                fill: true,
+                tension: 0.3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
+            scales: {
+              x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      }
+
+      // 2. Rainfall & Soil Moisture Chart
+      const ctxRain = document.getElementById('rainChart')?.getContext('2d');
+      if (ctxRain) {
+        new Chart(ctxRain, {
+          type: 'bar',
+          data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Rainfall (mm)',
+                data: [18.5, 12.0, 8.3, 4.0],
+                backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                borderColor: '#10b981',
+                borderWidth: 1
+              },
+              {
+                type: 'line',
+                label: 'Soil Moisture % (SMAP)',
+                data: [28, 26, 25, 24],
+                borderColor: '#06b6d4',
+                tension: 0.3,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
+            scales: {
+              x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y1: { position: 'right', ticks: { color: '#06b6d4', font: { size: 10 } }, grid: { display: false } }
+            }
+          }
+        });
+      }
+    }
+
+    // Tab switcher hook to trigger charts
+    const originalSwitchTab = switchTab;
+    switchTab = function(tabId) {
+      originalSwitchTab(tabId);
+      if (tabId === 'tab-charts') {
+        setTimeout(initNasaCharts, 50);
+      }
+    };
+
     // Initialize on load
     calculateRotation();
     updateSimulator();
+    calcIncome();
     // Prompt login immediately without any click
     openAuthModal();
   </script>
