@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, Query, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse, FileResponse
+
 
 # Ensure current package directory is on sys.path
 _current_dir = Path(__file__).resolve().parent
@@ -47,10 +48,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/", include_in_schema=False)
+@app.get("/", include_in_schema=False, response_class=HTMLResponse)
 def serve_index():
-    """Serves the static web app if available, else JSON status."""
+    """Serves the static web app dashboard if available, else HTML fallback."""
     candidates = [
+        Path(__file__).resolve().parent / "index.html",
         Path(__file__).resolve().parent.parent.parent / "index.html",
         Path(__file__).resolve().parent.parent.parent / "public" / "index.html",
         Path("index.html"),
@@ -58,8 +60,13 @@ def serve_index():
     ]
     for c in candidates:
         if c.exists():
-            return FileResponse(str(c))
-    return {"status": "ok", "service": "AGROVERSE AI"}
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    return HTMLResponse(content=f.read(), status_code=200)
+            except Exception:
+                return FileResponse(str(c), media_type="text/html")
+    return HTMLResponse(content="<!DOCTYPE html><html><body><h1>AGROVERSE AI</h1><p>NASA Precision Agriculture Service Running</p></body></html>", status_code=200)
+
 
 @app.get("/healthz")
 def health_check():
