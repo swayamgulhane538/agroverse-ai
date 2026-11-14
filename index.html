@@ -141,8 +141,9 @@
   </div>
 
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <!-- Main Container (Unlocked after login) -->
+  <main id="mainAppContainer" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 hidden">
+
 
     <!-- Provenance Hero Alert -->
     <div class="bg-gradient-to-r from-space-900 to-space-800 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
@@ -646,11 +647,14 @@
     function loginUser(name, email) {
       currentUser = { name, email, district: "Nagpur, MH" };
       closeAuthModal();
+      document.getElementById('mainAppContainer').classList.remove('hidden');
       renderUserProfile();
     }
 
     function logoutUser() {
       currentUser = null;
+      document.getElementById('mainAppContainer').classList.add('hidden');
+      openAuthModal();
       renderUserProfile();
     }
 
@@ -683,7 +687,8 @@
     // Initialize on load
     calculateRotation();
     updateSimulator();
-    renderUserProfile();
+    // Prompt login immediately without any click
+    openAuthModal();
   </script>
 </body>
 </html>
