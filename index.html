@@ -286,6 +286,14 @@
           <i class="fa-solid fa-landmark text-xs"></i>
           <span>Schemes & Subsidies (S1)</span>
         </button>
+        <button onclick="switchAppTab('disease')" id="pill-disease" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-camera-retro text-xs text-rose-300"></i>
+          <span>Disease Detection+ (M17)</span>
+        </button>
+        <button onclick="switchAppTab('parcels')" id="pill-parcels" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-map-location-dot text-xs text-teal-300"></i>
+          <span>My Farm Parcels (M10)</span>
+        </button>
       </div>
 
       <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Responsive: 2 cols on mobile, 4 cols on desktop) ===== -->
@@ -852,6 +860,147 @@
         </div>
       </div>
 
+      <!-- ===== TAB 10: DISEASE DETECTION+ (Module 17) ===== -->
+      <div id="subtab-disease" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">AI Plant Disease Detection+</h3>
+              <p class="text-xs text-slate-300 font-light">Calibrated leaf scanner, severity estimation (% area), and organic IPM guidance.</p>
+            </div>
+            <span class="text-[10px] text-rose-300 frosted-pill px-3 py-1 rounded-full border border-rose-500/30">
+              M17 • Calibrated AI Model
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Camera / Photo Input Zone -->
+            <div class="space-y-3 bg-space-900/60 p-4 rounded-2xl border border-white/5 text-xs text-center flex flex-col justify-center items-center py-6">
+              <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-300 text-2xl mb-2 shadow-lg">
+                <i class="fa-solid fa-camera"></i>
+              </div>
+              <h4 class="font-bold text-white text-sm">Capture or Upload Leaf Photo</h4>
+              <p class="text-[11px] text-slate-400 max-w-xs font-light">Hold phone 15-20 cm away. Ensure leaf is in sharp focus without heavy shadow.</p>
+              
+              <div class="flex gap-2 w-full max-w-xs pt-2">
+                <button onclick="simulateScan('pod_borer')" class="flex-1 btn-sage font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Scan Sample A
+                </button>
+                <button onclick="simulateScan('wilt')" class="flex-1 frosted-pill font-bold py-2.5 rounded-xl text-xs text-rose-300 border border-rose-500/30 flex items-center justify-center gap-1.5 hover:bg-rose-500/20">
+                  <i class="fa-solid fa-vial"></i> Scan Sample B
+                </button>
+              </div>
+              <span class="text-[9px] text-slate-500 pt-1">Supported: Soybean, Cotton, Chickpea, Tur, Citrus</span>
+            </div>
+
+            <!-- Diagnosis Card Result -->
+            <div id="diseaseResultCard" class="frosted-pill rounded-2xl p-4 space-y-3 text-xs">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Diagnosis Result</span>
+                  <h4 id="diagTitle" class="font-serif-display text-lg text-white font-bold">Helicoverpa Armigera (Pod Borer)</h4>
+                  <p id="diagCrop" class="text-[11px] text-slate-400">Crop: Chickpea / Chana • Larval Stage</p>
+                </div>
+                <div class="text-right">
+                  <span id="diagConfidence" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">92% Likely</span>
+                  <div id="diagSeverity" class="text-[10px] text-amber-300 font-medium mt-1">Severity: 14% Leaf/Pod Area</div>
+                </div>
+              </div>
+
+              <!-- Action Plan Accordion -->
+              <div class="space-y-2 border-t border-white/5 pt-2">
+                <span class="text-emerald-300 font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-shield-halved"></i> IPM-First Action Plan (Non-Chemical Priority)
+                </span>
+                <ul id="diagSteps" class="space-y-1.5 text-[11px] text-slate-300 pl-3 list-disc">
+                  <li><strong>Biological:</strong> Install 5 Pheromone traps/ha to monitor moth catch threshold (&gt;8 moths/trap).</li>
+                  <li><strong>Organic:</strong> Spray 5% Neem Seed Kernel Extract (NSKE) or HaNPV 250 LE/ha during early larval instars.</li>
+                  <li><strong>Cultural:</strong> Erect 20 bird perches (T-shaped bamboo sticks)/ha for natural predator feeding.</li>
+                </ul>
+              </div>
+
+              <div class="text-[10px] text-slate-400 border-t border-white/5 pt-2 flex items-center justify-between">
+                <span>Escalate: <strong>Kisan Call Centre (1800-180-1551)</strong></span>
+                <span class="text-emerald-400 font-semibold">Nagpur KVK Sourced</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 11: MULTI-PARCEL LAND MANAGER (Module 10) ===== -->
+      <div id="subtab-parcels" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">Multi-Parcel Land Fragmentation Manager</h3>
+              <p class="text-xs text-slate-300 font-light">Track scattered Gat/Survey plots and measure Simpson Fragmentation Index.</p>
+            </div>
+            <span class="text-[10px] text-teal-300 frosted-pill px-3 py-1 rounded-full border border-teal-500/30">
+              M10 • Spatial PostGIS Engine
+            </span>
+          </div>
+
+          <!-- Fragmentation Summary Capsule -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="frosted-pill rounded-2xl p-3.5">
+              <span class="text-slate-400 text-[10px] block">Total Registered Holdings</span>
+              <span class="font-serif-display text-2xl text-white font-bold">3 Plots <span class="text-xs font-sans text-slate-400">(4.2 Hectares)</span></span>
+            </div>
+            <div class="frosted-pill rounded-2xl p-3.5">
+              <span class="text-slate-400 text-[10px] block">Simpson Fragmentation Index</span>
+              <span class="font-serif-display text-2xl text-amber-300 font-bold">0.61 <span class="text-xs font-sans text-slate-400">(Moderate)</span></span>
+            </div>
+            <div class="frosted-pill rounded-2xl p-3.5">
+              <span class="text-slate-400 text-[10px] block">Inter-Parcel Mean Distance</span>
+              <span class="font-serif-display text-2xl text-teal-300 font-bold">1.4 km</span>
+            </div>
+          </div>
+
+          <!-- Parcel Cards List -->
+          <div class="space-y-2.5 text-xs">
+            <div class="frosted-pill rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-emerald-500/20">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-white text-sm">Gat No. 142/A (Wadi Plot)</h4>
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">2.0 ha</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Soil: Deep Black (Regur) • Water: Dug Well (Assured) • Crop: Soybean → Chana</div>
+              </div>
+              <div class="text-[10px] text-emerald-400 font-medium bg-space-900/80 px-2.5 py-1 rounded-lg border border-white/5 self-start sm:self-auto">
+                🛰️ NDVI Confidence: High (22 pixels)
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-teal-500/20">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-white text-sm">Gat No. 89 (Canal Side Plot)</h4>
+                  <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded font-bold">1.5 ha</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Soil: Clay Loam • Water: Canal Lift • Crop: Cotton → Wheat</div>
+              </div>
+              <div class="text-[10px] text-emerald-400 font-medium bg-space-900/80 px-2.5 py-1 rounded-lg border border-white/5 self-start sm:self-auto">
+                🛰️ NDVI Confidence: High (16 pixels)
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-amber-500/20">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-white text-sm">Gat No. 204 (Hillock Plot)</h4>
+                  <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">0.7 ha</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Soil: Shallow Red-Brown • Water: Rainfed only • Crop: Fallow / Safflower</div>
+              </div>
+              <div class="text-[10px] text-amber-300 font-medium bg-space-900/80 px-2.5 py-1 rounded-lg border border-white/5 self-start sm:self-auto">
+                ⚠️ Mixed Pixel Caveat (< 8 pixels)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ===== FLOATING FROSTED BOTTOM NAVIGATION (Leafora Style) ===== -->
@@ -932,7 +1081,7 @@
 
     function switchAppTab(tab) {
       // Hide all subtabs
-      ['overview', 'rotation', 'simulator', 'mandi', 'income', 'calendar', 'storage', 'transport', 'schemes'].forEach(t => {
+      ['overview', 'rotation', 'simulator', 'mandi', 'income', 'calendar', 'storage', 'transport', 'schemes', 'disease', 'parcels'].forEach(t => {
         const el = document.getElementById('subtab-' + t);
         if (el) el.classList.add('hidden');
 
@@ -963,6 +1112,39 @@
       if (activeBnav) {
         activeBnav.classList.add('text-emerald-400');
         activeBnav.classList.remove('text-slate-400');
+      }
+    }
+
+    // M17 Disease Detection Simulation
+    function simulateScan(type) {
+      const title = document.getElementById('diagTitle');
+      const crop = document.getElementById('diagCrop');
+      const conf = document.getElementById('diagConfidence');
+      const sev = document.getElementById('diagSeverity');
+      const steps = document.getElementById('diagSteps');
+
+      if (type === 'pod_borer') {
+        title.innerText = 'Helicoverpa Armigera (Pod Borer)';
+        crop.innerText = 'Crop: Chickpea / Chana • Larval Stage';
+        conf.className = 'text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold';
+        conf.innerText = '92% Likely';
+        sev.innerText = 'Severity: 14% Leaf/Pod Area';
+        steps.innerHTML = `
+          <li><strong>Biological:</strong> Install 5 Pheromone traps/ha to monitor moth catch threshold (&gt;8 moths/trap).</li>
+          <li><strong>Organic:</strong> Spray 5% Neem Seed Kernel Extract (NSKE) or HaNPV 250 LE/ha during early larval instars.</li>
+          <li><strong>Cultural:</strong> Erect 20 bird perches (T-shaped bamboo sticks)/ha for natural predator feeding.</li>
+        `;
+      } else {
+        title.innerText = 'Fusarium Wilt (Fusarium oxysporum)';
+        crop.innerText = 'Crop: Chickpea / Tur • Vascular Root System';
+        conf.className = 'text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-bold';
+        conf.innerText = '78% Possible (Early Stage)';
+        sev.innerText = 'Severity: 8% Plant Wilting';
+        steps.innerHTML = `
+          <li><strong>Organic Biological:</strong> Drench root zone with Trichoderma viride / harzianum (2.5 kg/ha in 500 kg FYM).</li>
+          <li><strong>Cultural:</strong> Uproot and burn severely wilted plants to prevent micro-sclerotia spread in black soil.</li>
+          <li><strong>Rotation Advice:</strong> Avoid continuous chickpea next Rabi; rotate with mustard or safflower.</li>
+        `;
       }
     }
 
