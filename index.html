@@ -115,8 +115,42 @@
           Healthy Soil. Smarter Sowing.<br>Official Vidarbha Climate & Mandi Intelligence.
         </p>
 
+        <!-- Interactive Toggle: Sign In vs Sign Up -->
+        <div class="grid grid-cols-2 p-1 frosted-pill rounded-2xl text-xs font-semibold">
+          <button type="button" onclick="setAuthTab('login')" id="tabBtnLogin" class="py-2.5 rounded-xl bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 transition">
+            Sign In
+          </button>
+          <button type="button" onclick="setAuthTab('signup')" id="tabBtnSignup" class="py-2.5 rounded-xl text-slate-400 hover:text-white transition">
+            Sign Up
+          </button>
+        </div>
+
         <!-- Form fields -->
-        <div class="space-y-3 pt-2 text-left">
+        <div class="space-y-3 pt-1 text-left">
+          
+          <!-- Sign-up specific fields (Hidden by default in login mode) -->
+          <div id="signUpFields" class="space-y-3 hidden">
+            <div class="frosted-pill rounded-xl px-3.5 py-2.5 flex items-center space-x-2.5">
+              <i class="fa-regular fa-user text-xs text-slate-400"></i>
+              <input type="text" id="regName" placeholder="Full Name (e.g. Swayam Gulhane)" class="bg-transparent text-xs text-white placeholder-slate-400/60 w-full outline-none">
+            </div>
+
+            <div class="frosted-pill rounded-xl px-3.5 py-2.5 flex items-center space-x-2.5">
+              <i class="fa-solid fa-id-badge text-xs text-slate-400"></i>
+              <select id="regType" class="bg-transparent text-xs text-slate-300 w-full outline-none">
+                <option value="Farmer" class="bg-slate-900 text-white">Farmer (किसान / शेतकरी)</option>
+                <option value="Student" class="bg-slate-900 text-white">Agricultural Student</option>
+                <option value="Researcher" class="bg-slate-900 text-white">Researcher / Expert</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 px-1">
+              <span>State: <strong class="text-white">Maharashtra</strong></span>
+              <span>District: <strong class="text-white">Nagpur</strong></span>
+            </div>
+          </div>
+
+          <!-- Common fields (Mobile / Email & Password) -->
           <div class="frosted-pill rounded-xl px-3.5 py-2.5 flex items-center space-x-2.5">
             <i class="fa-regular fa-envelope text-xs text-slate-400"></i>
             <input type="text" id="loginId" placeholder="Farmer ID or Mobile Number" value="nagpur.farmer@agroverse.in" class="bg-transparent text-xs text-white placeholder-slate-400/60 w-full outline-none">
@@ -128,14 +162,19 @@
           </div>
         </div>
 
-        <!-- Get Started Button -->
-        <button onclick="enterApp('Swayam Gulhane')" class="w-full btn-sage font-semibold py-3.5 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-all">
-          <span>Get Started</span>
-          <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        <!-- Submit Button -->
+        <button id="authActionBtn" onclick="handleAuthSubmit()" class="w-full btn-sage font-semibold py-3.5 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-all">
+          <span id="authActionText">Sign In →</span>
+        </button>
+
+        <!-- 1-Click Judge Quick Access -->
+        <button type="button" onclick="enterApp('Swayam Gulhane (Judge Demo)')" class="w-full frosted-pill hover:bg-emerald-500/20 text-emerald-300 py-2.5 rounded-xl text-[11px] font-medium transition flex items-center justify-center space-x-1.5 border border-emerald-500/30">
+          <i class="fa-solid fa-bolt text-amber-300 text-xs"></i>
+          <span>1-Click Demo Login (Judge Test)</span>
         </button>
 
         <div class="text-[10px] text-slate-400 font-light flex justify-between px-1">
-          <span>Region: Nagpur, MH</span>
+          <span>Region: Vidarbha, Nagpur</span>
           <span>Lead: Swayam Gulhane</span>
         </div>
       </div>
@@ -575,6 +614,37 @@
 
   <script>
     // Navigation & Auth Logic
+    let currentAuthMode = 'login';
+
+    function setAuthTab(mode) {
+      currentAuthMode = mode;
+      const isLogin = mode === 'login';
+      const btnLogin = document.getElementById('tabBtnLogin');
+      const btnSignup = document.getElementById('tabBtnSignup');
+      const signUpFields = document.getElementById('signUpFields');
+      const actionText = document.getElementById('authActionText');
+
+      if (isLogin) {
+        btnLogin.className = 'py-2.5 rounded-xl bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 transition';
+        btnSignup.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white transition';
+        signUpFields.classList.add('hidden');
+        actionText.innerText = 'Sign In →';
+      } else {
+        btnSignup.className = 'py-2.5 rounded-xl bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 transition';
+        btnLogin.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white transition';
+        signUpFields.classList.remove('hidden');
+        actionText.innerText = 'Create Account ✓';
+      }
+    }
+
+    function handleAuthSubmit() {
+      const email = document.getElementById('loginId')?.value || 'Farmer';
+      const name = currentAuthMode === 'signup' 
+        ? (document.getElementById('regName')?.value || 'Swayam Gulhane') 
+        : (email.split('@')[0] || 'Swayam Gulhane');
+      enterApp(name);
+    }
+
     function enterApp(name) {
       document.getElementById('screenGate').classList.add('hidden');
       document.getElementById('screenApp').classList.remove('hidden');
