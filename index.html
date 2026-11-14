@@ -61,19 +61,13 @@
       transform: translateY(-1px);
     }
     .app-viewport {
-      max-width: 440px;
+      width: 100%;
+      max-width: 1280px;
       margin: 0 auto;
       min-height: 100vh;
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 70px rgba(0, 0, 0, 0.7);
-    }
-    @media (min-width: 768px) {
-      .app-viewport {
-        border-left: 1px solid rgba(255, 255, 255, 0.06);
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
-      }
     }
     /* Hide scrollbars */
     ::-webkit-scrollbar { display: none; }
@@ -189,54 +183,65 @@
         <i class="fa-solid fa-sliders text-emerald-400 text-xs"></i>
       </div>
 
-      <!-- Featured Greenery Banner (Leafora style) -->
-      <div class="frosted-glass rounded-3xl p-5 relative overflow-hidden">
-        <div class="relative z-10 max-w-[65%] space-y-2">
-          <span class="text-[10px] font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full">Rabi 2026-27</span>
-          <h3 class="font-serif-display text-xl text-white leading-tight">Adapt Fields with NASA Data</h3>
-          <p class="text-[11px] text-slate-300/80 font-light">Optimize soybean-to-chickpea transition using SMAP moisture & POWER temperature.</p>
-          <button onclick="switchAppTab('rotation')" class="mt-2 px-4 py-2 btn-sage rounded-xl text-xs font-bold flex items-center space-x-1.5">
-            <span>Explore Strategies</span>
-          </button>
+      <!-- Featured Greenery Banner (Leafora style responsive) -->
+      <div class="frosted-glass rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="relative z-10 max-w-xl space-y-3">
+          <span class="text-[10px] font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-400/20">Rabi Sowing 2026-27</span>
+          <h3 class="font-serif-display text-2xl sm:text-3xl text-white leading-tight">Adapt Vidarbha Farms with NASA Earth Data</h3>
+          <p class="text-xs sm:text-sm text-slate-300/80 font-light max-w-lg">
+            Hyperlocal climate transition from Kharif soybean/cotton to Rabi chickpea. Powered by NASA SMAP soil moisture percentiles, GPM rainfall, and POWER temperature models.
+          </p>
+          <div class="flex items-center space-x-3 pt-2">
+            <button onclick="switchAppTab('rotation')" class="px-5 py-2.5 btn-sage rounded-xl text-xs font-bold flex items-center space-x-2">
+              <span>Evaluate Rotation Strategies</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+            <span class="text-xs text-slate-400 hidden sm:inline">• 100% Provenance Traceable</span>
+          </div>
+        </div>
+        <!-- Right side graphic / stat capsule -->
+        <div class="relative z-10 frosted-pill rounded-2xl p-4 sm:p-5 border border-emerald-500/20 hidden md:block text-right">
+          <div class="text-[10px] text-emerald-300 uppercase tracking-widest font-semibold">Nagpur Residual Moisture</div>
+          <div class="font-serif-display text-3xl text-white font-medium my-1">62nd <span class="text-xs font-sans text-slate-400">Percentile</span></div>
+          <p class="text-[11px] text-slate-400 font-light">Optimal for rainfed chickpea & safflower</p>
         </div>
         <!-- Decorative blurred botanical element -->
-        <div class="absolute -right-6 -bottom-6 w-36 h-36 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-700/10 blur-xl pointer-events-none"></div>
-        <div class="absolute right-4 bottom-3 text-5xl opacity-40">🌱</div>
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-700/5 blur-3xl pointer-events-none"></div>
       </div>
 
       <!-- Horizontal Module Selector Pills -->
-      <div class="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
-        <button onclick="switchAppTab('overview')" id="pill-overview" class="frosted-pill active px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap">
+      <div class="flex items-center space-x-2 sm:space-x-3 overflow-x-auto pb-1 text-xs">
+        <button onclick="switchAppTab('overview')" id="pill-overview" class="frosted-pill active px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-seedling text-xs"></i>
           <span>Overview</span>
         </button>
-        <button onclick="switchAppTab('rotation')" id="pill-rotation" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+        <button onclick="switchAppTab('rotation')" id="pill-rotation" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
           <i class="fa-solid fa-arrows-spin text-xs"></i>
-          <span>Rotation</span>
+          <span>Crop Rotation</span>
         </button>
-        <button onclick="switchAppTab('simulator')" id="pill-simulator" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+        <button onclick="switchAppTab('simulator')" id="pill-simulator" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
           <i class="fa-solid fa-sliders text-xs"></i>
-          <span>Simulator</span>
+          <span>Climate Simulator</span>
         </button>
-        <button onclick="switchAppTab('mandi')" id="pill-mandi" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+        <button onclick="switchAppTab('mandi')" id="pill-mandi" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
           <i class="fa-solid fa-chart-line text-xs"></i>
-          <span>Mandi</span>
+          <span>Mandi & MSP</span>
         </button>
-        <button onclick="switchAppTab('income')" id="pill-income" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+        <button onclick="switchAppTab('income')" id="pill-income" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
           <i class="fa-solid fa-wallet text-xs"></i>
-          <span>Income</span>
+          <span>Income Optimizer</span>
         </button>
       </div>
 
-      <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Leafora Card Grid) ===== -->
-      <div id="subtab-overview" class="space-y-4">
+      <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Responsive: 2 cols on mobile, 4 cols on desktop) ===== -->
+      <div id="subtab-overview" class="space-y-6">
         
         <div class="flex items-center justify-between text-xs">
-          <span class="font-serif-display text-base text-white">Live Environmental Observables</span>
-          <span class="text-emerald-400 text-[11px] font-medium">NASA POWER & SMAP</span>
+          <span class="font-serif-display text-lg text-white">Live Environmental Observables</span>
+          <span class="text-emerald-400 text-xs font-medium">NASA POWER & SMAP Feed Active</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Card 1: Soil Moisture -->
           <div class="frosted-glass rounded-2xl p-4 relative group">
             <div class="flex justify-between items-start">
@@ -541,27 +546,27 @@
     </div>
 
     <!-- ===== FLOATING FROSTED BOTTOM NAVIGATION (Leafora Style) ===== -->
-    <div id="bottomNav" class="fixed bottom-3 left-0 right-0 max-w-[420px] mx-auto px-4 z-50 hidden">
-      <div class="frosted-glass rounded-3xl py-2.5 px-4 flex items-center justify-around shadow-2xl border border-white/10">
-        <button onclick="switchAppTab('overview')" id="bnav-overview" class="flex flex-col items-center text-emerald-400 text-[10px] space-y-1 transition">
-          <i class="fa-solid fa-house text-sm"></i>
-          <span>Home</span>
+    <div id="bottomNav" class="fixed bottom-4 left-0 right-0 max-w-lg mx-auto px-4 z-50 hidden">
+      <div class="frosted-glass rounded-3xl py-3 px-6 flex items-center justify-around shadow-2xl border border-white/10 backdrop-blur-3xl">
+        <button onclick="switchAppTab('overview')" id="bnav-overview" class="flex flex-col items-center text-emerald-400 text-xs space-y-1 transition hover:scale-105">
+          <i class="fa-solid fa-house text-base"></i>
+          <span class="text-[10px]">Home</span>
         </button>
-        <button onclick="switchAppTab('rotation')" id="bnav-rotation" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
-          <i class="fa-solid fa-arrows-spin text-sm"></i>
-          <span>Rotate</span>
+        <button onclick="switchAppTab('rotation')" id="bnav-rotation" class="flex flex-col items-center text-slate-400 hover:text-white text-xs space-y-1 transition hover:scale-105">
+          <i class="fa-solid fa-arrows-spin text-base"></i>
+          <span class="text-[10px]">Rotation</span>
         </button>
-        <button onclick="switchAppTab('simulator')" id="bnav-simulator" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
-          <i class="fa-solid fa-sliders text-sm"></i>
-          <span>Simulate</span>
+        <button onclick="switchAppTab('simulator')" id="bnav-simulator" class="flex flex-col items-center text-slate-400 hover:text-white text-xs space-y-1 transition hover:scale-105">
+          <i class="fa-solid fa-sliders text-base"></i>
+          <span class="text-[10px]">Simulator</span>
         </button>
-        <button onclick="switchAppTab('mandi')" id="bnav-mandi" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
-          <i class="fa-solid fa-chart-line text-sm"></i>
-          <span>Mandi</span>
+        <button onclick="switchAppTab('mandi')" id="bnav-mandi" class="flex flex-col items-center text-slate-400 hover:text-white text-xs space-y-1 transition hover:scale-105">
+          <i class="fa-solid fa-chart-line text-base"></i>
+          <span class="text-[10px]">Mandi</span>
         </button>
-        <button onclick="switchAppTab('income')" id="bnav-income" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
-          <i class="fa-solid fa-wallet text-sm"></i>
-          <span>Income</span>
+        <button onclick="switchAppTab('income')" id="bnav-income" class="flex flex-col items-center text-slate-400 hover:text-white text-xs space-y-1 transition hover:scale-105">
+          <i class="fa-solid fa-wallet text-base"></i>
+          <span class="text-[10px]">Income</span>
         </button>
       </div>
     </div>
