@@ -311,7 +311,7 @@
           <div class="flex items-center space-x-2">
             <h1 class="text-xl font-extrabold tracking-tight text-gray-900">Agroverse <span class="text-xs bg-gray-100 text-gray-700 font-semibold px-2 py-0.5 rounded-full border border-gray-200">NASA 2026</span></h1>
           </div>
-          <p class="text-xs text-gray-500 font-medium">Nagpur, Vidarbha (21.1458° N, 79.0882° E) • Rabi 2026-27 Sowing</p>
+          <p id="headerLocationSub" class="text-xs text-gray-500 font-medium">Nagpur, Vidarbha (21.1458° N, 79.0882° E) • Rabi 2026-27 Sowing</p>
         </div>
       </div>
 
@@ -324,10 +324,10 @@
         
         <button onclick="toggleToolsModal()" class="flex items-center space-x-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-xl shadow-sm text-xs font-bold text-gray-800 hover:bg-gray-50">
           <i class="fa-solid fa-grid-2 text-emerald-600"></i>
-          <span>All Tools</span>
+          <span id="topAllToolsText">All Tools</span>
         </button>
 
-        <select id="appLang" class="bg-white border border-gray-200 text-xs rounded-xl px-2.5 py-1.5 text-gray-700 font-medium outline-none shadow-sm">
+        <select id="appLang" onchange="changeLanguage(this.value)" class="bg-white border border-gray-200 text-xs rounded-xl px-2.5 py-1.5 text-gray-700 font-medium outline-none shadow-sm cursor-pointer">
           <option value="en">English</option>
           <option value="hi">हिंदी (Hindi)</option>
           <option value="mr">मराठी (Marathi)</option>
@@ -1256,7 +1256,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl bg-black text-white flex items-center justify-center text-xs shadow-sm">
           <i class="fa-solid fa-house"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Home</span>
+        <span id="bnav-home-text" class="text-[10px] tracking-tight">Home</span>
       </button>
 
       <!-- 2. Parcels Map -->
@@ -1264,7 +1264,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl flex items-center justify-center text-xs">
           <i class="fa-solid fa-map-location-dot"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Parcels</span>
+        <span id="bnav-map-text" class="text-[10px] tracking-tight">Parcels</span>
       </button>
 
       <!-- 3. Rotation -->
@@ -1272,7 +1272,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl flex items-center justify-center text-xs">
           <i class="fa-solid fa-arrows-spin"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Rotate</span>
+        <span id="bnav-rot-text" class="text-[10px] tracking-tight">Rotate</span>
       </button>
 
       <!-- 4. Simulator -->
@@ -1280,7 +1280,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl flex items-center justify-center text-xs">
           <i class="fa-solid fa-sliders"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Simulate</span>
+        <span id="bnav-sim-text" class="text-[10px] tracking-tight">Simulate</span>
       </button>
 
       <!-- 5. Mandi Rates -->
@@ -1288,7 +1288,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl flex items-center justify-center text-xs">
           <i class="fa-solid fa-store"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Mandi</span>
+        <span id="bnav-mandi-text" class="text-[10px] tracking-tight">Mandi</span>
       </button>
 
       <!-- 6. Disease Doctor -->
@@ -1296,7 +1296,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl flex items-center justify-center text-xs">
           <i class="fa-solid fa-camera"></i>
         </div>
-        <span class="text-[10px] tracking-tight">Doctor</span>
+        <span id="bnav-doc-text" class="text-[10px] tracking-tight">Doctor</span>
       </button>
 
       <!-- 7. All Tools Trigger -->
@@ -1304,7 +1304,7 @@
         <div class="bnav-icon-wrap w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-xs">
           <i class="fa-solid fa-grid-2 text-emerald-600"></i>
         </div>
-        <span class="text-[10px] tracking-tight text-emerald-600">All Tools</span>
+        <span id="bnav-tools-text" class="text-[10px] tracking-tight text-emerald-600">All Tools</span>
       </button>
 
     </div>
@@ -1345,6 +1345,65 @@
         : (email.split('@')[0] || 'Swayam Gulhane');
       document.getElementById('userNameDisplay').innerText = name;
       closeLoginModal();
+    }
+
+    // Multilingual Dictionary (English, Hindi, Marathi)
+    const translations = {
+      en: {
+        locationHeader: "Nagpur, Vidarbha (21.1458° N, 79.0882° E) • Rabi 2026-27 Sowing",
+        topAllTools: "All Tools",
+        bnavHome: "Home",
+        bnavParcels: "Parcels",
+        bnavRotate: "Rotate",
+        bnavSimulate: "Simulate",
+        bnavMandi: "Mandi",
+        bnavDoctor: "Doctor",
+        bnavTools: "All Tools"
+      },
+      hi: {
+        locationHeader: "नागपुर, विदर्भ (21.1458° N, 79.0882° E) • रबी 2026-27 बुवाई",
+        topAllTools: "सभी साधन",
+        bnavHome: "होम",
+        bnavParcels: "खेत",
+        bnavRotate: "फसल चक्र",
+        bnavSimulate: "सिमुलेटर",
+        bnavMandi: "मंडी भाव",
+        bnavDoctor: "डॉक्टर",
+        bnavTools: "सभी साधन"
+      },
+      mr: {
+        locationHeader: "नागपूर, विदर्भ (21.1458° N, 79.0882° E) • रब्बी 2026-27 पेरणी हंगाम",
+        topAllTools: "सर्व साधने",
+        bnavHome: "मुख्य",
+        bnavParcels: "शेतजमीन",
+        bnavRotate: "फेरपालट",
+        bnavSimulate: "सिम्युलेटर",
+        bnavMandi: "बाजारभाव",
+        bnavDoctor: "पीक डॉक्टर",
+        bnavTools: "सर्व साधने"
+      }
+    };
+
+    function changeLanguage(lang) {
+      const t = translations[lang] || translations.en;
+      const locEl = document.getElementById('headerLocationSub');
+      if (locEl) locEl.innerText = t.locationHeader;
+      const topToolsEl = document.getElementById('topAllToolsText');
+      if (topToolsEl) topToolsEl.innerText = t.topAllTools;
+
+      const map = {
+        'bnav-home-text': t.bnavHome,
+        'bnav-map-text': t.bnavParcels,
+        'bnav-rot-text': t.bnavRotate,
+        'bnav-sim-text': t.bnavSimulate,
+        'bnav-mandi-text': t.bnavMandi,
+        'bnav-doc-text': t.bnavDoctor,
+        'bnav-tools-text': t.bnavTools
+      };
+      for (const [id, val] of Object.entries(map)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = val;
+      }
     }
 
     // View Switching Router
