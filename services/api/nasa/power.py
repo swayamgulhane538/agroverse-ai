@@ -1,7 +1,11 @@
 import requests
 from typing import Dict, Any
 from datetime import datetime, timedelta
-from ..models.provenance import Provenanced, ProvenanceMetadata
+try:
+    from ..models.provenance import Provenanced, ProvenanceMetadata
+except (ImportError, ValueError):
+    from models.provenance import Provenanced, ProvenanceMetadata
+
 
 # Nagpur Coordinates
 NAGPUR_LAT = 21.1458

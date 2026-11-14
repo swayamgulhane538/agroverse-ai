@@ -1,8 +1,13 @@
 import json
 import os
 from typing import Dict, Any, List
-from ..models.provenance import Provenanced, ProvenanceMetadata
-from ..data_loader import get_schemes
+try:
+    from ..models.provenance import Provenanced, ProvenanceMetadata
+    from ..data_loader import get_schemes
+except (ImportError, ValueError):
+    from models.provenance import Provenanced, ProvenanceMetadata
+    from data_loader import get_schemes
+
 
 class SchemeEngine:
     """

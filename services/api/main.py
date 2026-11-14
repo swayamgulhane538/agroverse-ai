@@ -1,16 +1,31 @@
 import os
+import sys
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, Query, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from .nasa.power import NasaPowerAdapter
-from .market.agmarknet import AgmarknetAdapter
-from .engines.calculators import AgriCalculators
-from .engines.crop_calendar import SmartCalendarEngine
-from .engines.schemes import SchemeEngine
-from .data_loader import get_crops, get_msp, get_schemes
+# Ensure current package directory is on sys.path
+_current_dir = Path(__file__).resolve().parent
+if str(_current_dir) not in sys.path:
+    sys.path.insert(0, str(_current_dir))
+
+try:
+    from .nasa.power import NasaPowerAdapter
+    from .market.agmarknet import AgmarknetAdapter
+    from .engines.calculators import AgriCalculators
+    from .engines.crop_calendar import SmartCalendarEngine
+    from .engines.schemes import SchemeEngine
+    from .data_loader import get_crops, get_msp, get_schemes
+except (ImportError, ValueError):
+    from nasa.power import NasaPowerAdapter
+    from market.agmarknet import AgmarknetAdapter
+    from engines.calculators import AgriCalculators
+    from engines.crop_calendar import SmartCalendarEngine
+    from engines.schemes import SchemeEngine
+    from data_loader import get_crops, get_msp, get_schemes
+
 
 # Read database URL from environment (external Postgres) - do not assume local DB or writable disk
 DATABASE_URL = os.getenv("DATABASE_URL", None)

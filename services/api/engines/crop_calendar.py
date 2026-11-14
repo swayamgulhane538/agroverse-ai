@@ -1,6 +1,10 @@
 from typing import List, Dict, Any
 from datetime import datetime, timedelta
-from ..models.provenance import Provenanced, ProvenanceMetadata
+try:
+    from ..models.provenance import Provenanced, ProvenanceMetadata
+except (ImportError, ValueError):
+    from models.provenance import Provenanced, ProvenanceMetadata
+
 
 class SmartCalendarEngine:
     """

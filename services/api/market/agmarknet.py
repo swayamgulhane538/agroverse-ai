@@ -1,5 +1,9 @@
 from typing import List, Dict, Any
-from ..models.provenance import Provenanced, ProvenanceMetadata
+try:
+    from ..models.provenance import Provenanced, ProvenanceMetadata
+except (ImportError, ValueError):
+    from models.provenance import Provenanced, ProvenanceMetadata
+
 
 class AgmarknetAdapter:
     @staticmethod

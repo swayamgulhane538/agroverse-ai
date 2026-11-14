@@ -13,4 +13,5 @@ dependencies = [
 ]
 
 [tool.vercel]
-entrypoint = "services.api.main:app"
+entrypoint = "main.py:app"
+

@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/main.py"
+    }
+  ],
   "crons": [
     {
       "path": "/v1/jobs/ingest-nasa",
