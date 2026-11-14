@@ -2,7 +2,9 @@ export type DataKind =
   | "measured"              // lab/field measurement or official mandi arrival
   | "satellite_observed"    // derived from satellite retrievals (NDVI, IMERG)
   | "reanalysis_modelled"   // model-assimilated product (SMAP L4, POWER MERRA-2)
-  | "user_entered"          // farm size, expenses entered by farmer
+  | "user_entered"          // farm size entered by farmer
+  | "user_entered_cost"     // custom expenditure entered by farmer (v3 extension)
+  | "official_document"     // official government schemes, gazette, MSP policy (v3 extension)
   | "ai_estimate"           // ML/heuristic output
   | "scenario"              // what-if simulation (e.g. -20% rain)
   | "demo";                 // fallback demo fixture

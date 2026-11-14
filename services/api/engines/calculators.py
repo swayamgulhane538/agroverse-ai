@@ -51,7 +51,7 @@ class AgriCalculators:
         """
         storage_cost = storage_months * monthly_storage_rent_q
         interest_cost = current_mandi_price_q * (monthly_interest_rate_pct / 100.0) * storage_months
-        total_carrying_cost = storage_cost + handling_handling_q + interest_cost
+        total_carrying_cost = storage_cost + loading_handling_q + interest_cost
 
         # Shrinkage fraction
         shrinkage_factor = 1.0 - (shrinkage_weight_loss_pct / 100.0)
