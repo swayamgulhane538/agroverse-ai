@@ -1,0 +1,91 @@
+[
+  {
+    "id": "pm_kisan",
+    "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+    "name_mr": "पीएम-किसान सन्मान निधी",
+    "name_hi": "प्रधानमंत्री किसान सम्मान निधि",
+    "level": "central",
+    "category": "income",
+    "benefit_text": "₹6,000 per year in 3 equal installments of ₹2,000 directly into Aadhaar-seeded bank account.",
+    "benefit_structured": { "amount_inr": 6000, "frequency": "annual" },
+    "eligibility_rules": {
+      "landholder": true,
+      "exclusion": ["institutional_landholders", "income_tax_payers", "retired_pensioners_gt_10000"]
+    },
+    "documents_required": ["Aadhaar Card", "7/12 Extract / Land Record", "Bank Passbook with Aadhaar link"],
+    "status": "active",
+    "official_urls": ["https://pmkisan.gov.in"],
+    "last_verified_at": "2026-11-10"
+  },
+  {
+    "id": "pm_kusum_solar",
+    "name": "PM-KUSUM (Component B/C: Solar Water Pump)",
+    "name_mr": "पंतप्रधान कुसुम सोलर पंप योजना",
+    "name_hi": "प्रधानमंत्री कुसुम सोलर पंप योजना",
+    "level": "central_and_state",
+    "category": "irrigation",
+    "benefit_text": "Up to 90% subsidy (60% Central + State, 30% Bank loan, 10% farmer share) for standalone off-grid solar pumps.",
+    "benefit_structured": { "subsidy_pct": 90, "farmer_share_pct": 10 },
+    "eligibility_rules": {
+      "water_source": ["dug_well", "borewell", "farm_pond"],
+      "no_electric_connection": true
+    },
+    "documents_required": ["7/12 & 8A Land Extract", "No-Dues Certificate", "Water source proof / Certificate"],
+    "status": "active",
+    "official_urls": ["https://pmkusum.mnre.gov.in", "https://www.mahadiscom.in/solar_mskvy"],
+    "last_verified_at": "2026-11-12"
+  },
+  {
+    "id": "mh_magel_tyala_shet_tale",
+    "name": "Magel Tyala Shet-Tale (Farm Pond Scheme Maharashtra)",
+    "name_mr": "मागेल त्याला शेततळे योजना (महाराष्ट्र)",
+    "name_hi": "मागेल त्याला शेततळे योजना",
+    "level": "state",
+    "category": "irrigation",
+    "benefit_text": "Direct financial subsidy up to ₹75,000 for lining and excavation of on-farm water harvesting ponds.",
+    "benefit_structured": { "cap_amount_inr": 75000 },
+    "eligibility_rules": {
+      "state": "Maharashtra",
+      "min_land_ha": 0.6
+    },
+    "documents_required": ["7/12 Extract", "Consent letter of all joint owners", "Caste Certificate (if applicable)"],
+    "status": "active",
+    "official_urls": ["https://mahadbt.maharashtra.gov.in"],
+    "last_verified_at": "2026-11-08"
+  },
+  {
+    "id": "pmfby_crop_insurance",
+    "name": "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
+    "name_mr": "प्रधानमंत्री पीक विमा योजना (१ रुपयात)",
+    "name_hi": "प्रधानमंत्री फसल बीमा योजना",
+    "level": "central_and_state",
+    "category": "insurance",
+    "benefit_text": "Comprehensive risk insurance from pre-sowing to post-harvest. Maharashtra token premium ₹1 for farmers.",
+    "benefit_structured": { "farmer_premium_flat_inr": 1 },
+    "eligibility_rules": {
+      "crops_notified": ["soybean", "cotton", "pigeonpea", "gram", "wheat"],
+      "states": ["Maharashtra"]
+    },
+    "documents_required": ["Sowing Certificate (Pik Pahani)", "7/12 Extract", "Bank Passbook"],
+    "status": "active",
+    "official_urls": ["https://pmfby.gov.in"],
+    "last_verified_at": "2026-11-11"
+  },
+  {
+    "id": "aif_cold_storage",
+    "name": "Agriculture Infrastructure Fund (AIF) & MIDH",
+    "name_mr": "कृषी पायाभूत सुविधा निधी (कोल्ड स्टोरेज व गोदाम)",
+    "name_hi": "कृषि अवसंरचना कोष",
+    "level": "central",
+    "category": "storage",
+    "benefit_text": "3% interest subvention on bank loans up to ₹2 Crore for post-harvest cold chains and sorting hubs.",
+    "benefit_structured": { "interest_subvention_pct": 3.0, "loan_limit_inr": 20000000 },
+    "eligibility_rules": {
+      "target_entities": ["farmers", "fpo", "pacs", "agri_entrepreneurs"]
+    },
+    "documents_required": ["Detailed Project Report (DPR)", "Land title / Lease deed", "KYC documents"],
+    "status": "active",
+    "official_urls": ["https://agriinfra.dac.gov.in"],
+    "last_verified_at": "2026-11-05"
+  }
+]
