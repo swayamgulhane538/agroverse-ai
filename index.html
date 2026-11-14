@@ -2,578 +2,537 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGROVERSE AI — NASA Space Apps Challenge 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AGROVERSE AI — NASA Space Apps 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            space: {
-              900: '#061a14',
-              800: '#0c2e24',
-              700: '#144d3d',
-              500: '#10b981',
-              400: '#34d399'
-            }
-          }
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-deep: #091a13;
+      --bg-card: rgba(18, 43, 33, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-glow: rgba(74, 222, 128, 0.15);
+      --accent-pill: #c8e6c9;
+      --accent-text: #1b4332;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #06130e;
+      color: #e2e8f0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(34, 110, 75, 0.28) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(6, 40, 27, 0.6) 0%, transparent 100%);
+      background-attachment: fixed;
+    }
+    .font-serif-display {
+      font-family: 'Playfair Display', serif;
+    }
+    .frosted-glass {
+      background: var(--bg-card);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .frosted-pill {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .frosted-pill.active {
+      background: rgba(52, 211, 153, 0.22);
+      border-color: rgba(52, 211, 153, 0.45);
+      color: #a7f3d0;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+    .btn-sage {
+      background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%);
+      color: #081c15;
+      box-shadow: 0 10px 25px -5px rgba(183, 228, 199, 0.3);
+    }
+    .btn-sage:hover {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      transform: translateY(-1px);
+    }
+    .app-viewport {
+      max-width: 440px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 70px rgba(0, 0, 0, 0.7);
+    }
+    @media (min-width: 768px) {
+      .app-viewport {
+        border-left: 1px solid rgba(255, 255, 255, 0.06);
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
       }
     }
-  </script>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    .glass-card { background: rgba(12, 46, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(52, 211, 153, 0.2); }
+    /* Hide scrollbars */
+    ::-webkit-scrollbar { display: none; }
+    * { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="antialiased">
 
-  <!-- Top Navbar -->
-  <header class="bg-space-900 border-b border-space-700/50 sticky top-0 z-50 px-4 py-3 shadow-lg">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/20">
-          <i class="fa-solid fa-seedling text-white text-xl"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-xl font-bold tracking-tight text-white">AGROVERSE <span class="text-emerald-400">AI</span></h1>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30">NASA SPACE APPS 2026</span>
-          </div>
-          <p class="text-xs text-slate-400">Nagpur, Vidarbha (21.1458° N, 79.0882° E) • Rabi 2026-27</p>
+  <div class="app-viewport pb-24">
+
+    <!-- STATUS BAR (Mobile Aesthetic) -->
+    <div class="pt-3 px-6 pb-2 flex items-center justify-between text-xs text-slate-300 font-medium select-none">
+      <span>9:41</span>
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-signal text-[10px]"></i>
+        <i class="fa-solid fa-wifi text-[10px]"></i>
+        <i class="fa-solid fa-battery-full text-xs"></i>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 1: SPLASH & LOGIN GATE ===== -->
+    <div id="screenGate" class="flex-1 flex flex-col justify-between p-6">
+      
+      <!-- Top Branding -->
+      <div class="pt-6 text-center">
+        <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full frosted-pill text-[11px] text-emerald-300 font-medium mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>NASA SPACE APPS 2026</span>
         </div>
       </div>
 
-      <!-- Mode & Language & User Profile / Login -->
-      <div class="flex items-center space-x-3">
-        <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-500/40 text-xs text-emerald-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="font-medium">LIVE NASA FEED</span>
+      <!-- Center Hero Glass Card -->
+      <div class="frosted-glass rounded-3xl p-8 text-center space-y-6 relative overflow-hidden my-auto">
+        <!-- Floating leaf icon -->
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-800/60 to-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 text-2xl shadow-lg shadow-emerald-900/40">
+          <i class="fa-solid fa-leaf"></i>
         </div>
-        <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-space-800 border border-space-700 text-xs rounded-lg px-2 py-1 text-slate-200 outline-none">
-          <option value="en">English</option>
-          <option value="hi">हिंदी (Hindi)</option>
-          <option value="mr">मराठी (Marathi)</option>
-        </select>
-        
-        <!-- Auth Button / User Profile -->
-        <div id="authContainer">
-          <button onclick="openAuthModal()" id="btnLogin" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-md shadow-emerald-700/20">
-            <i class="fa-solid fa-right-to-bracket"></i> <span>Farmer Login</span>
+
+        <div>
+          <h1 class="font-serif-display text-4xl text-white font-normal tracking-wide">Agroverse</h1>
+          <p class="text-xs text-emerald-300/80 uppercase tracking-widest mt-1 font-medium">NASA Climate Farming</p>
+        </div>
+
+        <p class="text-xs text-slate-300/80 leading-relaxed font-light">
+          Healthy Soil. Smarter Sowing.<br>Official Vidarbha Climate & Mandi Intelligence.
+        </p>
+
+        <!-- Form fields -->
+        <div class="space-y-3 pt-2 text-left">
+          <div class="frosted-pill rounded-xl px-3.5 py-2.5 flex items-center space-x-2.5">
+            <i class="fa-regular fa-envelope text-xs text-slate-400"></i>
+            <input type="text" id="loginId" placeholder="Farmer ID or Mobile Number" value="nagpur.farmer@agroverse.in" class="bg-transparent text-xs text-white placeholder-slate-400/60 w-full outline-none">
+          </div>
+
+          <div class="frosted-pill rounded-xl px-3.5 py-2.5 flex items-center space-x-2.5">
+            <i class="fa-solid fa-lock text-xs text-slate-400"></i>
+            <input type="password" id="loginPass" value="••••••••" class="bg-transparent text-xs text-white placeholder-slate-400/60 w-full outline-none">
+          </div>
+        </div>
+
+        <!-- Get Started Button -->
+        <button onclick="enterApp('Swayam Gulhane')" class="w-full btn-sage font-semibold py-3.5 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-all">
+          <span>Get Started</span>
+          <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </button>
+
+        <div class="text-[10px] text-slate-400 font-light flex justify-between px-1">
+          <span>Region: Nagpur, MH</span>
+          <span>Lead: Swayam Gulhane</span>
+        </div>
+      </div>
+
+      <!-- Bottom indicator dots -->
+      <div class="flex justify-center space-x-2 pt-4">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+        <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+      </div>
+    </div>
+
+
+    <!-- ===== SCREEN 2: MAIN DASHBOARD & TABS ===== -->
+    <div id="screenApp" class="flex-1 flex-col p-5 space-y-5 hidden">
+
+      <!-- Top Header Nav -->
+      <div class="flex items-center justify-between">
+        <button onclick="logoutApp()" class="w-10 h-10 rounded-2xl frosted-glass flex items-center justify-center text-slate-300 hover:text-white">
+          <i class="fa-solid fa-bars-staggered text-sm"></i>
+        </button>
+
+        <div class="text-center">
+          <h2 class="font-serif-display text-xl text-white font-medium">Agroverse</h2>
+          <div class="text-[10px] text-emerald-400 flex items-center justify-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Nagpur (21.14°N)</span>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="w-10 h-10 rounded-2xl frosted-glass flex items-center justify-center text-emerald-300">
+            <i class="fa-solid fa-satellite text-sm"></i>
+          </div>
+          <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-[9px] font-bold text-slate-950 flex items-center justify-center">L</span>
+        </div>
+      </div>
+
+      <!-- Search & Location Pill -->
+      <div class="frosted-glass rounded-2xl px-4 py-3 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-3 text-slate-300 flex-1">
+          <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+          <span class="text-slate-300/80">Search crops, mandis, soil zones...</span>
+        </div>
+        <i class="fa-solid fa-sliders text-emerald-400 text-xs"></i>
+      </div>
+
+      <!-- Featured Greenery Banner (Leafora style) -->
+      <div class="frosted-glass rounded-3xl p-5 relative overflow-hidden">
+        <div class="relative z-10 max-w-[65%] space-y-2">
+          <span class="text-[10px] font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full">Rabi 2026-27</span>
+          <h3 class="font-serif-display text-xl text-white leading-tight">Adapt Fields with NASA Data</h3>
+          <p class="text-[11px] text-slate-300/80 font-light">Optimize soybean-to-chickpea transition using SMAP moisture & POWER temperature.</p>
+          <button onclick="switchAppTab('rotation')" class="mt-2 px-4 py-2 btn-sage rounded-xl text-xs font-bold flex items-center space-x-1.5">
+            <span>Explore Strategies</span>
           </button>
         </div>
+        <!-- Decorative blurred botanical element -->
+        <div class="absolute -right-6 -bottom-6 w-36 h-36 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-700/10 blur-xl pointer-events-none"></div>
+        <div class="absolute right-4 bottom-3 text-5xl opacity-40">🌱</div>
       </div>
-    </div>
-  </header>
 
-  <!-- AUTH MODAL (Login / Register) -->
-  <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
-    <div class="bg-space-900 border border-emerald-500/40 rounded-2xl w-full max-w-md p-6 relative shadow-2xl space-y-4">
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <!-- Horizontal Module Selector Pills -->
+      <div class="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
+        <button onclick="switchAppTab('overview')" id="pill-overview" class="frosted-pill active px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap">
+          <i class="fa-solid fa-seedling text-xs"></i>
+          <span>Overview</span>
+        </button>
+        <button onclick="switchAppTab('rotation')" id="pill-rotation" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-arrows-spin text-xs"></i>
+          <span>Rotation</span>
+        </button>
+        <button onclick="switchAppTab('simulator')" id="pill-simulator" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-sliders text-xs"></i>
+          <span>Simulator</span>
+        </button>
+        <button onclick="switchAppTab('mandi')" id="pill-mandi" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-chart-line text-xs"></i>
+          <span>Mandi</span>
+        </button>
+        <button onclick="switchAppTab('income')" id="pill-income" class="frosted-pill px-3.5 py-2 rounded-xl flex items-center space-x-1.5 whitespace-nowrap text-slate-300">
+          <i class="fa-solid fa-wallet text-xs"></i>
+          <span>Income</span>
+        </button>
+      </div>
 
-      <div class="text-center space-y-1">
-        <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-xl">
-          <i class="fa-solid fa-user-lock"></i>
+      <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Leafora Card Grid) ===== -->
+      <div id="subtab-overview" class="space-y-4">
+        
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-serif-display text-base text-white">Live Environmental Observables</span>
+          <span class="text-emerald-400 text-[11px] font-medium">NASA POWER & SMAP</span>
         </div>
-        <h3 id="authModalTitle" class="text-xl font-bold text-white">Farmer Sign In</h3>
-        <p class="text-xs text-slate-400">Access personalized NASA farm data & Mandi rate alerts</p>
-      </div>
 
-      <!-- Tab Switch (Login vs Register) -->
-      <div class="grid grid-cols-2 bg-space-800 p-1 rounded-xl text-xs font-semibold">
-        <button onclick="setAuthMode('login')" id="tabLogin" class="py-2 rounded-lg bg-emerald-600 text-white transition">Sign In</button>
-        <button onclick="setAuthMode('register')" id="tabRegister" class="py-2 rounded-lg text-slate-400 hover:text-white transition">Register</button>
-      </div>
-
-      <!-- Auth Form -->
-      <form onsubmit="handleAuthSubmit(event)" class="space-y-3 text-xs">
-        <!-- Register-only fields -->
-        <div id="registerFields" class="space-y-3 hidden">
-          <div>
-            <label class="text-slate-300 block mb-1">Full Name</label>
-            <input type="text" id="authName" placeholder="e.g. Swayam Gulhane" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="text-slate-300 block mb-1">User Category</label>
-            <select id="authUserType" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-white outline-none">
-              <option value="Farmer">Farmer (किसान / शेतकरी)</option>
-              <option value="Student">Agricultural Student</option>
-              <option value="Researcher">Researcher / Expert</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-slate-300 block mb-1">State</label>
-              <input type="text" value="Maharashtra" disabled class="w-full bg-space-800/60 border border-space-700 rounded-lg p-2.5 text-slate-400 cursor-not-allowed">
+        <div class="grid grid-cols-2 gap-3.5">
+          <!-- Card 1: Soil Moisture -->
+          <div class="frosted-glass rounded-2xl p-4 relative group">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] text-emerald-300 uppercase tracking-wider font-semibold">SMAP L3</span>
+              <i class="fa-solid fa-droplet text-xs text-teal-400"></i>
             </div>
-            <div>
-              <label class="text-slate-300 block mb-1">District</label>
-              <input type="text" value="Nagpur" disabled class="w-full bg-space-800/60 border border-space-700 rounded-lg p-2.5 text-slate-400 cursor-not-allowed">
+            <div class="mt-3">
+              <div class="text-2xl font-serif-display font-medium text-white">0.24 <span class="text-xs font-sans text-slate-400">m³/m³</span></div>
+              <div class="text-[11px] text-emerald-400 font-medium mt-0.5">Root Moisture: Good</div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-white/5 flex justify-between text-[10px] text-slate-400">
+              <span>62nd Percentile</span>
+              <span>~9km res</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Temperature -->
+          <div class="frosted-glass rounded-2xl p-4 relative group">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] text-emerald-300 uppercase tracking-wider font-semibold">POWER MERRA-2</span>
+              <i class="fa-solid fa-temperature-half text-xs text-rose-400"></i>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-serif-display font-medium text-white">28.4°C</div>
+              <div class="text-[11px] text-slate-300 font-medium mt-0.5">Min 18.2° / Max 32.1°</div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-white/5 flex justify-between text-[10px] text-slate-400">
+              <span>Rabi Sowing Fit</span>
+              <span>~50km</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Mandi Rate -->
+          <div class="frosted-glass rounded-2xl p-4 relative group">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] text-amber-300 uppercase tracking-wider font-semibold">Nagpur Mandi</span>
+              <i class="fa-solid fa-coins text-xs text-amber-400"></i>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-serif-display font-medium text-white">₹4,980 <span class="text-xs font-sans text-slate-400">/Q</span></div>
+              <div class="text-[11px] text-emerald-400 font-medium mt-0.5">+₹88 Above MSP</div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-white/5 flex justify-between text-[10px] text-slate-400">
+              <span>Yellow Soybean</span>
+              <span>Kalamna APMC</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Rainfall 30-day -->
+          <div class="frosted-glass rounded-2xl p-4 relative group">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] text-cyan-300 uppercase tracking-wider font-semibold">GPM IMERG</span>
+              <i class="fa-solid fa-cloud-rain text-xs text-cyan-400"></i>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-serif-display font-medium text-white">42.8 <span class="text-xs font-sans text-slate-400">mm</span></div>
+              <div class="text-[11px] text-cyan-300 font-medium mt-0.5">+8% Rainfall Anomaly</div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-white/5 flex justify-between text-[10px] text-slate-400">
+              <span>Dry Spell: Low</span>
+              <span>~10km</span>
             </div>
           </div>
         </div>
 
-        <div>
-          <label class="text-slate-300 block mb-1">Mobile Number or Email</label>
-          <input type="text" id="authEmail" required placeholder="farmer@agroverse.in or 98XXXXXXXX" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
+        <!-- Plant Focus Card (Detail view inspired by Leafora Snake Plant) -->
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">Target Rabi Crop Recommendation</span>
+              <h4 class="font-serif-display text-xl text-white">Chickpea (Desi Chana)</h4>
+              <p class="text-xs text-slate-400">Cicer arietinum • High Drought Tolerance</p>
+            </div>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-bold text-sm">
+              94
+            </div>
+          </div>
+
+          <!-- 4 Circular Trait Pills -->
+          <div class="grid grid-cols-4 gap-2 pt-1 text-center">
+            <div class="frosted-pill rounded-xl p-2.5">
+              <i class="fa-solid fa-droplet text-emerald-300 text-xs"></i>
+              <div class="text-[10px] text-slate-400 mt-1">Water</div>
+              <div class="text-[11px] font-semibold text-white">280 mm</div>
+            </div>
+            <div class="frosted-pill rounded-xl p-2.5">
+              <i class="fa-regular fa-sun text-amber-300 text-xs"></i>
+              <div class="text-[10px] text-slate-400 mt-1">Sunlight</div>
+              <div class="text-[11px] font-semibold text-white">High</div>
+            </div>
+            <div class="frosted-pill rounded-xl p-2.5">
+              <i class="fa-solid fa-flask text-teal-300 text-xs"></i>
+              <div class="text-[10px] text-slate-400 mt-1">N-Fixation</div>
+              <div class="text-[11px] font-semibold text-white">+35 kg</div>
+            </div>
+            <div class="frosted-pill rounded-xl p-2.5">
+              <i class="fa-solid fa-shield-virus text-indigo-300 text-xs"></i>
+              <div class="text-[10px] text-slate-400 mt-1">Resilience</div>
+              <div class="text-[11px] font-semibold text-white">Grade A</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-white/5">
+            <div>
+              <span class="text-[10px] text-slate-400 block">Est. Net Profit</span>
+              <span class="font-serif-display text-lg text-emerald-300">₹38,000 <span class="text-xs font-sans text-slate-400">/ ha</span></span>
+            </div>
+            <button onclick="switchAppTab('rotation')" class="btn-sage font-semibold text-xs px-4 py-2.5 rounded-xl">
+              Evaluate Rotation
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label class="text-slate-300 block mb-1">Password</label>
-          <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-white outline-none focus:border-emerald-500">
-        </div>
-
-        <button type="submit" id="authSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-sm transition shadow-lg shadow-emerald-700/30 flex items-center justify-center gap-2">
-          <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
-        </button>
-
-        <!-- Dev Mode 1-click test button -->
-        <button type="button" onclick="quickDemoLogin()" class="w-full bg-space-800 hover:bg-space-700 text-emerald-400 font-semibold py-2 rounded-lg text-xs border border-emerald-500/30 transition">
-          <i class="fa-solid fa-bolt mr-1"></i> 1-Click Demo Login (Judge Test Mode)
-        </button>
-      </form>
-    </div>
-  </div>
-
-
-  <!-- Main Container (Unlocked after login) -->
-  <main id="mainAppContainer" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 hidden">
-
-
-    <!-- Provenance Hero Alert -->
-    <div class="bg-gradient-to-r from-space-900 to-space-800 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
-      <div class="space-y-1">
-        <div class="flex items-center space-x-2 text-emerald-400 text-sm font-semibold">
-          <i class="fa-solid fa-satellite"></i>
-          <span id="hero_subtitle">Field Shift: Adapting Farms with NASA Data</span>
-        </div>
-        <h2 id="hero_title" class="text-lg sm:text-xl font-bold text-white">Hyperlocal Climate & Sowing Decision Platform</h2>
-        <p id="hero_desc" class="text-xs sm:text-sm text-slate-300 max-w-2xl">
-          Combining NASA POWER daily meteorology, SMAP soil moisture percentiles, and official AGMARKNET mandi rates for resilient Vidarbha agriculture.
-        </p>
-      </div>
-      <div class="flex items-center gap-2 text-xs">
-        <span class="bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300">
-          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> 100% Provenance Verified
-        </span>
-      </div>
-    </div>
-
-    <!-- 4 Core Metrics Grid (NASA & Market) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      
-      <!-- Metric 1: Temp -->
-      <div class="glass-card rounded-xl p-4 relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <span class="text-xs text-slate-400 font-medium" id="lbl_temp">Surface Temperature</span>
-          <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">NASA POWER</span>
-        </div>
-        <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-bold text-white">28.4°C</span>
-          <span class="text-xs text-emerald-400 font-medium">Optimal for Rabi</span>
-        </div>
-        <div class="mt-3 text-[11px] text-slate-400 flex items-center justify-between border-t border-space-700/60 pt-2">
-          <span>Min: 18.2°C | Max: 32.1°C</span>
-          <span title="Grid resolution: ~50km MERRA-2"><i class="fa-solid fa-circle-info text-slate-500"></i> ~50km</span>
-        </div>
       </div>
 
-      <!-- Metric 2: Soil Moisture -->
-      <div class="glass-card rounded-xl p-4 relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <span class="text-xs text-slate-400 font-medium" id="lbl_moisture">Root-Zone Soil Moisture</span>
-          <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30">NASA SMAP</span>
-        </div>
-        <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-bold text-emerald-400">0.24 <span class="text-lg font-normal text-slate-300">m³/m³</span></span>
-          <span class="text-xs text-amber-300 font-medium">62nd Percentile</span>
-        </div>
-        <div class="mt-3 text-[11px] text-slate-400 flex items-center justify-between border-t border-space-700/60 pt-2">
-          <span>Post-Kharif Residual: Good</span>
-          <span title="Passive Microwave 9km L3"><i class="fa-solid fa-circle-info text-slate-500"></i> ~9km</span>
-        </div>
-      </div>
+      <!-- ===== TAB 2: CROP ROTATION ENGINE ===== -->
+      <div id="subtab-rotation" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <h3 class="font-serif-display text-xl text-white">AI Crop Rotation Engine</h3>
+          <p class="text-xs text-slate-300 font-light">Calculated via deterministic weighted multi-criteria scoring against Vidarbha soil and NASA SMAP residual moisture.</p>
 
-      <!-- Metric 3: Rainfall Total -->
-      <div class="glass-card rounded-xl p-4 relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <span class="text-xs text-slate-400 font-medium" id="lbl_rain">30-Day Rainfall Total</span>
-          <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">GPM IMERG</span>
-        </div>
-        <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-bold text-white">42.8 <span class="text-lg font-normal text-slate-300">mm</span></span>
-          <span class="text-xs text-emerald-400 font-medium">+8% Anomaly</span>
-        </div>
-        <div class="mt-3 text-[11px] text-slate-400 flex items-center justify-between border-t border-space-700/60 pt-2">
-          <span>Dry Spell Risk: Low</span>
-          <span title="Late Run 0.1 deg"><i class="fa-solid fa-circle-info text-slate-500"></i> ~10km</span>
-        </div>
-      </div>
-
-      <!-- Metric 4: Soybean Mandi Modal -->
-      <div class="glass-card rounded-xl p-4 relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <span class="text-xs text-slate-400 font-medium" id="lbl_mandi">Nagpur Mandi (Soybean)</span>
-          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">AGMARKNET</span>
-        </div>
-        <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-bold text-white">₹4,980</span>
-          <span class="text-xs text-emerald-400 font-medium">+₹88 vs MSP</span>
-        </div>
-        <div class="mt-3 text-[11px] text-slate-400 flex items-center justify-between border-t border-space-700/60 pt-2">
-          <span>Arrival Date: Nov 2026</span>
-          <span class="text-emerald-400 font-medium">MSP: ₹4,892</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Tabbed Core Modules -->
-    <div class="space-y-4">
-      <div class="flex border-b border-space-700 space-x-2 sm:space-x-4 overflow-x-auto pb-1 text-sm">
-        <button onclick="switchTab('tab-rotation')" id="btn-tab-rotation" class="tab-btn px-4 py-2 font-semibold text-emerald-400 border-b-2 border-emerald-400 transition">
-          <i class="fa-solid fa-arrows-spin mr-1.5"></i> <span id="tab1_title">AI Crop Rotation Engine</span>
-        </button>
-        <button onclick="switchTab('tab-simulator')" id="btn-tab-simulator" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          <i class="fa-solid fa-sliders mr-1.5"></i> <span id="tab2_title">AI Farm Simulator (Climate Shock)</span>
-        </button>
-        <button onclick="switchTab('tab-mandi')" id="btn-tab-mandi" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          <i class="fa-solid fa-chart-line mr-1.5"></i> <span id="tab3_title">Live Mandi & MSP</span>
-        </button>
-        <button onclick="switchTab('tab-income')" id="btn-tab-income" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          <i class="fa-solid fa-calculator mr-1.5"></i> <span id="tab4_title">Income Optimizer</span>
-        </button>
-        <button onclick="switchTab('tab-charts')" id="btn-tab-charts" class="tab-btn px-4 py-2 font-semibold text-slate-400 hover:text-slate-200 transition">
-          <i class="fa-solid fa-satellite-dish mr-1.5"></i> <span id="tab5_title">NASA Climate Trends</span>
-        </button>
-      </div>
-
-      <!-- TAB 1: CROP ROTATION -->
-      <div id="tab-rotation" class="tab-content space-y-4">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          <!-- Controls Panel -->
-          <div class="glass-card rounded-xl p-5 space-y-4">
-            <h3 class="font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-sliders text-emerald-400"></i> Field Parameters
-            </h3>
-            
-            <div class="space-y-1">
-              <label class="text-xs text-slate-300">Previous Kharif Crop</label>
-              <select id="prevCrop" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-sm text-white outline-none">
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="text-slate-400 block mb-1">Previous Kharif Crop</label>
+              <select id="mPrevCrop" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
                 <option value="soybean">Soybean (Yellow) - 95 Days</option>
                 <option value="cotton">Cotton (Bt) - 160 Days</option>
               </select>
             </div>
-
-            <div class="space-y-1">
-              <label class="text-xs text-slate-300">Soil Type (Vidarbha)</label>
-              <select id="soilType" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-sm text-white outline-none">
-                <option value="black">Deep Black (Regur / Heavy Vertisol)</option>
-                <option value="medium">Medium Black / Loamy</option>
-              </select>
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-xs text-slate-300">Available Irrigation</label>
-              <select id="irrigation" class="w-full bg-space-800 border border-space-700 rounded-lg p-2.5 text-sm text-white outline-none">
+            <div>
+              <label class="text-slate-400 block mb-1">Available Irrigation</label>
+              <select id="mIrrig" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
                 <option value="limited">Limited (1-2 protective irrigations)</option>
                 <option value="assured">Assured Well / Canal (3-5 irrigations)</option>
                 <option value="rainfed">Residual Moisture Only</option>
               </select>
             </div>
-
-            <button onclick="calculateRotation()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-2.5 rounded-lg text-sm transition shadow-lg shadow-emerald-700/30 flex items-center justify-center gap-2">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Evaluate Rabi Strategies
+            <button onclick="runMobileRotation()" class="w-full btn-sage font-bold py-3 rounded-xl text-xs uppercase tracking-wider">
+              Compute Best Rotation
             </button>
           </div>
 
-          <!-- Strategy Results (2 columns) -->
-          <div class="lg:col-span-2 space-y-4">
-            <div id="rotationCards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- Cards injected by JS -->
-            </div>
-            <div class="glass-card rounded-xl p-4 text-xs text-slate-300 space-y-2 border-emerald-500/20">
-              <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-circle-check"></i> Agronomic Explainability & Science Traceability
-              </div>
-              <p id="explain_text">
-                Rankings are computed using deterministic multi-criteria weighted scoring: Soil Health index (nitrogen credits), Water Demand vs NASA SMAP residual moisture, and Mandi price realization probability.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- TAB 2: FARM SIMULATOR -->
-      <div id="tab-simulator" class="tab-content hidden space-y-4">
-        <div class="glass-card rounded-xl p-5 space-y-6">
-          <div class="border-b border-space-700/60 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h3 class="font-bold text-lg text-white">FAO-56 Water-Stress & Climate Sensitivity Simulator</h3>
-              <p class="text-xs text-slate-400">Simulate climate shocks against NASA baseline data (FAO Yield-Response: 1 - Ya/Ym = Ky * (1 - ETa/ETm))</p>
-            </div>
-            <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full self-start">
-              Scenario Analysis — Not a Forecast
-            </span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Sliders -->
-            <div class="space-y-5 bg-space-900/60 p-4 rounded-xl border border-space-700">
-              <div class="space-y-2">
-                <div class="flex justify-between text-xs font-semibold">
-                  <span class="text-slate-200">Rainfall Deviation (%)</span>
-                  <span id="val_rain" class="text-emerald-400 font-bold">-20% (Dry Shock)</span>
-                </div>
-                <input type="range" id="slider_rain" min="-50" max="30" value="-20" oninput="updateSimulator()" class="w-full accent-emerald-500">
-                <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>-50% Severe Drought</span>
-                  <span>Baseline (0%)</span>
-                  <span>+30% Excess</span>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <div class="flex justify-between text-xs font-semibold">
-                  <span class="text-slate-200">Temperature Anomaly (°C)</span>
-                  <span id="val_temp" class="text-rose-400 font-bold">+2.0 °C (Terminal Heat)</span>
-                </div>
-                <input type="range" id="slider_temp" min="0" max="5" step="0.5" value="2.0" oninput="updateSimulator()" class="w-full accent-rose-500">
-                <div class="flex justify-between text-[10px] text-slate-400">
-                  <span>0.0 °C (Normal)</span>
-                  <span>+2.5 °C (Moderate)</span>
-                  <span>+5.0 °C (Extreme)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Calculated Impact Snapshot -->
-            <div class="grid grid-cols-2 gap-3">
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-3 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Chickpea Yield Impact</span>
-                <span id="sim_chana_yield" class="text-2xl font-bold text-amber-400">-12.4%</span>
-                <span class="text-[10px] text-slate-400">Ky = 1.0 (High resilience)</span>
-              </div>
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-3 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Wheat Yield Impact</span>
-                <span id="sim_wheat_yield" class="text-2xl font-bold text-rose-400">-24.8%</span>
-                <span class="text-[10px] text-slate-400">Heat stress penalty</span>
-              </div>
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-3 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Soil Water Deficit</span>
-                <span id="sim_deficit" class="text-2xl font-bold text-cyan-400">78 mm</span>
-                <span class="text-[10px] text-slate-400">Over 90-day window</span>
-              </div>
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-3 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Recommended Action</span>
-                <span id="sim_recommendation" class="text-sm font-bold text-emerald-400">Shift to Chana</span>
-                <span class="text-[10px] text-slate-400">Save ₹12,000 irrigation</span>
-              </div>
-            </div>
+          <div id="mobileRotationResults" class="space-y-3 pt-2">
+            <!-- Dynamic Cards -->
           </div>
         </div>
       </div>
 
-      <!-- TAB 3: LIVE MANDI -->
-      <div id="tab-mandi" class="tab-content hidden space-y-4">
-        <div class="glass-card rounded-xl p-5 space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-space-700/60 pb-3">
-            <div>
-              <h3 class="font-bold text-lg text-white">Official Mandi Rates & MSP Price Protection</h3>
-              <p class="text-xs text-slate-400">Nagpur APMC Mandi, Kalamna Market • Source: AGMARKNET (data.gov.in)</p>
+      <!-- ===== TAB 3: CLIMATE SHOCK SIMULATOR ===== -->
+      <div id="subtab-simulator" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-5">
+          <div>
+            <h3 class="font-serif-display text-xl text-white">FAO-56 Climate Simulator</h3>
+            <p class="text-xs text-slate-300 font-light mt-0.5">Formula: 1 − Ya/Ym = Ky × (1 − ETa/ETm)</p>
+          </div>
+
+          <div class="space-y-4 text-xs">
+            <div class="space-y-1.5">
+              <div class="flex justify-between font-medium">
+                <span class="text-slate-300">Rainfall Deviation</span>
+                <span id="mValRain" class="text-emerald-400 font-bold">-20% (Dry Shock)</span>
+              </div>
+              <input type="range" id="mSliderRain" min="-50" max="30" value="-20" oninput="runMobileSim()" class="w-full accent-emerald-400">
             </div>
-            <div class="text-xs text-slate-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i> Refreshed hourly
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between font-medium">
+                <span class="text-slate-300">Temperature Anomaly</span>
+                <span id="mValTemp" class="text-rose-400 font-bold">+2.0 °C</span>
+              </div>
+              <input type="range" id="mSliderTemp" min="0" max="5" step="0.5" value="2.0" oninput="runMobileSim()" class="w-full accent-rose-400">
             </div>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-300">
-              <thead class="bg-space-900/90 text-slate-400 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="p-3">Commodity</th>
-                  <th class="p-3">Variety</th>
-                  <th class="p-3">Modal Rate (₹/Q)</th>
-                  <th class="p-3">Govt MSP (₹/Q)</th>
-                  <th class="p-3">Difference vs MSP</th>
-                  <th class="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-space-700/60 font-medium">
-                <tr class="hover:bg-space-800/40">
-                  <td class="p-3 text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-emerald-400"></i> Soybean</td>
-                  <td class="p-3">Yellow (Local)</td>
-                  <td class="p-3 text-white font-bold text-sm">₹4,980</td>
-                  <td class="p-3 text-slate-400">₹4,892</td>
-                  <td class="p-3 text-emerald-400">+₹88 (+1.8%)</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Above MSP</span></td>
-                </tr>
-                <tr class="hover:bg-space-800/40">
-                  <td class="p-3 text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-cyan-400"></i> Cotton</td>
-                  <td class="p-3">Medium Staple</td>
-                  <td class="p-3 text-white font-bold text-sm">₹7,250</td>
-                  <td class="p-3 text-slate-400">₹7,121</td>
-                  <td class="p-3 text-emerald-400">+₹129 (+1.8%)</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Profitable</span></td>
-                </tr>
-                <tr class="hover:bg-space-800/40">
-                  <td class="p-3 text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-amber-400"></i> Gram (Chana)</td>
-                  <td class="p-3">Desi Chana</td>
-                  <td class="p-3 text-white font-bold text-sm">₹5,820</td>
-                  <td class="p-3 text-slate-400">₹5,650</td>
-                  <td class="p-3 text-emerald-400">+₹170 (+3.0%)</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">High Demand</span></td>
-                </tr>
-                <tr class="hover:bg-space-800/40">
-                  <td class="p-3 text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-indigo-400"></i> Tur (Arhar)</td>
-                  <td class="p-3">Red Tur</td>
-                  <td class="p-3 text-white font-bold text-sm">₹10,400</td>
-                  <td class="p-3 text-slate-400">₹7,550</td>
-                  <td class="p-3 text-emerald-400">+₹2,850 (+37.7%)</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Peak Premium</span></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="grid grid-cols-2 gap-3 pt-2 text-xs">
+            <div class="frosted-pill rounded-2xl p-3">
+              <span class="text-slate-400 text-[10px] block">Chickpea Yield Impact</span>
+              <span id="mSimChana" class="font-serif-display text-xl text-amber-300 font-bold">-12.4%</span>
+              <span class="text-[10px] text-emerald-400 block mt-1">High Drought Buffer</span>
+            </div>
+            <div class="frosted-pill rounded-2xl p-3">
+              <span class="text-slate-400 text-[10px] block">Wheat Yield Impact</span>
+              <span id="mSimWheat" class="font-serif-display text-xl text-rose-400 font-bold">-24.8%</span>
+              <span class="text-[10px] text-rose-300 block mt-1">Terminal Heat Penalty</span>
+            </div>
+          </div>
+
+          <div class="p-3 frosted-pill rounded-xl border-emerald-500/30 text-xs flex items-center justify-between">
+            <span class="text-slate-300">Recommendation:</span>
+            <span id="mSimRec" class="text-emerald-300 font-bold">Shift to Chickpea (Save ₹12k)</span>
           </div>
         </div>
       </div>
 
-      <!-- TAB 4: FARMER INCOME OPTIMIZER (Module 7) -->
-      <div id="tab-income" class="tab-content hidden space-y-4">
-        <div class="glass-card rounded-xl p-5 space-y-5">
-          <div class="border-b border-space-700/60 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h3 class="font-bold text-lg text-white">Farmer Cost-Benefit & Break-Even Calculator</h3>
-              <p class="text-xs text-slate-400">Deterministic calculation based on input costs, expected yield, and live mandi realizations.</p>
-            </div>
-            <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full self-start">
-              Module 7 • Financial Risk Analysis
-            </span>
+      <!-- ===== TAB 4: MANDI & MSP ===== -->
+      <div id="subtab-mandi" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-serif-display text-xl text-white">Nagpur Mandi Rates</h3>
+            <span class="text-[10px] text-emerald-300 frosted-pill px-2.5 py-1 rounded-full">AGMARKNET Live</span>
           </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Cost Input Form -->
-            <div class="space-y-3 bg-space-900/60 p-4 rounded-xl border border-space-700 text-xs">
-              <h4 class="font-bold text-white text-sm mb-2 text-emerald-400">Crop & Expense Inputs (1 Hectare)</h4>
-              
+          
+          <div class="space-y-2.5 text-xs">
+            <div class="frosted-pill rounded-2xl p-3.5 flex justify-between items-center">
               <div>
-                <label class="text-slate-300 block mb-1">Select Crop</label>
-                <select id="inc_crop" onchange="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
-                  <option value="chickpea">Chickpea / Chana (Rabi Target)</option>
-                  <option value="wheat">Wheat (Irrigated)</option>
-                  <option value="soybean">Soybean (Kharif Baseline)</option>
-                </select>
+                <div class="font-bold text-white text-sm">Soybean (Yellow)</div>
+                <div class="text-[10px] text-slate-400">MSP: ₹4,892/Q</div>
               </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="text-slate-300 block mb-1">Expected Yield (Q/ha)</label>
-                  <input type="number" id="inc_yield" value="18" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
-                </div>
-                <div>
-                  <label class="text-slate-300 block mb-1">Selling Price (₹/Q)</label>
-                  <input type="number" id="inc_price" value="5820" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded-lg p-2 text-white outline-none">
-                </div>
-              </div>
-
-              <div class="border-t border-space-700/60 pt-2 space-y-2">
-                <span class="text-slate-400 font-semibold block text-[11px]">Input Breakdown (₹/ha):</span>
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="text-slate-400 block text-[10px]">Seed Cost</label>
-                    <input type="number" id="inc_seed" value="5000" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
-                  </div>
-                  <div>
-                    <label class="text-slate-400 block text-[10px]">Fertilizers</label>
-                    <input type="number" id="inc_fert" value="6500" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
-                  </div>
-                  <div>
-                    <label class="text-slate-400 block text-[10px]">Labor & Machinery</label>
-                    <input type="number" id="inc_labor" value="10000" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
-                  </div>
-                  <div>
-                    <label class="text-slate-400 block text-[10px]">Irrigation / Fuel</label>
-                    <input type="number" id="inc_irr" value="3500" oninput="calcIncome()" class="w-full bg-space-800 border border-space-700 rounded p-1.5 text-white">
-                  </div>
-                </div>
+              <div class="text-right">
+                <div class="font-serif-display text-lg text-emerald-300 font-bold">₹4,980</div>
+                <div class="text-[10px] text-emerald-400">+₹88 Profit</div>
               </div>
             </div>
 
-            <!-- Calculation Output Cards -->
-            <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Total Investment (Cost)</span>
-                <span id="res_cost" class="text-3xl font-bold text-white">₹25,000</span>
-                <span class="text-[11px] text-slate-400">Cost per Quintal: <span id="res_cost_q" class="text-emerald-400 font-bold">₹1,389/Q</span></span>
+            <div class="frosted-pill rounded-2xl p-3.5 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm">Cotton (Medium Staple)</div>
+                <div class="text-[10px] text-slate-400">MSP: ₹7,121/Q</div>
               </div>
-
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Gross Realization (Revenue)</span>
-                <span id="res_revenue" class="text-3xl font-bold text-emerald-400">₹1,04,760</span>
-                <span class="text-[11px] text-slate-400">At Mandi Modal: ₹5,820/Q</span>
+              <div class="text-right">
+                <div class="font-serif-display text-lg text-emerald-300 font-bold">₹7,250</div>
+                <div class="text-[10px] text-emerald-400">+₹129 Profit</div>
               </div>
+            </div>
 
-              <div class="bg-space-900/80 border border-emerald-500/40 rounded-xl p-4 flex flex-col justify-between bg-emerald-950/20">
-                <span class="text-xs text-emerald-300 font-semibold">Net Profit (Farmer Surplus)</span>
-                <span id="res_profit" class="text-3xl font-bold text-emerald-300">₹79,760</span>
-                <span class="text-[11px] text-emerald-400 font-medium">B:C Ratio: <span id="res_bcr" class="font-bold">4.19</span></span>
+            <div class="frosted-pill rounded-2xl p-3.5 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm">Gram (Chickpea / Chana)</div>
+                <div class="text-[10px] text-slate-400">MSP: ₹5,650/Q</div>
               </div>
+              <div class="text-right">
+                <div class="font-serif-display text-lg text-emerald-300 font-bold">₹5,820</div>
+                <div class="text-[10px] text-emerald-400">+₹170 Above MSP</div>
+              </div>
+            </div>
 
-              <div class="bg-space-900/80 border border-space-700 rounded-xl p-4 flex flex-col justify-between">
-                <span class="text-xs text-slate-400">Safety Margins (Risk Buffer)</span>
-                <div class="space-y-1 text-xs">
-                  <div class="flex justify-between text-slate-300"><span>Break-Even Price:</span> <span id="res_bep" class="font-bold text-amber-300">₹1,389 / Q</span></div>
-                  <div class="flex justify-between text-slate-300"><span>Break-Even Yield:</span> <span id="res_bey" class="font-bold text-cyan-300">4.3 Q / ha</span></div>
-                  <div class="flex justify-between text-slate-400 text-[10px]"><span>MSP Safety Net:</span> <span class="text-emerald-400">₹5,650 / Q</span></div>
-                </div>
-                <span class="text-[10px] text-emerald-400 pt-1 border-t border-space-700/60 font-medium">✅ High margin safety vs distress selling</span>
+            <div class="frosted-pill rounded-2xl p-3.5 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm">Tur / Arhar</div>
+                <div class="text-[10px] text-slate-400">MSP: ₹7,550/Q</div>
+              </div>
+              <div class="text-right">
+                <div class="font-serif-display text-lg text-emerald-300 font-bold">₹10,400</div>
+                <div class="text-[10px] text-emerald-400">+₹2,850 Premium</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TAB 5: NASA CLIMATE TRENDS (Chart.js Module 1) -->
-      <div id="tab-charts" class="tab-content hidden space-y-4">
-        <div class="glass-card rounded-xl p-5 space-y-5">
-          <div class="border-b border-space-700/60 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h3 class="font-bold text-lg text-white">NASA Earth Observation Timeseries (Nagpur 21.14°N, 79.08°E)</h3>
-              <p class="text-xs text-slate-400">NASA POWER daily temperatures & GPM IMERG 30-day precipitation history.</p>
+      <!-- ===== TAB 5: INCOME OPTIMIZER ===== -->
+      <div id="subtab-income" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <h3 class="font-serif-display text-xl text-white">Income Optimizer</h3>
+          <p class="text-xs text-slate-300 font-light">Input costs vs projected market revenue for 1 Hectare.</p>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-slate-400 block mb-1">Expected Yield (Q/ha)</label>
+                <input type="number" id="mIncYield" value="18" oninput="runMobileIncome()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Price (₹/Q)</label>
+                <input type="number" id="mIncPrice" value="5820" oninput="runMobileIncome()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
             </div>
-            <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 px-3 py-1 rounded-full self-start">
-              Resolution: 0.5° Grid (MERRA-2)
-            </span>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-slate-400 block mb-1">Seed + Fert (₹)</label>
+                <input type="number" id="mIncInput1" value="11500" oninput="runMobileIncome()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Labor + Irrig (₹)</label>
+                <input type="number" id="mIncInput2" value="13500" oninput="runMobileIncome()" class="w-full frosted-pill rounded-xl p-2.5 text-white outline-none">
+              </div>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Chart 1: Temperature Trend -->
-            <div class="bg-space-900/60 p-4 rounded-xl border border-space-700">
-              <h4 class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-                <span>Daily Max & Min Temperature (°C)</span>
-                <span class="text-[10px] text-blue-400">NASA POWER AG 2.0</span>
-              </h4>
-              <div class="h-60 relative">
-                <canvas id="tempChart"></canvas>
-              </div>
+          <div class="frosted-pill rounded-2xl p-4 space-y-2 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span>Total Cost:</span>
+              <span id="mResCost" class="font-bold text-white">₹25,000</span>
             </div>
-
-            <!-- Chart 2: Rainfall & Soil Moisture Anomaly -->
-            <div class="bg-space-900/60 p-4 rounded-xl border border-space-700">
-              <h4 class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-                <span>Rainfall Cumulative & Root-Zone Moisture</span>
-                <span class="text-[10px] text-cyan-400">GPM IMERG + SMAP</span>
-              </h4>
-              <div class="h-60 relative">
-                <canvas id="rainChart"></canvas>
-              </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Total Revenue:</span>
+              <span id="mResRev" class="font-bold text-emerald-300">₹1,04,760</span>
+            </div>
+            <div class="flex justify-between text-sm pt-2 border-t border-white/5 font-bold">
+              <span class="text-emerald-400">Net Profit:</span>
+              <span id="mResProfit" class="font-serif-display text-xl text-emerald-300">₹79,760</span>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 pt-1">
+              <span>Break-Even Price:</span>
+              <span id="mResBep" class="text-amber-300 font-semibold">₹1,389 / Q</span>
             </div>
           </div>
         </div>
@@ -581,375 +540,150 @@
 
     </div>
 
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-space-900 border-t border-space-700/60 py-4 px-4 text-center text-xs text-slate-400">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-      <div>
-        Built with NASA Open Data for <span class="text-emerald-400 font-semibold">NASA Space Apps Challenge 2026</span>
-      </div>
-      <div>
-        Developer: <span class="text-white font-medium">Swayam Gulhane</span> • Nagpur, India
+    <!-- ===== FLOATING FROSTED BOTTOM NAVIGATION (Leafora Style) ===== -->
+    <div id="bottomNav" class="fixed bottom-3 left-0 right-0 max-w-[420px] mx-auto px-4 z-50 hidden">
+      <div class="frosted-glass rounded-3xl py-2.5 px-4 flex items-center justify-around shadow-2xl border border-white/10">
+        <button onclick="switchAppTab('overview')" id="bnav-overview" class="flex flex-col items-center text-emerald-400 text-[10px] space-y-1 transition">
+          <i class="fa-solid fa-house text-sm"></i>
+          <span>Home</span>
+        </button>
+        <button onclick="switchAppTab('rotation')" id="bnav-rotation" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
+          <i class="fa-solid fa-arrows-spin text-sm"></i>
+          <span>Rotate</span>
+        </button>
+        <button onclick="switchAppTab('simulator')" id="bnav-simulator" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
+          <i class="fa-solid fa-sliders text-sm"></i>
+          <span>Simulate</span>
+        </button>
+        <button onclick="switchAppTab('mandi')" id="bnav-mandi" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
+          <i class="fa-solid fa-chart-line text-sm"></i>
+          <span>Mandi</span>
+        </button>
+        <button onclick="switchAppTab('income')" id="bnav-income" class="flex flex-col items-center text-slate-400 hover:text-white text-[10px] space-y-1 transition">
+          <i class="fa-solid fa-wallet text-sm"></i>
+          <span>Income</span>
+        </button>
       </div>
     </div>
-  </footer>
+
+  </div>
 
   <script>
-    // Tab switching logic
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('text-emerald-400', 'border-b-2', 'border-emerald-400');
-        el.classList.add('text-slate-400');
-      });
-      document.getElementById(tabId).classList.remove('hidden');
-      const activeBtn = document.getElementById('btn-' + tabId);
-      activeBtn.classList.add('text-emerald-400', 'border-b-2', 'border-emerald-400');
-      activeBtn.classList.remove('text-slate-400');
+    // Navigation & Auth Logic
+    function enterApp(name) {
+      document.getElementById('screenGate').classList.add('hidden');
+      document.getElementById('screenApp').classList.remove('hidden');
+      document.getElementById('bottomNav').classList.remove('hidden');
+      runMobileRotation();
+      runMobileSim();
+      runMobileIncome();
     }
 
-    // Interactive Crop Rotation Engine
-    function calculateRotation() {
-      const prev = document.getElementById('prevCrop').value;
-      const irr = document.getElementById('irrigation').value;
-      const container = document.getElementById('rotationCards');
+    function logoutApp() {
+      document.getElementById('screenApp').classList.add('hidden');
+      document.getElementById('bottomNav').classList.add('hidden');
+      document.getElementById('screenGate').classList.remove('hidden');
+    }
 
-      let strats = [];
-      if (irr === 'limited' || irr === 'rainfed') {
-        strats = [
-          {
-            title: "Strategy A: Chickpea (Gram / Chana) [Recommended]",
-            badge: "Score: 94/100",
-            badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-            duration: "95-105 Days",
-            water: "250-300 mm (Low)",
-            income: "Est. Net Profit: ₹38,000 / ha",
-            nitrogen: "+35 kg N/ha natural fixation",
-            notes: "Matches Vidarbha residual soil moisture profile after Kharif Soybean."
-          },
-          {
-            title: "Strategy B: Safflower (Kardi) / Linseed",
-            badge: "Score: 82/100",
-            badgeColor: "bg-teal-500/20 text-teal-300 border-teal-500/40",
-            duration: "115 Days",
-            water: "200-250 mm (Drought hardy)",
-            income: "Est. Net Profit: ₹28,000 / ha",
-            nitrogen: "Deep taproot breaks hardpan",
-            notes: "High drought tolerance if winter rains fail."
-          }
-        ];
-      } else {
-        strats = [
-          {
-            title: "Strategy A: High-Yield Wheat + Mustard border",
-            badge: "Score: 91/100",
-            badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-            duration: "110-120 Days",
-            water: "400-500 mm (High)",
-            income: "Est. Net Profit: ₹46,000 / ha",
-            nitrogen: "Requires 120 kg N chemical top-dress",
-            notes: "Feasible due to assured irrigation supply."
-          },
-          {
-            title: "Strategy B: Kabuli Chana (High Market Value)",
-            badge: "Score: 88/100",
-            badgeColor: "bg-teal-500/20 text-teal-300 border-teal-500/40",
-            duration: "105 Days",
-            water: "350 mm (Medium)",
-            income: "Est. Net Profit: ₹52,000 / ha",
-            nitrogen: "+40 kg N/ha natural fixation",
-            notes: "Higher commodity rate at Kalamna APMC."
-          }
-        ];
+    function switchAppTab(tab) {
+      // Hide all subtabs
+      ['overview', 'rotation', 'simulator', 'mandi', 'income'].forEach(t => {
+        const el = document.getElementById('subtab-' + t);
+        if (el) el.classList.add('hidden');
+
+        const pill = document.getElementById('pill-' + t);
+        if (pill) {
+          pill.classList.remove('active');
+          pill.classList.add('text-slate-300');
+        }
+
+        const bnav = document.getElementById('bnav-' + t);
+        if (bnav) {
+          bnav.classList.remove('text-emerald-400');
+          bnav.classList.add('text-slate-400');
+        }
+      });
+
+      // Show active subtab
+      const activeEl = document.getElementById('subtab-' + tab);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      const activePill = document.getElementById('pill-' + tab);
+      if (activePill) {
+        activePill.classList.add('active');
+        activePill.classList.remove('text-slate-300');
       }
 
-      container.innerHTML = strats.map(s => `
-        <div class="glass-card rounded-xl p-4 border border-space-700 space-y-3">
+      const activeBnav = document.getElementById('bnav-' + tab);
+      if (activeBnav) {
+        activeBnav.classList.add('text-emerald-400');
+        activeBnav.classList.remove('text-slate-400');
+      }
+    }
+
+    // Interactive Rotation for Mobile UI
+    function runMobileRotation() {
+      const irr = document.getElementById('mIrrig')?.value || 'limited';
+      const container = document.getElementById('mobileRotationResults');
+      if (!container) return;
+
+      const items = irr === 'assured' ? [
+        { title: "High-Yield Wheat + Mustard", tag: "Score 91", water: "420 mm", rev: "₹46,000 net", desc: "Best with canal/well water access" },
+        { title: "Kabuli Chana (Grade A)", tag: "Score 88", water: "340 mm", rev: "₹52,000 net", desc: "High price premium at Kalamna APMC" }
+      ] : [
+        { title: "Chickpea / Chana (Recommended)", tag: "Score 94", water: "280 mm", rev: "₹38,000 net", desc: "Matches SMAP residual soil moisture" },
+        { title: "Safflower (Kardi) Drought-Hardy", tag: "Score 82", water: "220 mm", rev: "₹28,000 net", desc: "Deep taproots survive zero winter rains" }
+      ];
+
+      container.innerHTML = items.map(i => `
+        <div class="frosted-pill rounded-2xl p-3.5 space-y-2">
           <div class="flex justify-between items-start">
-            <h4 class="font-bold text-sm text-white">${s.title}</h4>
-            <span class="text-[10px] px-2 py-0.5 rounded border ${s.badgeColor} font-bold">${s.badge}</span>
+            <span class="font-bold text-white text-sm">${i.title}</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">${i.tag}</span>
           </div>
-          <div class="space-y-1.5 text-xs text-slate-300">
-            <div class="flex justify-between"><span>Water Need:</span> <span class="font-semibold text-white">${s.water}</span></div>
-            <div class="flex justify-between"><span>Duration:</span> <span class="font-semibold text-white">${s.duration}</span></div>
-            <div class="flex justify-between"><span>Economics:</span> <span class="font-semibold text-emerald-400">${s.income}</span></div>
-            <div class="flex justify-between"><span>Soil Health:</span> <span class="font-semibold text-teal-300">${s.nitrogen}</span></div>
+          <div class="flex justify-between text-[11px] text-slate-300">
+            <span>Water Need: <strong class="text-white">${i.water}</strong></span>
+            <span>Est. Profit: <strong class="text-emerald-300">${i.rev}</strong></span>
           </div>
-          <p class="text-[11px] text-slate-400 pt-2 border-t border-space-700/60">${s.notes}</p>
+          <p class="text-[10px] text-slate-400 pt-1 border-t border-white/5">${i.desc}</p>
         </div>
       `).join('');
     }
 
-    // Simulator Interactive Math
-    function updateSimulator() {
-      const rain = parseInt(document.getElementById('slider_rain').value);
-      const temp = parseFloat(document.getElementById('slider_temp').value);
+    // Interactive Simulator for Mobile UI
+    function runMobileSim() {
+      const rain = parseInt(document.getElementById('mSliderRain')?.value || -20);
+      const temp = parseFloat(document.getElementById('mSliderTemp')?.value || 2.0);
 
-      document.getElementById('val_rain').innerText = (rain > 0 ? '+' : '') + rain + '% (' + (rain < -15 ? 'Dry Shock' : 'Normal') + ')';
-      document.getElementById('val_temp').innerText = '+' + temp.toFixed(1) + ' °C (' + (temp > 1.5 ? 'Heat Stress' : 'Normal') + ')';
+      document.getElementById('mValRain').innerText = (rain > 0 ? '+' : '') + rain + '% (' + (rain < -15 ? 'Dry Shock' : 'Normal') + ')';
+      document.getElementById('mValTemp').innerText = '+' + temp.toFixed(1) + ' °C';
 
-      // FAO-56 Yield response approximations:
-      // Wheat is highly sensitive to terminal heat (temp) and moisture:
-      const wheatDrop = Math.max(0, (-rain * 0.45) + (temp * 6.5)).toFixed(1);
-      // Chickpea is deep-rooted, lower Ky
-      const chanaDrop = Math.max(0, (-rain * 0.28) + (temp * 3.2)).toFixed(1);
+      const wheatLoss = Math.max(0, (-rain * 0.45) + (temp * 6.5)).toFixed(1);
+      const chanaLoss = Math.max(0, (-rain * 0.28) + (temp * 3.2)).toFixed(1);
 
-      document.getElementById('sim_wheat_yield').innerText = '-' + wheatDrop + '%';
-      document.getElementById('sim_chana_yield').innerText = '-' + chanaDrop + '%';
-      document.getElementById('sim_deficit').innerText = Math.abs(rain * 3.5).toFixed(0) + ' mm';
-
-      if (wheatDrop > 18) {
-        document.getElementById('sim_recommendation').innerText = 'Shift to Chana';
-      } else {
-        document.getElementById('sim_recommendation').innerText = 'Wheat Viable';
-      }
+      document.getElementById('mSimWheat').innerText = '-' + wheatLoss + '%';
+      document.getElementById('mSimChana').innerText = '-' + chanaLoss + '%';
+      document.getElementById('mSimRec').innerText = wheatLoss > 18 ? 'Shift to Chickpea (Save ₹12k)' : 'Wheat Viable';
     }
 
-    // Multilingual translations dictionary
-    const dict = {
-      en: {
-        hero_title: "Hyperlocal Climate & Sowing Decision Platform",
-        hero_desc: "Combining NASA POWER daily meteorology, SMAP soil moisture percentiles, and official AGMARKNET mandi rates for resilient Vidarbha agriculture.",
-        lbl_temp: "Surface Temperature",
-        lbl_moisture: "Root-Zone Soil Moisture",
-        lbl_rain: "30-Day Rainfall Total",
-        lbl_mandi: "Nagpur Mandi (Soybean)",
-        tab1_title: "AI Crop Rotation Engine",
-        tab2_title: "AI Farm Simulator (Climate Shock)",
-        tab3_title: "Live Mandi & MSP Benchmarks"
-      },
-      hi: {
-        hero_title: "नासा डेटा आधारित जलवायु एवं बुवाई निर्णय प्रणाली",
-        hero_desc: "विदर्भ में टिकाऊ खेती के लिए नासा पावर मौसम डेटा, स्मैप मृदा नमी और सरकारी एगमार्कनेट मंडी दरों का संयोजन।",
-        lbl_temp: "सतह का तापमान",
-        lbl_moisture: "जड़-क्षेत्र मृदा नमी",
-        lbl_rain: "30-दिवसीय कुल वर्षा",
-        lbl_mandi: "नागपुर मंडी (सोयाबीन)",
-        tab1_title: "एआई फसल चक्र प्रणाली",
-        tab2_title: "एआई कृषि सिमुलेटर (जलवायु प्रभाव)",
-        tab3_title: "लाइव मंडी भाव एवं एमएसपी"
-      },
-      mr: {
-        hero_title: "नासा डेटा आधारित हवामान व पेरणी निर्णय प्रणाली",
-        hero_desc: "विदर्भातील शेतीसाठी नासाचे हवामान निरीक्षण, जमिनीतील ओलावा आणि अधिकृत बाजारभाव यांचे एकात्मिक विश्लेषण.",
-        lbl_temp: "जमिनीचे तापमान",
-        lbl_moisture: "मुळांमधील मातीचा ओलावा",
-        lbl_rain: "३० दिवसांचा एकूण पाऊस",
-        lbl_mandi: "नागपूर बाजार समिती (सोयाबीन)",
-        tab1_title: "एआय पीक फेरपालट इंजिन",
-        tab2_title: "एआय शेती सिम्युलेटर (हवामान धक्का)",
-        tab3_title: "थेट बाजारभाव व हमीभाव (MSP)"
-      }
-    };
+    // Income calculations for Mobile UI
+    function runMobileIncome() {
+      const y = parseFloat(document.getElementById('mIncYield')?.value || 18);
+      const p = parseFloat(document.getElementById('mIncPrice')?.value || 5820);
+      const c1 = parseFloat(document.getElementById('mIncInput1')?.value || 11500);
+      const c2 = parseFloat(document.getElementById('mIncInput2')?.value || 13500);
 
-    function changeLanguage(lang) {
-      const texts = dict[lang];
-      for (const [key, val] of Object.entries(texts)) {
-        const el = document.getElementById(key);
-        if (el) el.innerText = val;
-      }
+      const totalCost = c1 + c2;
+      const totalRev = y * p;
+      const netProfit = totalRev - totalCost;
+      const bep = y > 0 ? Math.round(totalCost / y) : 0;
+
+      document.getElementById('mResCost').innerText = '₹' + totalCost.toLocaleString('en-IN');
+      document.getElementById('mResRev').innerText = '₹' + totalRev.toLocaleString('en-IN');
+      document.getElementById('mResProfit').innerText = '₹' + netProfit.toLocaleString('en-IN');
+      document.getElementById('mResBep').innerText = '₹' + bep.toLocaleString('en-IN') + ' / Q';
     }
-
-    // Auth Handling
-    let currentUser = null;
-    let authMode = 'login';
-
-    function openAuthModal() {
-      document.getElementById('authModal').classList.remove('hidden');
-    }
-
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.add('hidden');
-    }
-
-    function setAuthMode(mode) {
-      authMode = mode;
-      const isLogin = mode === 'login';
-      document.getElementById('tabLogin').className = isLogin ? 'py-2 rounded-lg bg-emerald-600 text-white transition' : 'py-2 rounded-lg text-slate-400 hover:text-white transition';
-      document.getElementById('tabRegister').className = !isLogin ? 'py-2 rounded-lg bg-emerald-600 text-white transition' : 'py-2 rounded-lg text-slate-400 hover:text-white transition';
-      document.getElementById('registerFields').className = isLogin ? 'space-y-3 hidden' : 'space-y-3';
-      document.getElementById('authModalTitle').innerText = isLogin ? 'Farmer Sign In' : 'Create Farmer Account';
-      document.getElementById('authSubmitBtn').innerHTML = isLogin ? '<span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>' : '<span>Register Account</span> <i class="fa-solid fa-check"></i>';
-    }
-
-    function handleAuthSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('authEmail').value;
-      const name = authMode === 'register' ? document.getElementById('authName').value : (email.split('@')[0] || 'Nagpur Farmer');
-      loginUser(name, email);
-    }
-
-    function quickDemoLogin() {
-      loginUser("Swayam Gulhane (Farmer)", "farmer.nagpur@agroverse.in");
-    }
-
-    function loginUser(name, email) {
-      currentUser = { name, email, district: "Nagpur, MH" };
-      closeAuthModal();
-      document.getElementById('mainAppContainer').classList.remove('hidden');
-      renderUserProfile();
-    }
-
-    function logoutUser() {
-      currentUser = null;
-      document.getElementById('mainAppContainer').classList.add('hidden');
-      openAuthModal();
-      renderUserProfile();
-    }
-
-    function renderUserProfile() {
-      const container = document.getElementById('authContainer');
-      if (currentUser) {
-        container.innerHTML = `
-          <div class="flex items-center space-x-2 bg-space-800 border border-emerald-500/40 px-2.5 py-1 rounded-lg">
-            <div class="w-6 h-6 rounded-full bg-emerald-500/30 flex items-center justify-center text-emerald-400 text-xs">
-              <i class="fa-solid fa-user-check"></i>
-            </div>
-            <div class="text-left">
-              <div class="text-xs font-bold text-white leading-tight">${currentUser.name}</div>
-              <div class="text-[9px] text-emerald-400">${currentUser.district}</div>
-            </div>
-            <button onclick="logoutUser()" title="Logout" class="text-slate-400 hover:text-rose-400 text-xs ml-1.5 transition">
-              <i class="fa-solid fa-right-from-bracket"></i>
-            </button>
-          </div>
-        `;
-      } else {
-        container.innerHTML = `
-          <button onclick="openAuthModal()" id="btnLogin" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-md shadow-emerald-700/20">
-            <i class="fa-solid fa-right-to-bracket"></i> <span>Farmer Login</span>
-          </button>
-        `;
-      }
-    }
-
-    // Income Optimizer Calculation (Module 7)
-    function calcIncome() {
-      const yieldHa = parseFloat(document.getElementById('inc_yield').value) || 0;
-      const priceQ = parseFloat(document.getElementById('inc_price').value) || 0;
-      
-      const seed = parseFloat(document.getElementById('inc_seed').value) || 0;
-      const fert = parseFloat(document.getElementById('inc_fert').value) || 0;
-      const labor = parseFloat(document.getElementById('inc_labor').value) || 0;
-      const irr = parseFloat(document.getElementById('inc_irr').value) || 0;
-
-      const totalCost = seed + fert + labor + irr;
-      const totalRevenue = yieldHa * priceQ;
-      const netProfit = totalRevenue - totalCost;
-      const costPerQ = yieldHa > 0 ? (totalCost / yieldHa) : 0;
-      const bcr = totalCost > 0 ? (totalRevenue / totalCost) : 0;
-      const bep = yieldHa > 0 ? (totalCost / yieldHa) : 0;
-      const bey = priceQ > 0 ? (totalCost / priceQ) : 0;
-
-      document.getElementById('res_cost').innerText = '₹' + totalCost.toLocaleString('en-IN');
-      document.getElementById('res_revenue').innerText = '₹' + totalRevenue.toLocaleString('en-IN');
-      document.getElementById('res_profit').innerText = '₹' + netProfit.toLocaleString('en-IN');
-      document.getElementById('res_cost_q').innerText = '₹' + Math.round(costPerQ).toLocaleString('en-IN') + '/Q';
-      document.getElementById('res_bcr').innerText = bcr.toFixed(2);
-      document.getElementById('res_bep').innerText = '₹' + Math.round(bep).toLocaleString('en-IN') + ' / Q';
-      document.getElementById('res_bey').innerText = bey.toFixed(1) + ' Q / ha';
-    }
-
-    // Initialize NASA Trend Charts
-    let chartsInit = false;
-    function initNasaCharts() {
-      if (chartsInit) return;
-      chartsInit = true;
-
-      // 1. Temperature Chart
-      const ctxTemp = document.getElementById('tempChart')?.getContext('2d');
-      if (ctxTemp) {
-        new Chart(ctxTemp, {
-          type: 'line',
-          data: {
-            labels: ['1 Nov', '3 Nov', '5 Nov', '7 Nov', '9 Nov', '11 Nov', '13 Nov'],
-            datasets: [
-              {
-                label: 'Max Temp (°C)',
-                data: [33.2, 32.5, 31.8, 32.1, 31.0, 30.5, 32.1],
-                borderColor: '#f43f5e',
-                backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                fill: true,
-                tension: 0.3
-              },
-              {
-                label: 'Min Temp (°C)',
-                data: [19.5, 18.8, 17.5, 18.2, 17.8, 16.9, 18.2],
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                fill: true,
-                tension: 0.3
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
-            scales: {
-              x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
-            }
-          }
-        });
-      }
-
-      // 2. Rainfall & Soil Moisture Chart
-      const ctxRain = document.getElementById('rainChart')?.getContext('2d');
-      if (ctxRain) {
-        new Chart(ctxRain, {
-          type: 'bar',
-          data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [
-              {
-                type: 'bar',
-                label: 'Rainfall (mm)',
-                data: [18.5, 12.0, 8.3, 4.0],
-                backgroundColor: 'rgba(16, 185, 129, 0.6)',
-                borderColor: '#10b981',
-                borderWidth: 1
-              },
-              {
-                type: 'line',
-                label: 'Soil Moisture % (SMAP)',
-                data: [28, 26, 25, 24],
-                borderColor: '#06b6d4',
-                tension: 0.3,
-                yAxisID: 'y1'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
-            scales: {
-              x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y1: { position: 'right', ticks: { color: '#06b6d4', font: { size: 10 } }, grid: { display: false } }
-            }
-          }
-        });
-      }
-    }
-
-    // Tab switcher hook to trigger charts
-    const originalSwitchTab = switchTab;
-    switchTab = function(tabId) {
-      originalSwitchTab(tabId);
-      if (tabId === 'tab-charts') {
-        setTimeout(initNasaCharts, 50);
-      }
-    };
-
-    // Initialize on load
-    calculateRotation();
-    updateSimulator();
-    calcIncome();
-    // Prompt login immediately without any click
-    openAuthModal();
   </script>
+
 </body>
 </html>
