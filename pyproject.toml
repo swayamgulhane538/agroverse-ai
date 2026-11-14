@@ -1,0 +1,16 @@
+[project]
+name = "agroverse-ai"
+version = "2.0.0"
+description = "AGROVERSE AI — NASA Precision Agriculture Platform"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "pydantic>=2.6.0",
+    "requests>=2.31.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.1",
+]
+
+[tool.vercel]
+entrypoint = "services.api.main:app"

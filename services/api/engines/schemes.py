@@ -2,6 +2,7 @@ import json
 import os
 from typing import Dict, Any, List
 from ..models.provenance import Provenanced, ProvenanceMetadata
+from ..data_loader import get_schemes
 
 class SchemeEngine:
     """
@@ -11,11 +12,8 @@ class SchemeEngine:
     
     @staticmethod
     def load_catalog() -> List[Dict[str, Any]]:
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-        file_path = os.path.join(base_dir, "data", "schemes.json")
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+            return get_schemes()
         except Exception:
             return []
 

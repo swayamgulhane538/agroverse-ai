@@ -1,19 +1,9 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 import os
+import sys
 
-app = FastAPI(title="AGROVERSE AI — NASA Precision Agriculture")
+# Ensure repository root is on sys.path
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
 
-@app.get("/{full_path:path}", response_class=HTMLResponse)
-def serve_app(full_path: str = ""):
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    candidates = [
-        os.path.join(base_dir, "index.html"),
-        os.path.join(base_dir, "public", "index.html"),
-        "index.html"
-    ]
-    for c in candidates:
-        if os.path.exists(c):
-            with open(c, "r", encoding="utf-8") as f:
-                return HTMLResponse(content=f.read())
-    return HTMLResponse("<h1>AGROVERSE AI — NASA 2026</h1><p>Platform Active</p>")
+from services.api.main import app
