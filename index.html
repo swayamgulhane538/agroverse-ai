@@ -270,6 +270,10 @@
           <i class="fa-solid fa-wallet text-xs"></i>
           <span>Income Optimizer</span>
         </button>
+        <button onclick="switchAppTab('calendar')" id="pill-calendar" class="frosted-pill px-4 py-2.5 rounded-xl flex items-center space-x-2 whitespace-nowrap text-slate-300">
+          <i class="fa-regular fa-calendar-check text-xs"></i>
+          <span>Smart Calendar</span>
+        </button>
       </div>
 
       <!-- ===== TAB 1: OVERVIEW METRIC CARDS (Responsive: 2 cols on mobile, 4 cols on desktop) ===== -->
@@ -582,6 +586,80 @@
         </div>
       </div>
 
+      <!-- ===== TAB 6: SMART FARMING CALENDAR (Module 8 - P1) ===== -->
+      <div id="subtab-calendar" class="space-y-4 hidden">
+        <div class="frosted-glass rounded-3xl p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/5 pb-3">
+            <div>
+              <h3 class="font-serif-display text-xl text-white">Smart Farming Calendar</h3>
+              <p class="text-xs text-slate-300 font-light">Stage-by-stage advisory triggered by NASA SMAP soil moisture & thermal degree days.</p>
+            </div>
+            <span class="text-[10px] text-emerald-300 frosted-pill px-3 py-1 rounded-full border border-emerald-500/30">
+              Nagpur Rabi 2026-27 Protocol
+            </span>
+          </div>
+
+          <!-- Timeline Activities -->
+          <div class="space-y-3 pt-1">
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-l-4 border-l-emerald-400">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-emerald-300 uppercase tracking-wider">Stage 1 • Mid November</span>
+                  <h4 class="font-bold text-white text-sm">Optimal Sowing Window</h4>
+                </div>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">Action Now</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Seed drilling for Desi Chana at 30×10 cm spacing. Treat seeds with Trichoderma + Rhizobium culture.</p>
+              <div class="text-[10px] text-slate-400 flex items-center gap-2 pt-1 border-t border-white/5">
+                <span>🛰️ Trigger: Residual moisture 0.24 m³/m³ (NASA SMAP)</span>
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-l-4 border-l-teal-400">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-teal-300 uppercase tracking-wider">Stage 2 • +30 Days (Dec)</span>
+                  <h4 class="font-bold text-white text-sm">Branching & Protective Irrigation</h4>
+                </div>
+                <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full font-semibold">Upcoming</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Provide single light sprinkler irrigation if winter dry spell exceeds 25 consecutive days.</p>
+              <div class="text-[10px] text-slate-400 flex items-center gap-2 pt-1 border-t border-white/5">
+                <span>🛰️ Trigger: GPM IMERG 14-day rainfall deficit threshold</span>
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-l-4 border-l-amber-400">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Stage 3 • +65 Days (Jan)</span>
+                  <h4 class="font-bold text-white text-sm">Pod Formation & Pest Watch</h4>
+                </div>
+                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">Scheduled</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Deploy 5 pheromone traps/ha for Helicoverpa (Pod borer). Spray 5% Neem seed kernel extract (NSKE).</p>
+              <div class="text-[10px] text-slate-400 flex items-center gap-2 pt-1 border-t border-white/5">
+                <span>🛰️ Trigger: GDD (Growing Degree Days) cumulative thermal unit</span>
+              </div>
+            </div>
+
+            <div class="frosted-pill rounded-2xl p-4 space-y-2 border-l-4 border-l-indigo-400">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider">Stage 4 • +100 Days (Feb)</span>
+                  <h4 class="font-bold text-white text-sm">Maturity & Harvesting</h4>
+                </div>
+                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-semibold">End of Season</span>
+              </div>
+              <p class="text-xs text-slate-300 font-light">Harvest when 90% of pods turn straw yellow. Dry grains under sun to achieve &lt;10% storage moisture.</p>
+              <div class="text-[10px] text-slate-400 flex items-center gap-2 pt-1 border-t border-white/5">
+                <span>🛰️ Trigger: NDVI vegetative senescence curve decline</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ===== FLOATING FROSTED BOTTOM NAVIGATION (Leafora Style) ===== -->
@@ -662,7 +740,7 @@
 
     function switchAppTab(tab) {
       // Hide all subtabs
-      ['overview', 'rotation', 'simulator', 'mandi', 'income'].forEach(t => {
+      ['overview', 'rotation', 'simulator', 'mandi', 'income', 'calendar'].forEach(t => {
         const el = document.getElementById('subtab-' + t);
         if (el) el.classList.add('hidden');
 
