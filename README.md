@@ -29,13 +29,11 @@
 
 ---
 
-## 👥 Team Details & Roles
-| Member Name | Role & Responsibility | GitHub Account |
-| :--- | :--- | :--- |
-| **Member 1** | Team Lead & Frontend Architecture | `[username]` |
-| **Member 2** | NASA Remote Sensing & API Integration | `[username]` |
-| **Member 3** | Backend Services & Data Provenance Layer | `[username]` |
-| **Member 4** | Mandi Intelligence & QA / Documentation | `[username]` |
+## 👤 Developer Details
+- **Solo Developer & Lead:** Swayam Gulhane (`@swayamgulhane538`)
+- **Institution / Location:** Nagpur, Maharashtra, India
+- **Hackathon:** NASA Space Apps Challenge Nagpur 2026
+
 
 ---
 

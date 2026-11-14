@@ -1,0 +1,42 @@
+[
+  {
+    "commodity": "Soybean (Yellow)",
+    "season": "Kharif 2026",
+    "msp_inr_quintal": 4892,
+    "effective_year": "2025-26 / 2026",
+    "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
+    "source_url": "https://cacp.dacnet.nic.in"
+  },
+  {
+    "commodity": "Cotton (Medium Staple)",
+    "season": "Kharif 2026",
+    "msp_inr_quintal": 7121,
+    "effective_year": "2025-26 / 2026",
+    "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
+    "source_url": "https://cacp.dacnet.nic.in"
+  },
+  {
+    "commodity": "Gram (Chickpea / Chana)",
+    "season": "Rabi 2026-27",
+    "msp_inr_quintal": 5650,
+    "effective_year": "2026-27",
+    "source": "Cabinet Committee on Economic Affairs (CCEA)",
+    "source_url": "https://cacp.dacnet.nic.in"
+  },
+  {
+    "commodity": "Wheat",
+    "season": "Rabi 2026-27",
+    "msp_inr_quintal": 2425,
+    "effective_year": "2026-27",
+    "source": "Cabinet Committee on Economic Affairs (CCEA)",
+    "source_url": "https://cacp.dacnet.nic.in"
+  },
+  {
+    "commodity": "Tur / Arhar",
+    "season": "Kharif 2026",
+    "msp_inr_quintal": 7550,
+    "effective_year": "2025-26 / 2026",
+    "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
+    "source_url": "https://cacp.dacnet.nic.in"
+  }
+]
