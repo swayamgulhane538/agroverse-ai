@@ -2372,7 +2372,15 @@
       runCleanSimulator();
       runCleanIncome();
       runStoreMath();
+
+      // Switch to URL requested view if provided (e.g. ?view=view-fertilizer)
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestedView = urlParams.get('view') || window.location.hash.replace('#', '');
+      if (requestedView && ALL_VIEWS.includes(requestedView)) {
+        switchView(requestedView);
+      }
     });
+
   </script>
 </body>
 </html>
