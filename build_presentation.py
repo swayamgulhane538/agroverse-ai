@@ -10,8 +10,27 @@ def get_b64(fname):
         return base64.b64encode(f.read()).decode("utf-8")
 
 slides_data = [
+    # SLIDE 1: FRONT PAGE / COVER SLIDE
     {
+        "is_cover": True,
         "num": "01",
+        "tag": "OFFICIAL HACKATHON SUBMISSION",
+        "title": "AGROVERSE AI",
+        "subtitle": "Next-Generation NASA Earth Observation & Precision Agriculture Decision Support Platform",
+        "badge": "REG: NSA 04 1423",
+        "student_name": "Swayam Gulhane",
+        "reg_no": "NSA 04 1423",
+        "hackathon": "NASA Space Apps Challenge / NASA Earth Observation Hackathon 2026",
+        "track": "Earth Observation for Precision Agriculture, Climate Resilience & Food Security",
+        "problem_statement": "Leveraging NASA Earth Observation Datasets (POWER, SMAP, GPM IMERG) and AI to Empower Farmers with Hyper-Local Agricultural Intelligence, Climate Risk Mitigation, and Economic Resilience",
+        "location": "Nagpur, Vidarbha, Maharashtra, India",
+        "live_url": "https://agroverse-ai-iota.vercel.app/",
+        "notes": "Good morning / afternoon esteemed judges! My name is Swayam Gulhane, Registration Number NSA 04 1423. Today, I am proud to present AGROVERSE AI for the NASA Space Apps Challenge 2026. Our mission is to bridge orbital satellite remote sensing with ground-level farmer decisions to solve agrarian distress in climate-vulnerable rainfed regions."
+    },
+    # SLIDE 2: NASA EARTH TELEMETRY HUB
+    {
+        "is_cover": False,
+        "num": "02",
         "tag": "NASA EARTH OBSERVATION & TELEMETRY",
         "title": "NASA Earth Observation & Hydrology Hub",
         "subtitle": "Real-time satellite meteorology, root-zone soil moisture & dry-spell risk intelligence",
@@ -30,8 +49,10 @@ slides_data = [
         ],
         "notes": "Emphasize for NASA Hackathon judges: Every meteorological and hydrological metric is traceable to calibrated NASA satellite feeds. We never display synthetic or fake live data."
     },
+    # SLIDE 3: SMART FERTILIZER & JEEVAMRUT
     {
-        "num": "02",
+        "is_cover": False,
+        "num": "03",
         "tag": "PRECISION NUTRIENT MANAGEMENT",
         "title": "Smart Fertilizer & Organic Jeevamrut Engine",
         "subtitle": "Acreage-calibrated chemical macronutrients with zero-cost microbial bio-formulations",
@@ -50,8 +71,10 @@ slides_data = [
         ],
         "notes": "Judges love the dual approach: We give farmers precision chemical fertilizer quantities to prevent over-fertilization, while empowering them with organic preparation recipes for soil regenerative health."
     },
+    # SLIDE 4: SPRAYING ADVISORY
     {
-        "num": "03",
+        "is_cover": False,
+        "num": "04",
         "tag": "MICRO-METEOROLOGY & CHEMICAL SAFETY",
         "title": "Automatic Spray Window Advisory",
         "subtitle": "Open-Meteo 72h forecast integration with Stull (2011) Delta-T & CIB&RC IPM tiers",
@@ -70,8 +93,10 @@ slides_data = [
         ],
         "notes": "Highlight Stull Delta-T equation: We use genuine atmospheric physics to protect pollinators and prevent chemical drift onto adjacent fields and water bodies."
     },
+    # SLIDE 5: AI DISEASE SCANNER
     {
-        "num": "04",
+        "is_cover": False,
+        "num": "05",
         "tag": "COMPUTER VISION & ENTOMOLOGY",
         "title": "AI Plant Disease Doctor & Leaf Scanner",
         "subtitle": "Photographic leaf inspection with confidence grading, symptom analysis & KVK escalation",
@@ -91,8 +116,10 @@ slides_data = [
         ],
         "notes": "Emphasize responsible AI: The system does not hallucinate treatments. It provides calibrated confidence scores, symptoms, and clearly explains when expert KVK consultation is necessary."
     },
+    # SLIDE 6: MANDI & MSP TRACKER
     {
-        "num": "05",
+        "is_cover": False,
+        "num": "06",
         "tag": "AGMARKNET & STATUTORY BENCHMARKS",
         "title": "APMC Mandi Intelligence & MSP Tracker",
         "subtitle": "Multi-market Agmarknet feed with haversine distance, net transport & price history",
@@ -112,8 +139,10 @@ slides_data = [
         ],
         "notes": "Showcase real Agmarknet data.gov.in integration: Features transparent mode badge (LIVE / CACHED / DEMO), statutory disclaimers, and price target alerts that never fire on synthetic data."
     },
+    # SLIDE 7: INCOME OPTIMIZER
     {
-        "num": "06",
+        "is_cover": False,
+        "num": "07",
         "tag": "AGRICULTURAL ECONOMICS & PLANNING",
         "title": "Multi-Crop Financial Rank & Income Optimizer",
         "subtitle": "Whole-farm profitability simulation, cost of cultivation & benefit-cost ratio (B:C)",
@@ -132,8 +161,10 @@ slides_data = [
         ],
         "notes": "This tool directly addresses farm distress by guiding farmers on what crop maximizes net profit after accounting for their specific soil type, water reserve, and market volatility."
     },
+    # SLIDE 8: CADASTRAL MAP STUDIO
     {
-        "num": "07",
+        "is_cover": False,
+        "num": "08",
         "tag": "GIS & CADASTRAL PARCEL MANAGEMENT",
         "title": "Multi-Parcel Cadastral Land Manager (M10)",
         "subtitle": "Cadastral boundary polygons, Gat numbers & spatial NASA telemetry linkage",
@@ -152,8 +183,10 @@ slides_data = [
         ],
         "notes": "By grounding precision agriculture in cadastral survey boundaries, Agroverse connects orbital NASA data directly to the farmer's physical property lines."
     },
+    # SLIDE 9: SENTINEL-2 NDVI
     {
-        "num": "08",
+        "is_cover": False,
+        "num": "09",
         "tag": "REMOTE SENSING & CANOPY BIOMASS",
         "title": "Copernicus Sentinel-2 & NDVI Vigour Metrics",
         "subtitle": "10m spatial resolution multi-spectral canopy health & diverging histogram analysis",
@@ -174,6 +207,8 @@ slides_data = [
     }
 ]
 
+total_slides = len(slides_data)
+
 html_parts = []
 html_parts.append("""<!DOCTYPE html>
 <html lang="en">
@@ -188,7 +223,7 @@ html_parts.append("""<!DOCTYPE html>
   <style>
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      background: #0b0f19;
+      background: #080c16;
       color: #f1f5f9;
       margin: 0;
       padding: 0;
@@ -209,6 +244,11 @@ html_parts.append("""<!DOCTYPE html>
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
     }
+    .glow-title {
+      background: linear-gradient(135deg, #ffffff 0%, #a7f3d0 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     @media print {
       body { background: white !important; color: black !important; }
       .no-print { display: none !important; }
@@ -217,12 +257,17 @@ html_parts.append("""<!DOCTYPE html>
         page-break-after: always !important;
         height: 100vh !important;
         width: 100vw !important;
-        padding: 20px !important;
+        padding: 24px !important;
         box-sizing: border-box !important;
       }
       .glass-card {
         background: #f8fafc !important;
         border: 1px solid #e2e8f0 !important;
+        color: #0f172a !important;
+      }
+      .glow-title {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
         color: #0f172a !important;
       }
     }
@@ -235,7 +280,7 @@ html_parts.append("""<!DOCTYPE html>
     <button onclick="prevSlide()" title="Previous Slide (Left Arrow)" class="p-1.5 rounded-full hover:bg-white/20 transition text-gray-300 hover:text-white">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
-    <span id="slideCounter" class="font-mono text-emerald-400 font-bold px-1">01 / 08</span>
+    <span id="slideCounter" class="font-mono text-emerald-400 font-bold px-1">01 / 09</span>
     <button onclick="nextSlide()" title="Next Slide (Right Arrow / Space)" class="p-1.5 rounded-full hover:bg-white/20 transition text-gray-300 hover:text-white">
       <i class="fa-solid fa-chevron-right"></i>
     </button>
@@ -259,105 +304,261 @@ html_parts.append("""<!DOCTYPE html>
 
 for idx, s in enumerate(slides_data):
     active_class = "active" if idx == 0 else ""
-    points_html = "".join([f'<li class="flex items-start space-x-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed"><i class="fa-solid fa-circle-check text-emerald-400 text-xs mt-1 shrink-0"></i><span>{p}</span></li>' for p in s["points"]])
     
-    metrics_html = "".join([f'''
-      <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
-        <div class="text-[10px] text-gray-400 uppercase font-semibold">{m['label']}</div>
-        <div class="text-sm sm:text-base font-extrabold text-white font-mono mt-0.5">{m['val']}</div>
-      </div>
-    ''' for m in s["metrics"]])
-
-    html_parts.append(f"""
-    <!-- SLIDE {s['num']} -->
-    <div class="slide {active_class} flex-col justify-between p-6 sm:p-10 lg:p-12 relative overflow-hidden" id="slide-{idx}">
-      
-      <!-- Top Brand Header -->
-      <div class="flex justify-between items-center border-b border-white/10 pb-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-black flex items-center justify-center font-black text-base shadow-lg shadow-emerald-500/20">
-            <i class="fa-solid fa-leaf"></i>
-          </div>
-          <div>
-            <div class="text-sm font-extrabold tracking-tight text-white flex items-center space-x-2">
-              <span>AGROVERSE AI</span>
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">NASA HACKATHON 2026</span>
+    if s.get("is_cover"):
+        # RENDER DEDICATED FRONT PAGE / TITLE SLIDE
+        html_parts.append(f"""
+        <!-- SLIDE 01: FRONT PAGE / COVER -->
+        <div class="slide {active_class} flex-col justify-between p-6 sm:p-10 lg:p-14 relative overflow-hidden bg-gradient-to-br from-[#080c16] via-[#0d1527] to-[#0a1120]" id="slide-{idx}">
+          
+          <!-- Top Badges Row -->
+          <div class="flex justify-between items-center border-b border-white/10 pb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-black flex items-center justify-center font-black text-lg shadow-lg shadow-emerald-500/20">
+                <i class="fa-solid fa-satellite"></i>
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 font-bold block">{s['hackathon']}</span>
+                <span class="text-[11px] text-gray-400">Official Project Presentation Deck</span>
+              </div>
             </div>
-            <div class="text-[10px] text-gray-400">Precision Agriculture & Automated Farmer Decision System</div>
+
+            <div class="flex items-center space-x-2">
+              <span class="px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-xs font-bold shadow-sm">
+                <i class="fa-solid fa-id-badge text-emerald-400 mr-1.5"></i>REG: {s['reg_no']}
+              </span>
+              <span class="font-mono text-xs text-gray-400 font-bold ml-2">SLIDE 01 / {total_slides:02d}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="flex items-center space-x-3">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/80 px-3 py-1 rounded-full">{s['badge']}</span>
-          <span class="font-mono text-xs text-gray-400 font-bold">SLIDE {s['num']}</span>
-        </div>
-      </div>
+          <!-- Main Hero 2-Column Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto py-6 items-center">
+            
+            <!-- Left Side: Problem Statement & Mission (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+              <div>
+                <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 font-bold bg-emerald-950/70 border border-emerald-800/80 px-3 py-1 rounded-full">NASA HACKATHON 2026 PROJECT</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight glow-title mt-3">
+                  {s['title']}
+                </h1>
+                <p class="text-sm sm:text-base text-gray-300 mt-2 font-medium leading-relaxed">
+                  {s['subtitle']}
+                </p>
+              </div>
 
-      <!-- Main Slide 2-Column Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto py-4 items-center">
+              <!-- Problem Statement Callout Box -->
+              <div class="glass-card p-6 border-l-4 border-l-emerald-400 space-y-2.5 shadow-2xl">
+                <div class="flex items-center space-x-2 text-xs font-bold font-mono uppercase text-emerald-400">
+                  <i class="fa-solid fa-bullseye text-sm"></i>
+                  <span>Problem Statement Name</span>
+                </div>
+                <p class="text-sm sm:text-base font-bold text-white leading-snug">
+                  "{s['problem_statement']}"
+                </p>
+                <div class="text-xs text-gray-400 pt-1 border-t border-white/10 flex items-center space-x-2">
+                  <i class="fa-solid fa-compass text-teal-400"></i>
+                  <span><strong>Challenge Track:</strong> {s['track']}</span>
+                </div>
+              </div>
+
+              <!-- 3 Core Solution Pillars -->
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                  <div class="text-emerald-400 text-sm mb-1"><i class="fa-solid fa-satellite-dish"></i></div>
+                  <div class="text-[11px] font-bold text-white">NASA Telemetry</div>
+                  <div class="text-[9px] text-gray-400 mt-0.5">POWER + SMAP + GPM</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                  <div class="text-teal-400 text-sm mb-1"><i class="fa-solid fa-microchip-ai"></i></div>
+                  <div class="text-[11px] font-bold text-white">AI Diagnostics</div>
+                  <div class="text-[9px] text-gray-400 mt-0.5">Vision + Stull Delta-T</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                  <div class="text-indigo-400 text-sm mb-1"><i class="fa-solid fa-scale-balanced"></i></div>
+                  <div class="text-[11px] font-bold text-white">Mandi Economics</div>
+                  <div class="text-[9px] text-gray-400 mt-0.5">Agmarknet + CCEA MSP</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Candidate Dossier Card (5 Cols) -->
+            <div class="lg:col-span-5 flex flex-col justify-center">
+              <div class="glass-card p-6 sm:p-7 space-y-5 border border-white/15 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div>
+                    <span class="text-[10px] font-mono text-gray-400 uppercase font-semibold">Candidate / Innovator</span>
+                    <h3 class="text-xl font-extrabold text-white mt-0.5">{s['student_name']}</h3>
+                  </div>
+                  <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-xl text-emerald-400 font-black">
+                    SG
+                  </div>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                  <div class="flex justify-between items-center py-1 border-b border-white/5">
+                    <span class="text-gray-400">Registration Number</span>
+                    <span class="font-mono font-bold text-emerald-400 text-sm">{s['reg_no']}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-white/5">
+                    <span class="text-gray-400">Event Track</span>
+                    <span class="font-semibold text-gray-200">NASA Space Apps 2026</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-white/5">
+                    <span class="text-gray-400">Location / Focus</span>
+                    <span class="font-semibold text-gray-200">{s['location']}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-white/5">
+                    <span class="text-gray-400">Live Web App</span>
+                    <a href="{s['live_url']}" target="_blank" class="font-mono text-emerald-400 underline hover:text-emerald-300">agroverse-ai.vercel.app</a>
+                  </div>
+                  <div class="flex justify-between items-center py-1">
+                    <span class="text-gray-400">Telemetry Status</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">● 100% LIVE VERIFIED</span>
+                  </div>
+                </div>
+
+                <!-- Verified Satellite Telemetry Logos -->
+                <div class="pt-3 border-t border-white/10 space-y-1.5">
+                  <div class="text-[10px] font-mono uppercase text-gray-400">Verified Earth Observation Feeds:</div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="text-[9px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">NASA POWER</span>
+                    <span class="text-[9px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">NASA SMAP L4</span>
+                    <span class="text-[9px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">NASA GPM IMERG</span>
+                    <span class="text-[9px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-gray-300 font-mono">Copernicus Sentinel-2</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Speaker Notes Drawer (Collapsible) -->
+          <div id="notes-{idx}" class="speaker-notes hidden mb-3 p-3.5 bg-amber-950/70 border border-amber-500/40 rounded-2xl text-xs text-amber-200 shadow-xl">
+            <div class="flex items-center space-x-2 font-bold uppercase tracking-wider text-[10px] text-amber-400 mb-1">
+              <i class="fa-solid fa-microphone"></i>
+              <span>Pitch Introduction & Opening Script</span>
+            </div>
+            <p class="leading-relaxed">{s['notes']}</p>
+          </div>
+
+          <!-- Slide Footer -->
+          <div class="flex justify-between items-center text-[11px] text-gray-400 border-t border-white/10 pt-3 font-mono">
+            <div class="flex items-center space-x-3">
+              <span>{s['student_name']} • Reg No: <strong>{s['reg_no']}</strong></span>
+              <span>•</span>
+              <span class="text-emerald-400">NASA Space Apps 2026</span>
+            </div>
+            <div>
+              <span>Press <strong>Space</strong> or <strong>→</strong> to begin module walkthrough</span>
+            </div>
+          </div>
+
+        </div>
+        """)
+    else:
+        # RENDER MODULE SCREENSHOT SLIDE
+        points_html = "".join([f'<li class="flex items-start space-x-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed"><i class="fa-solid fa-circle-check text-emerald-400 text-xs mt-1 shrink-0"></i><span>{p}</span></li>' for p in s["points"]])
         
-        <!-- Left Column: Narrative & Technical Proofs (7 Cols) -->
-        <div class="lg:col-span-6 xl:col-span-7 space-y-5">
-          <div>
-            <span class="text-[11px] font-bold tracking-widest text-emerald-400 uppercase">{s['tag']}</span>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mt-1">{s['title']}</h2>
-            <p class="text-xs sm:text-sm text-gray-400 mt-1.5 leading-relaxed">{s['subtitle']}</p>
+        metrics_html = "".join([f'''
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+            <div class="text-[10px] text-gray-400 uppercase font-semibold">{m['label']}</div>
+            <div class="text-sm sm:text-base font-extrabold text-white font-mono mt-0.5">{m['val']}</div>
           </div>
+        ''' for m in s["metrics"]])
 
-          <div class="glass-card p-5 sm:p-6 space-y-3 shadow-xl">
-            <ul class="space-y-3">
-              {points_html}
-            </ul>
-          </div>
-
-          <!-- Micro Metric Highlights -->
-          <div class="grid grid-cols-3 gap-3">
-            {metrics_html}
-          </div>
-        </div>
-
-        <!-- Right Column: High-Res Embedded Screenshot (5 Cols) -->
-        <div class="lg:col-span-6 xl:col-span-5 flex flex-col items-center justify-center">
-          <div class="w-full rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black/80 p-2 relative group">
-            <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-white/5 rounded-t-xl border-b border-white/10 text-[10px] text-gray-400 font-mono">
-              <span class="w-2 h-2 rounded-full bg-rose-500/80"></span>
-              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
-              <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
-              <span class="ml-2 text-gray-400 truncate">agroverse-ai.vercel.app</span>
+        html_parts.append(f"""
+        <!-- SLIDE {s['num']} -->
+        <div class="slide {active_class} flex-col justify-between p-6 sm:p-10 lg:p-12 relative overflow-hidden" id="slide-{idx}">
+          
+          <!-- Top Brand Header -->
+          <div class="flex justify-between items-center border-b border-white/10 pb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-black flex items-center justify-center font-black text-base shadow-lg shadow-emerald-500/20">
+                <i class="fa-solid fa-leaf"></i>
+              </div>
+              <div>
+                <div class="text-sm font-extrabold tracking-tight text-white flex items-center space-x-2">
+                  <span>AGROVERSE AI</span>
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">NASA HACKATHON 2026</span>
+                </div>
+                <div class="text-[10px] text-gray-400">Swayam Gulhane • Reg: <strong class="text-gray-300">NSA 04 1423</strong></div>
+              </div>
             </div>
-            <img src="data:image/png;base64,{s['image']}" alt="{s['title']} Screenshot" class="w-full h-auto object-cover rounded-b-xl border border-white/10 shadow-inner group-hover:scale-[1.01] transition duration-300">
+
+            <div class="flex items-center space-x-3">
+              <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/80 px-3 py-1 rounded-full">{s['badge']}</span>
+              <span class="font-mono text-xs text-gray-400 font-bold">SLIDE {s['num']} / {total_slides:02d}</span>
+            </div>
           </div>
-          <div class="text-[11px] text-gray-400 mt-2 text-center flex items-center space-x-2 font-mono">
-            <i class="fa-solid fa-camera text-emerald-400"></i>
-            <span>Live System Screenshot (Captured 15 Nov 2026)</span>
+
+          <!-- Main Slide 2-Column Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto py-4 items-center">
+            
+            <!-- Left Column: Narrative & Technical Proofs (7 Cols) -->
+            <div class="lg:col-span-6 xl:col-span-7 space-y-5">
+              <div>
+                <span class="text-[11px] font-bold tracking-widest text-emerald-400 uppercase font-mono">{s['tag']}</span>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mt-1">{s['title']}</h2>
+                <p class="text-xs sm:text-sm text-gray-400 mt-1.5 leading-relaxed">{s['subtitle']}</p>
+              </div>
+
+              <div class="glass-card p-5 sm:p-6 space-y-3 shadow-xl">
+                <ul class="space-y-3">
+                  {points_html}
+                </ul>
+              </div>
+
+              <!-- Micro Metric Highlights -->
+              <div class="grid grid-cols-3 gap-3">
+                {metrics_html}
+              </div>
+            </div>
+
+            <!-- Right Column: High-Res Embedded Screenshot (5 Cols) -->
+            <div class="lg:col-span-6 xl:col-span-5 flex flex-col items-center justify-center">
+              <div class="w-full rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black/80 p-2 relative group">
+                <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-white/5 rounded-t-xl border-b border-white/10 text-[10px] text-gray-400 font-mono">
+                  <span class="w-2 h-2 rounded-full bg-rose-500/80"></span>
+                  <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+                  <span class="ml-2 text-gray-400 truncate">agroverse-ai.vercel.app</span>
+                </div>
+                <img src="data:image/png;base64,{s['image']}" alt="{s['title']} Screenshot" class="w-full h-auto object-cover rounded-b-xl border border-white/10 shadow-inner group-hover:scale-[1.01] transition duration-300">
+              </div>
+              <div class="text-[11px] text-gray-400 mt-2 text-center flex items-center space-x-2 font-mono">
+                <i class="fa-solid fa-camera text-emerald-400"></i>
+                <span>Live System Screenshot (Captured 15 Nov 2026)</span>
+              </div>
+            </div>
+
           </div>
-        </div>
 
-      </div>
+          <!-- Speaker Notes Drawer (Collapsible) -->
+          <div id="notes-{idx}" class="speaker-notes hidden mb-3 p-3.5 bg-amber-950/70 border border-amber-500/40 rounded-2xl text-xs text-amber-200 shadow-xl">
+            <div class="flex items-center space-x-2 font-bold uppercase tracking-wider text-[10px] text-amber-400 mb-1">
+              <i class="fa-solid fa-microphone"></i>
+              <span>Pitch & Presentation Talking Points</span>
+            </div>
+            <p class="leading-relaxed">{s['notes']}</p>
+          </div>
 
-      <!-- Speaker Notes Drawer (Collapsible) -->
-      <div id="notes-{idx}" class="speaker-notes hidden mb-3 p-3.5 bg-amber-950/70 border border-amber-500/40 rounded-2xl text-xs text-amber-200 shadow-xl">
-        <div class="flex items-center space-x-2 font-bold uppercase tracking-wider text-[10px] text-amber-400 mb-1">
-          <i class="fa-solid fa-microphone"></i>
-          <span>Pitch & Presentation Talking Points</span>
-        </div>
-        <p class="leading-relaxed">{s['notes']}</p>
-      </div>
+          <!-- Slide Footer -->
+          <div class="flex justify-between items-center text-[11px] text-gray-400 border-t border-white/10 pt-3 font-mono">
+            <div class="flex items-center space-x-3">
+              <span>Swayam Gulhane (NSA 04 1423) • NASA Hackathon 2026</span>
+              <span>•</span>
+              <span class="text-emerald-400">agroverse-ai-iota.vercel.app</span>
+            </div>
+            <div>
+              <span>Press <strong>Space</strong> or <strong>→</strong> for next slide</span>
+            </div>
+          </div>
 
-      <!-- Slide Footer -->
-      <div class="flex justify-between items-center text-[11px] text-gray-400 border-t border-white/10 pt-3 font-mono">
-        <div class="flex items-center space-x-3">
-          <span>NASA Hackathon 2026 • Agroverse AI</span>
-          <span>•</span>
-          <span class="text-emerald-400">Live: agroverse-ai-iota.vercel.app</span>
         </div>
-        <div>
-          <span>Press <strong>Space</strong> or <strong>→</strong> for next slide</span>
-        </div>
-      </div>
-
-    </div>
-""")
+        """)
 
 html_parts.append("""
   </div>
@@ -366,7 +567,7 @@ html_parts.append("""
   <div class="no-print fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl">
 """)
 
-for idx in range(len(slides_data)):
+for idx in range(total_slides):
     dot_cls = "w-6 h-2.5 rounded-full bg-emerald-400 transition-all" if idx == 0 else "w-2.5 h-2.5 rounded-full bg-white/30 transition-all hover:bg-white/60"
     html_parts.append(f'<button onclick="goToSlide({idx})" id="dot-{idx}" class="{dot_cls}"></button>\n')
 
@@ -375,7 +576,7 @@ html_parts.append("""
 
   <script>
     let currentSlide = 0;
-    const totalSlides = 8;
+    const totalSlides = """ + str(total_slides) + """;
     let notesVisible = false;
 
     function updateSlide() {
@@ -396,7 +597,7 @@ html_parts.append("""
       });
 
       const counter = document.getElementById('slideCounter');
-      if (counter) counter.innerText = `0${currentSlide + 1} / 0${totalSlides}`;
+      if (counter) counter.innerText = `${(currentSlide + 1).toString().padStart(2, '0')} / ${totalSlides.toString().padStart(2, '0')}`;
     }
 
     function nextSlide() {
@@ -473,5 +674,6 @@ with open(os.path.join(repo_dir, "public", "presentation.html"), "w", encoding="
 with open(os.path.join(brain_dir, "agroverse_presentation.html"), "w", encoding="utf-8") as f:
     f.write(full_html)
 
-print("SUCCESS: presentation.html generated successfully!")
+print("SUCCESS: presentation.html with Front Page generated successfully!")
+print("Total Slides:", total_slides)
 print("HTML Size:", f"{len(full_html) / 1024:.1f} KB")
