@@ -87,60 +87,143 @@
   <!-- ========================================== -->
   <!-- 1. LOGIN & PROFILE MODAL                   -->
   <!-- ========================================== -->
-  <div id="screenGate" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm hidden">
-    <div class="clean-card w-full max-w-md p-7 sm:p-8 space-y-5 text-center shadow-2xl relative">
-      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 text-lg p-2">
+  <!-- ========================================== -->
+  <!-- 1. LOGIN & PROFILE MODAL (ACTIVE ON START) -->
+  <!-- ========================================== -->
+  <div id="screenGate" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div class="clean-card w-full max-w-md p-6 sm:p-8 space-y-5 text-center shadow-2xl relative border-2 border-emerald-500/20 bg-white">
+      <button onclick="closeLoginModal()" title="Skip / Browse Dashboard" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 text-lg p-2 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto text-2xl shadow-lg">
-        <i class="fa-solid fa-leaf text-emerald-400"></i>
-      </div>
 
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Agroverse</h1>
-        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider mt-1">NASA Precision Climate Agriculture</p>
-        <p class="text-xs text-gray-400 mt-1">Vidarbha Rabi Window • Nagpur, Maharashtra</p>
-      </div>
-
-      <!-- Sign In vs Profile Toggle -->
-      <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-2xl text-xs font-bold">
-        <button type="button" onclick="setAuthTab('login')" id="tabBtnLogin" class="py-2.5 rounded-xl bg-black text-white transition">
-          Sign In
-        </button>
-        <button type="button" onclick="setAuthTab('signup')" id="tabBtnSignup" class="py-2.5 rounded-xl text-gray-500 hover:text-gray-900 transition">
-          Farmer Profile
-        </button>
-      </div>
-
-      <div class="space-y-3 text-left text-xs">
-        <div>
-          <label class="text-gray-500 block mb-1 font-semibold">Farmer Full Name</label>
-          <input type="text" id="regName" placeholder="e.g. Swayam Gulhane" value="Swayam Gulhane" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 outline-none font-medium">
+      <!-- App Branding Logo -->
+      <div class="space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto text-2xl shadow-xl border border-gray-800">
+          <i class="fa-solid fa-seedling text-emerald-400"></i>
         </div>
         <div>
-          <label class="text-gray-500 block mb-1 font-semibold">Taluka / Village</label>
-          <input type="text" id="regLocation" placeholder="e.g. Hingna, Nagpur" value="Hingna (Nagpur)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 outline-none font-medium">
+          <div class="inline-flex items-center space-x-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>NASA Field Shift 2026</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">AGROVERSE AI</h1>
+          <p class="text-xs text-gray-500 font-medium">Precision Climate Decision Support & Farm Twin</p>
+        </div>
+      </div>
+
+      <!-- Auth Mode Switcher Tabs -->
+      <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-2xl text-xs font-bold">
+        <button type="button" onclick="setAuthTab('login')" id="tabBtnLogin" class="py-2.5 rounded-xl bg-black text-white transition shadow-sm flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-right-to-bracket text-xs"></i>
+          <span>Farmer Sign In</span>
+        </button>
+        <button type="button" onclick="setAuthTab('profile')" id="tabBtnProfile" class="py-2.5 rounded-xl text-gray-600 hover:text-gray-900 transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-id-card text-xs"></i>
+          <span>Farm Profile</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: QUICK SIGN IN -->
+      <div id="authTabLoginContent" class="space-y-3.5 text-left text-xs">
+        <div>
+          <label class="text-gray-600 block mb-1 font-bold">Registered Mobile Number / Kisan ID</label>
+          <div class="relative">
+            <span class="absolute left-3 top-3 text-gray-400 font-bold">+91</span>
+            <input type="tel" id="loginPhone" placeholder="Enter 10-digit mobile" value="9876543210" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-12 text-gray-900 outline-none font-bold text-sm focus:border-emerald-500 focus:bg-white transition">
+          </div>
+        </div>
+
+        <!-- Quick 1-Click Profile Match Card -->
+        <div onclick="quickSelectUser('Swayam Gulhane', 'Hingna, Nagpur', '5.0', 'Chickpea')" class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl cursor-pointer hover:bg-emerald-100/60 transition flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-full bg-emerald-600 text-white font-extrabold flex items-center justify-center text-xs shadow-sm">
+              SG
+            </div>
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <strong class="text-gray-900 font-bold text-xs" id="quickNameDisplay">Swayam Gulhane</strong>
+                <span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">NSA 04 1423</span>
+              </div>
+              <p class="text-[11px] text-gray-500" id="quickMetaDisplay">Hingna (Nagpur) • 5.0 Acres • Chickpea</p>
+            </div>
+          </div>
+          <span class="text-emerald-700 text-xs font-bold flex items-center">
+            <span>Login</span>
+            <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- TAB 2: PROFILE REGISTRATION / EDIT -->
+      <div id="authTabProfileContent" class="space-y-3 text-left text-xs hidden">
+        <div>
+          <label class="text-gray-600 block mb-1 font-bold">Farmer Full Name</label>
+          <input type="text" id="regName" placeholder="e.g. Swayam Gulhane" value="Swayam Gulhane" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-semibold focus:border-emerald-500 transition">
+        </div>
+        <div>
+          <label class="text-gray-600 block mb-1 font-bold">Mobile Number</label>
+          <input type="tel" id="regPhone" placeholder="Mobile Number" value="9876543210" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-semibold focus:border-emerald-500 transition">
+        </div>
+        <div>
+          <label class="text-gray-600 block mb-1 font-bold">Village / Taluka & District</label>
+          <input type="text" id="regLocation" placeholder="e.g. Hingna, Nagpur" value="Hingna (Nagpur)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-semibold focus:border-emerald-500 transition">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-gray-500 block mb-1 font-semibold">Total Land (Acres)</label>
-            <input type="number" id="regLand" value="5.0" step="0.5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 outline-none font-medium">
+            <label class="text-gray-600 block mb-1 font-bold">Land Size (Acres)</label>
+            <input type="number" id="regLand" value="5.0" step="0.5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-bold focus:border-emerald-500 transition">
           </div>
           <div>
-            <label class="text-gray-500 block mb-1 font-semibold">Primary Crop</label>
-            <select id="regCrop" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 outline-none font-medium">
+            <label class="text-gray-600 block mb-1 font-bold">Primary Crop</label>
+            <select id="regCrop" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-semibold focus:border-emerald-500 transition">
               <option value="Chickpea">Chickpea (Desi Chana)</option>
-              <option value="Wheat">Wheat (Lokwan)</option>
-              <option value="Cotton">Cotton (Kapas)</option>
+              <option value="Wheat">Wheat (Sharbati)</option>
+              <option value="Cotton">Bt Cotton (Kapas)</option>
               <option value="Soybean">Soybean (Yellow)</option>
+              <option value="Safflower">Safflower (Kardi)</option>
             </select>
           </div>
         </div>
+        <div>
+          <label class="text-gray-600 block mb-1 font-bold">Dominant Soil Type</label>
+          <select id="regSoil" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 outline-none font-semibold focus:border-emerald-500 transition">
+            <option value="black_cotton" selected>Deep Black Clay (Vertisol)</option>
+            <option value="medium_black">Medium Black Soil</option>
+            <option value="red_loam">Red Loam (Alfisol)</option>
+            <option value="sandy_loam">Sandy Loam</option>
+          </select>
+        </div>
       </div>
 
-      <button onclick="handleAuthSubmit()" class="w-full btn-black py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2">
-        <span id="authActionText">Save Profile & Continue →</span>
+      <!-- Permanent Persistence Toggle Indicator -->
+      <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 text-left text-xs flex items-center justify-between">
+        <label class="flex items-center space-x-2 cursor-pointer select-none">
+          <input type="checkbox" id="authPersistCheck" checked class="w-4 h-4 text-emerald-600 rounded accent-emerald-600">
+          <span class="text-gray-700 font-semibold text-[11px]">Save changes permanently on this device</span>
+        </label>
+        <span class="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded-full">Permanent</span>
+      </div>
+
+      <!-- Primary Action Submit Button -->
+      <button onclick="handleAuthSubmit()" class="w-full btn-black py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition">
+        <i class="fa-solid fa-lock-open text-emerald-400"></i>
+        <span id="authActionText">Enter Agroverse AI Hub →</span>
       </button>
+
+      <div class="flex items-center justify-center space-x-4 pt-1">
+        <button type="button" onclick="logoutFarmer()" class="text-[11px] text-gray-500 hover:text-rose-600 font-bold flex items-center space-x-1 transition">
+          <i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
+          <span>Log Out / Switch Farmer</span>
+        </button>
+        <span class="text-gray-300">•</span>
+        <button type="button" onclick="closeLoginModal()" class="text-[11px] text-gray-500 hover:text-gray-900 font-bold transition">
+          Browse Farm Hub
+        </button>
+      </div>
+
+      <p class="text-[10px] text-gray-400 text-center">
+        NASA Space Apps Challenge 2026 • Problem: Field Shift • NSA 04 1423
+      </p>
     </div>
   </div>
 
@@ -356,9 +439,10 @@
         </button>
 
         <!-- Farmer Profile Pill -->
-        <div onclick="openLoginModal()" class="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm text-xs font-semibold text-gray-700 hover:border-gray-400 transition">
-          <i class="fa-regular fa-user text-gray-500"></i>
+        <div onclick="openLoginModal()" title="View Farmer Profile / Switch Account" class="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm text-xs font-semibold text-gray-700 hover:border-emerald-500 hover:text-emerald-800 transition">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span id="userNameDisplay">Swayam G.</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
         </div>
       </div>
     </header>
@@ -3184,46 +3268,330 @@
   <!-- 5. JAVASCRIPT LOGIC, ENGINES & VOICE SPEECH SYNTHESIS                     -->
   <!-- ========================================================================= -->
   <script>
-    // Modal Helpers
+    // =========================================================================
+    // PERMANENT STORAGE & AUTHENTICATION GATEWAY (AGROVERSE PERSISTENCE)
+    // =========================================================================
+    function setAuthTab(tab) {
+      const loginContent = document.getElementById('authTabLoginContent');
+      const profileContent = document.getElementById('authTabProfileContent');
+      const btnLogin = document.getElementById('tabBtnLogin');
+      const btnProfile = document.getElementById('tabBtnProfile');
+      const actionText = document.getElementById('authActionText');
+
+      if (tab === 'login') {
+        if (loginContent) loginContent.classList.remove('hidden');
+        if (profileContent) profileContent.classList.add('hidden');
+        if (btnLogin) btnLogin.className = 'py-2.5 rounded-xl bg-black text-white transition shadow-sm flex items-center justify-center space-x-1.5';
+        if (btnProfile) btnProfile.className = 'py-2.5 rounded-xl text-gray-600 hover:text-gray-900 transition flex items-center justify-center space-x-1.5';
+        if (actionText) actionText.innerText = 'Enter Agroverse AI Hub →';
+      } else {
+        if (loginContent) loginContent.classList.add('hidden');
+        if (profileContent) profileContent.classList.remove('hidden');
+        if (btnLogin) btnLogin.className = 'py-2.5 rounded-xl text-gray-600 hover:text-gray-900 transition flex items-center justify-center space-x-1.5';
+        if (btnProfile) btnProfile.className = 'py-2.5 rounded-xl bg-black text-white transition shadow-sm flex items-center justify-center space-x-1.5';
+        if (actionText) actionText.innerText = 'Save Farm Profile & Launch →';
+      }
+    }
+
+    function quickSelectUser(name, loc, land, crop) {
+      if (document.getElementById('regName')) document.getElementById('regName').value = name;
+      if (document.getElementById('regLocation')) document.getElementById('regLocation').value = loc;
+      if (document.getElementById('regLand')) document.getElementById('regLand').value = land;
+      if (document.getElementById('regCrop')) document.getElementById('regCrop').value = crop;
+      handleAuthSubmit();
+    }
+
     function openLoginModal() {
-      document.getElementById('screenGate').classList.remove('hidden');
+      const gate = document.getElementById('screenGate');
+      if (gate) gate.classList.remove('hidden');
     }
+
     function closeLoginModal() {
-      document.getElementById('screenGate').classList.add('hidden');
+      const gate = document.getElementById('screenGate');
+      if (gate) gate.classList.add('hidden');
     }
+
+    function logoutFarmer() {
+      localStorage.removeItem('agro_session_active');
+      openLoginModal();
+      setAuthTab('login');
+      AgroversePersistence.showNotification('Logged out. Please sign in to resume farm tracking.');
+    }
+
     function toggleToolsModal() {
       const modal = document.getElementById('toolsModal');
-      modal.classList.toggle('hidden');
+      if (modal) modal.classList.toggle('hidden');
     }
 
     // Farmer Profile LocalStorage Management
     function initFarmerProfile() {
       const savedName = localStorage.getItem('agro_farmer_name') || 'Swayam Gulhane';
+      const savedPhone = localStorage.getItem('agro_farmer_phone') || '9876543210';
       const savedLoc = localStorage.getItem('agro_farmer_loc') || 'Hingna (Nagpur)';
       const savedLand = localStorage.getItem('agro_farmer_land') || '5.0';
       const savedCrop = localStorage.getItem('agro_farmer_crop') || 'Chickpea';
+      const savedSoil = localStorage.getItem('agro_farmer_soil') || 'black_cotton';
 
-      document.getElementById('userNameDisplay').innerText = savedName.split(' ')[0] + ' G.';
+      const userDisplay = document.getElementById('userNameDisplay');
+      if (userDisplay) {
+        userDisplay.innerText = savedName.split(' ')[0] + ' G.';
+      }
+
       if (document.getElementById('regName')) document.getElementById('regName').value = savedName;
+      if (document.getElementById('regPhone')) document.getElementById('regPhone').value = savedPhone;
+      if (document.getElementById('loginPhone')) document.getElementById('loginPhone').value = savedPhone;
       if (document.getElementById('regLocation')) document.getElementById('regLocation').value = savedLoc;
       if (document.getElementById('regLand')) document.getElementById('regLand').value = savedLand;
       if (document.getElementById('regCrop')) document.getElementById('regCrop').value = savedCrop;
+      if (document.getElementById('regSoil')) document.getElementById('regSoil').value = savedSoil;
+
+      const qName = document.getElementById('quickNameDisplay');
+      const qMeta = document.getElementById('quickMetaDisplay');
+      if (qName) qName.innerText = savedName;
+      if (qMeta) qMeta.innerText = `${savedLoc} • ${savedLand} Acres • ${savedCrop}`;
     }
 
     function handleAuthSubmit() {
       const name = document.getElementById('regName')?.value || 'Swayam Gulhane';
-      const loc = document.getElementById('regLocation')?.value || 'Hingna, Nagpur';
+      const phone = document.getElementById('regPhone')?.value || document.getElementById('loginPhone')?.value || '9876543210';
+      const loc = document.getElementById('regLocation')?.value || 'Hingna (Nagpur)';
       const land = document.getElementById('regLand')?.value || '5.0';
       const crop = document.getElementById('regCrop')?.value || 'Chickpea';
+      const soil = document.getElementById('regSoil')?.value || 'black_cotton';
 
       localStorage.setItem('agro_farmer_name', name);
+      localStorage.setItem('agro_farmer_phone', phone);
       localStorage.setItem('agro_farmer_loc', loc);
       localStorage.setItem('agro_farmer_land', land);
       localStorage.setItem('agro_farmer_crop', crop);
+      localStorage.setItem('agro_farmer_soil', soil);
+      localStorage.setItem('agro_session_active', 'true');
 
-      document.getElementById('userNameDisplay').innerText = name.split(' ')[0] + ' G.';
+      const userDisplay = document.getElementById('userNameDisplay');
+      if (userDisplay) {
+        userDisplay.innerText = name.split(' ')[0] + ' G.';
+      }
+
+      // Also sync to active form elements if applicable
+      const rotSize = document.getElementById('rotFarmSize');
+      if (rotSize && !rotSize.value) rotSize.value = (parseFloat(land) * 0.404686).toFixed(1);
+      const orgAcres = document.getElementById('orgAcres');
+      if (orgAcres) orgAcres.value = land;
+
+      // Save complete permanent snapshot
+      AgroversePersistence.saveAll();
       closeLoginModal();
+      AgroversePersistence.showNotification(`✓ Welcome ${name}! Session & farm data permanently saved.`);
     }
+
+    // =========================================================================
+    // UNIVERSAL PERMANENT PERSISTENCE ENGINE (AUTO-SAVES ALL FORM CHANGES)
+    // =========================================================================
+    const AgroversePersistence = {
+      KEY: 'agroverse_permanent_state_v2',
+
+      saveAll() {
+        try {
+          const state = {
+            farmer: {
+              name: document.getElementById('regName')?.value || 'Swayam Gulhane',
+              phone: document.getElementById('regPhone')?.value || '9876543210',
+              location: document.getElementById('regLocation')?.value || 'Hingna (Nagpur)',
+              land: document.getElementById('regLand')?.value || '5.0',
+              crop: document.getElementById('regCrop')?.value || 'Chickpea',
+              soil: document.getElementById('regSoil')?.value || 'black_cotton'
+            },
+            rotation: {
+              currentCrop: document.getElementById('rotCurrentCrop')?.value || 'soybean',
+              prevCrop: document.getElementById('rotPrevCrop')?.value || 'cotton',
+              soilType: document.getElementById('rotSoilType')?.value || 'black_cotton',
+              soilPh: document.getElementById('rotSoilPh')?.value || '7.6',
+              waterAvail: document.getElementById('rotWaterAvail')?.value || 'limited_irrigation',
+              location: document.getElementById('rotLocation')?.value || 'nagpur_rural',
+              season: document.getElementById('rotSeason')?.value || 'rabi_2026_27',
+              farmSize: document.getElementById('rotFarmSize')?.value || '2.0',
+              prefCrops: document.getElementById('rotPrefCrops')?.value || 'chickpea_safflower',
+              priorities: Array.from(typeof activeRotationPriorities !== 'undefined' ? activeRotationPriorities : [])
+            },
+            organicFert: {
+              crop: document.getElementById('orgCrop')?.value || 'chickpea',
+              acres: document.getElementById('orgAcres')?.value || '2.5',
+              soil: document.getElementById('orgSoil')?.value || 'black_cotton',
+              ph: document.getElementById('orgPh')?.value || '7.6',
+              soc: document.getElementById('orgSoc')?.value || '0.45'
+            },
+            chemFert: {
+              crop: document.getElementById('f_crop')?.value || 'cotton',
+              acres: document.getElementById('f_acres')?.value || '5.0',
+              nSoil: document.getElementById('f_n_soil')?.value || '180',
+              pSoil: document.getElementById('f_p_soil')?.value || '14',
+              kSoil: document.getElementById('f_k_soil')?.value || '320'
+            },
+            climateSim: {
+              rain: document.getElementById('c_slider_rain')?.value || '-20',
+              temp: document.getElementById('c_slider_temp')?.value || '2.0'
+            },
+            storeMath: {
+              price: document.getElementById('v_store_price')?.value || '4980',
+              m: document.getElementById('v_store_m')?.value || '3',
+              rent: document.getElementById('v_store_rent')?.value || '35',
+              shrink: document.getElementById('v_store_shrink')?.value || '1.5'
+            },
+            lang: typeof currentLang !== 'undefined' ? currentLang : 'en',
+            savedAt: new Date().toISOString()
+          };
+
+          localStorage.setItem(this.KEY, JSON.stringify(state));
+          this.showSaveIndicator();
+        } catch (e) {
+          console.warn('Permanent auto-save error:', e);
+        }
+      },
+
+      restoreAll() {
+        try {
+          const raw = localStorage.getItem(this.KEY);
+          if (!raw) return false;
+          const state = JSON.parse(raw);
+          if (!state) return false;
+
+          // Restore Profile
+          if (state.farmer) {
+            if (document.getElementById('regName') && state.farmer.name) document.getElementById('regName').value = state.farmer.name;
+            if (document.getElementById('regPhone') && state.farmer.phone) document.getElementById('regPhone').value = state.farmer.phone;
+            if (document.getElementById('loginPhone') && state.farmer.phone) document.getElementById('loginPhone').value = state.farmer.phone;
+            if (document.getElementById('regLocation') && state.farmer.location) document.getElementById('regLocation').value = state.farmer.location;
+            if (document.getElementById('regLand') && state.farmer.land) document.getElementById('regLand').value = state.farmer.land;
+            if (document.getElementById('regCrop') && state.farmer.crop) document.getElementById('regCrop').value = state.farmer.crop;
+            if (document.getElementById('regSoil') && state.farmer.soil) document.getElementById('regSoil').value = state.farmer.soil;
+            if (document.getElementById('userNameDisplay') && state.farmer.name) {
+              document.getElementById('userNameDisplay').innerText = state.farmer.name.split(' ')[0] + ' G.';
+            }
+          }
+
+          // Restore Rotation Inputs
+          if (state.rotation) {
+            if (document.getElementById('rotCurrentCrop') && state.rotation.currentCrop) document.getElementById('rotCurrentCrop').value = state.rotation.currentCrop;
+            if (document.getElementById('rotPrevCrop') && state.rotation.prevCrop) document.getElementById('rotPrevCrop').value = state.rotation.prevCrop;
+            if (document.getElementById('rotSoilType') && state.rotation.soilType) document.getElementById('rotSoilType').value = state.rotation.soilType;
+            if (document.getElementById('rotSoilPh') && state.rotation.soilPh) {
+              document.getElementById('rotSoilPh').value = state.rotation.soilPh;
+              const phVal = document.getElementById('rotPhVal');
+              if (phVal) phVal.innerText = state.rotation.soilPh;
+            }
+            if (document.getElementById('rotWaterAvail') && state.rotation.waterAvail) document.getElementById('rotWaterAvail').value = state.rotation.waterAvail;
+            if (document.getElementById('rotLocation') && state.rotation.location) document.getElementById('rotLocation').value = state.rotation.location;
+            if (document.getElementById('rotSeason') && state.rotation.season) document.getElementById('rotSeason').value = state.rotation.season;
+            if (document.getElementById('rotFarmSize') && state.rotation.farmSize) document.getElementById('rotFarmSize').value = state.rotation.farmSize;
+            if (document.getElementById('rotPrefCrops') && state.rotation.prefCrops) document.getElementById('rotPrefCrops').value = state.rotation.prefCrops;
+            if (Array.isArray(state.rotation.priorities) && state.rotation.priorities.length > 0 && typeof activeRotationPriorities !== 'undefined') {
+              activeRotationPriorities = new Set(state.rotation.priorities);
+              if (typeof updatePriorityPillStyles === 'function') updatePriorityPillStyles();
+            }
+          }
+
+          // Restore Organic Fertilizer
+          if (state.organicFert) {
+            if (document.getElementById('orgCrop') && state.organicFert.crop) document.getElementById('orgCrop').value = state.organicFert.crop;
+            if (document.getElementById('orgAcres') && state.organicFert.acres) document.getElementById('orgAcres').value = state.organicFert.acres;
+            if (document.getElementById('orgSoil') && state.organicFert.soil) document.getElementById('orgSoil').value = state.organicFert.soil;
+            if (document.getElementById('orgPh') && state.organicFert.ph) {
+              document.getElementById('orgPh').value = state.organicFert.ph;
+              const phEl = document.getElementById('orgPhVal');
+              if (phEl) phEl.innerText = state.organicFert.ph;
+            }
+            if (document.getElementById('orgSoc') && state.organicFert.soc) {
+              document.getElementById('orgSoc').value = state.organicFert.soc;
+              const socEl = document.getElementById('orgSocVal');
+              if (socEl) socEl.innerText = state.organicFert.soc + '%';
+            }
+          }
+
+          // Restore Chemical Fertilizer
+          if (state.chemFert) {
+            if (document.getElementById('f_crop') && state.chemFert.crop) document.getElementById('f_crop').value = state.chemFert.crop;
+            if (document.getElementById('f_acres') && state.chemFert.acres) document.getElementById('f_acres').value = state.chemFert.acres;
+            if (document.getElementById('f_n_soil') && state.chemFert.nSoil) document.getElementById('f_n_soil').value = state.chemFert.nSoil;
+            if (document.getElementById('f_p_soil') && state.chemFert.pSoil) document.getElementById('f_p_soil').value = state.chemFert.pSoil;
+            if (document.getElementById('f_k_soil') && state.chemFert.kSoil) document.getElementById('f_k_soil').value = state.chemFert.kSoil;
+          }
+
+          // Restore Climate Simulator
+          if (state.climateSim) {
+            if (document.getElementById('c_slider_rain') && state.climateSim.rain) document.getElementById('c_slider_rain').value = state.climateSim.rain;
+            if (document.getElementById('c_slider_temp') && state.climateSim.temp) document.getElementById('c_slider_temp').value = state.climateSim.temp;
+          }
+
+          // Restore Store vs Sell
+          if (state.storeMath) {
+            if (document.getElementById('v_store_price') && state.storeMath.price) document.getElementById('v_store_price').value = state.storeMath.price;
+            if (document.getElementById('v_store_m') && state.storeMath.m) document.getElementById('v_store_m').value = state.storeMath.m;
+            if (document.getElementById('v_store_rent') && state.storeMath.rent) document.getElementById('v_store_rent').value = state.storeMath.rent;
+            if (document.getElementById('v_store_shrink') && state.storeMath.shrink) document.getElementById('v_store_shrink').value = state.storeMath.shrink;
+          }
+
+          return true;
+        } catch (e) {
+          console.warn('Permanent restore error:', e);
+          return false;
+        }
+      },
+
+      showSaveIndicator() {
+        let indicator = document.getElementById('agroPermanentSavePill');
+        if (!indicator) {
+          indicator = document.createElement('div');
+          indicator.id = 'agroPermanentSavePill';
+          indicator.className = 'fixed bottom-20 right-4 z-[90] bg-black/85 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-emerald-500/40 flex items-center space-x-1.5 transition-all opacity-0 pointer-events-none';
+          indicator.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i><span>Saved permanently to device</span>';
+          document.body.appendChild(indicator);
+        }
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => {
+          indicator.classList.remove('opacity-100');
+          indicator.classList.add('opacity-0');
+        }, 1600);
+      },
+
+      showNotification(msg) {
+        let toast = document.getElementById('agroNotificationToast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'agroNotificationToast';
+          toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[110] bg-gray-900 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-2xl border border-emerald-500/50 flex items-center space-x-2 transition-all opacity-0 pointer-events-none';
+          document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fa-solid fa-shield-check text-emerald-400"></i><span>${msg}</span>`;
+        toast.classList.remove('opacity-0', '-translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(this._notifTimer);
+        this._notifTimer = setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', '-translate-y-4');
+        }, 3200);
+      },
+
+      attachAutoSaveListeners() {
+        const selectors = [
+          '#regName', '#regPhone', '#regLocation', '#regLand', '#regCrop', '#regSoil',
+          '#rotCurrentCrop', '#rotPrevCrop', '#rotSoilType', '#rotSoilPh', '#rotWaterAvail',
+          '#rotLocation', '#rotSeason', '#rotFarmSize', '#rotPrefCrops',
+          '#orgCrop', '#orgAcres', '#orgSoil', '#orgPh', '#orgSoc',
+          '#f_crop', '#f_acres', '#f_n_soil', '#f_p_soil', '#f_k_soil',
+          '#c_slider_rain', '#c_slider_temp',
+          '#v_store_price', '#v_store_m', '#v_store_rent', '#v_store_shrink'
+        ];
+
+        selectors.forEach(sel => {
+          document.querySelectorAll(sel).forEach(el => {
+            el.addEventListener('input', () => this.saveAll());
+            el.addEventListener('change', () => this.saveAll());
+          });
+        });
+      }
+    };
 
     // Multilingual Translations Dictionary (EN, HI, MR)
     let currentLang = 'en';
@@ -6459,7 +6827,15 @@
 
     // Run on startup
     window.addEventListener('DOMContentLoaded', () => {
+      // 1. Restore all permanently saved user inputs & settings
+      AgroversePersistence.restoreAll();
       initFarmerProfile();
+      AgroversePersistence.attachAutoSaveListeners();
+
+      // 2. Open login & profile gateway immediately upon app launch
+      openLoginModal();
+
+      // 3. Initialize background engines with restored values
       fetchLiveWeatherData();
       calcFertilizer();
       evaluateSpraying();
@@ -6472,7 +6848,6 @@
       loadNasaEarthObservationDashboard();
       loadOrganicFertilizerAdvisor();
       evaluateSmartRotationComparison();
-      initDiseaseScannerEvents();
 
       // Switch to URL requested view if provided (e.g. ?view=view-fertilizer)
       const urlParams = new URLSearchParams(window.location.search);
