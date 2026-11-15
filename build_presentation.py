@@ -22,7 +22,7 @@ slides_data = [
         "reg_no": "NSA 04 1423",
         "hackathon": "NASA Space Apps Challenge / NASA Earth Observation Hackathon 2026",
         "track": "Earth Observation for Precision Agriculture, Climate Resilience & Food Security",
-        "problem_statement": "Leveraging NASA Earth Observation Datasets (POWER, SMAP, GPM IMERG) and AI to Empower Farmers with Hyper-Local Agricultural Intelligence, Climate Risk Mitigation, and Economic Resilience",
+        "problem_statement": "Field Shift: Adapting Farms with NASA Data",
         "location": "Nagpur, Vidarbha, Maharashtra, India",
         "live_url": "https://agroverse-ai-iota.vercel.app/",
         "notes": "Good morning / afternoon esteemed judges! My name is Swayam Gulhane, Registration Number NSA 04 1423. Today, I am proud to present AGROVERSE AI for the NASA Space Apps Challenge 2026. Our mission is to bridge orbital satellite remote sensing with ground-level farmer decisions to solve agrarian distress in climate-vulnerable rainfed regions."
