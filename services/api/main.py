@@ -28,6 +28,9 @@ try:
     from .engines.msp import MSPEngine
     from .data_loader import get_crops, get_msp, get_schemes, get_msp_table
     from .disease_scan_api import router as disease_scan_router
+    from .nasa.nasa_dashboard import ComprehensiveNasaEarthObsEngine
+    from .engines.crop_rotation import CropRotationComparisonEngine
+    from .engines.organic_fertilizer import OrganicFertilizerAdvisorEngine
 except (ImportError, ValueError):
     from nasa.power import NasaPowerAdapter
     from nasa.earth_obs import NasaEarthObsAdapter
@@ -42,6 +45,9 @@ except (ImportError, ValueError):
     from engines.msp import MSPEngine
     from data_loader import get_crops, get_msp, get_schemes, get_msp_table
     from disease_scan_api import router as disease_scan_router
+    from nasa.nasa_dashboard import ComprehensiveNasaEarthObsEngine
+    from engines.crop_rotation import CropRotationComparisonEngine
+    from engines.organic_fertilizer import OrganicFertilizerAdvisorEngine
 
 
 class PriceAlertRequest(BaseModel):
@@ -50,6 +56,29 @@ class PriceAlertRequest(BaseModel):
     condition: str = "gte"
     market: str = "kalamna"
     user_id: str = "farmer_1"
+
+
+class RotationCompareRequest(BaseModel):
+    current_crop: str = "soybean"
+    previous_crop: str = "cotton"
+    soil_type: str = "black_cotton"
+    soil_ph: float = 7.6
+    available_water: str = "limited_1_irrigation"
+    farm_size_ha: float = 2.0
+    farming_season: str = "rabi"
+    farmer_priorities: List[str] = ["income", "soil_health", "water_saving"]
+    preferred_crops: Optional[List[str]] = None
+    lat: Optional[float] = 21.1458
+    lon: Optional[float] = 79.0882
+
+
+class OrganicFertilizerRequest(BaseModel):
+    crop: str = "chickpea"
+    soil_type: str = "black_cotton"
+    soil_ph: float = 7.6
+    field_size_acres: float = 2.5
+    organic_carbon_pct: float = 0.45
+    current_water_status: str = "adequate"
 
 
 
@@ -303,6 +332,98 @@ def match_schemes(land_ha: float = 1.5, state: str = "Maharashtra", has_water_so
     return SchemeEngine.match_schemes(profile)
 
 # --- Advanced Agricultural Intelligence & NASA Earth Observation ---
+
+@app.get("/v1/nasa/dashboard")
+def get_nasa_earth_observation_dashboard(
+    lat: float = Query(21.1458, description="Latitude coordinate"),
+    lon: float = Query(79.0882, description="Longitude coordinate"),
+    parcel_id: Optional[str] = Query("gat_142_a", description="Farm parcel identifier")
+):
+    """
+    NASA 2026 Challenge: Comprehensive 8-Mission Earth Observation Telemetry Dashboard.
+    Integrates SMAP, GPM IMERG, POWER, Landsat 8/9, MODIS, ECOSTRESS, GRACE-FO, and SRTM.
+    """
+    return ComprehensiveNasaEarthObsEngine.get_full_earth_observation_dashboard(
+        lat=lat,
+        lon=lon,
+        parcel_id=parcel_id
+    )
+
+@app.post("/v1/rotation/compare")
+def compare_crop_rotation_post(req: RotationCompareRequest):
+    """
+    NASA 2026 Challenge: Smart Crop Rotation Comparison & Explainable AI (XAI) Engine.
+    Evaluates 3 strategies (Existing, Soil Improvement, Water Conservation) based on farmer priorities.
+    """
+    return CropRotationComparisonEngine.evaluate_rotation_strategies(
+        current_crop=req.current_crop,
+        previous_crop=req.previous_crop,
+        soil_type=req.soil_type,
+        soil_ph=req.soil_ph,
+        available_water=req.available_water,
+        farming_season=req.farming_season,
+        farm_size_ha=req.farm_size_ha,
+        preferred_crops=req.preferred_crops,
+        farmer_priorities=req.farmer_priorities,
+        farm_location={"district": "Nagpur", "state": "Maharashtra", "lat": req.lat, "lon": req.lon}
+    )
+
+@app.get("/v1/rotation/compare")
+def compare_crop_rotation_get(
+    current_crop: str = Query("soybean", description="Current or harvested crop"),
+    previous_crop: str = Query("cotton", description="Previous crop in rotation"),
+    soil_type: str = Query("black_cotton", description="Soil classification"),
+    soil_ph: float = Query(7.6, description="Soil pH"),
+    available_water: str = Query("limited_1_irrigation", description="Water availability"),
+    farm_size_ha: float = Query(2.0, description="Farm size in hectares"),
+    priorities: Optional[str] = Query("income,soil_health,water_saving", description="Comma-separated farmer priorities"),
+    lat: float = Query(21.1458, description="Farm latitude"),
+    lon: float = Query(79.0882, description="Farm longitude")
+):
+    """GET endpoint for Crop Rotation Comparison & Explainable AI Engine."""
+    p_list = [p.strip() for p in priorities.split(",") if p.strip()] if priorities else ["income", "soil_health", "water_saving"]
+    return CropRotationComparisonEngine.evaluate_rotation_strategies(
+        current_crop=current_crop,
+        previous_crop=previous_crop,
+        soil_type=soil_type,
+        soil_ph=soil_ph,
+        available_water=available_water,
+        farm_size_ha=farm_size_ha,
+        farmer_priorities=p_list,
+        farm_location={"district": "Nagpur", "state": "Maharashtra", "lat": lat, "lon": lon}
+    )
+
+@app.post("/v1/fertilizer/organic")
+def get_organic_fertilizer_post(req: OrganicFertilizerRequest):
+    """
+    Organic Fertilizer Advisor & Conventional Nutrient Comparison Engine.
+    Provides Vermicompost, FYM, Compost, Green Manure, Residue Management, and Biofertilizers.
+    """
+    return OrganicFertilizerAdvisorEngine.generate_organic_recommendation(
+        crop_id=req.crop,
+        soil_type=req.soil_type,
+        soil_ph=req.soil_ph,
+        field_size_acres=req.field_size_acres,
+        organic_carbon_pct=req.organic_carbon_pct,
+        current_water_status=req.current_water_status
+    )
+
+@app.get("/v1/fertilizer/organic")
+def get_organic_fertilizer_get(
+    crop: str = Query("chickpea", description="Crop identifier"),
+    soil_type: str = Query("black_cotton", description="Soil type"),
+    soil_ph: float = Query(7.6, description="Soil pH"),
+    acres: float = Query(2.5, description="Field size in acres"),
+    oc_pct: float = Query(0.45, description="Organic carbon percentage")
+):
+    """GET endpoint for Organic Fertilizer Advisor & Comparison Engine."""
+    return OrganicFertilizerAdvisorEngine.generate_organic_recommendation(
+        crop_id=crop,
+        soil_type=soil_type,
+        soil_ph=soil_ph,
+        field_size_acres=acres,
+        organic_carbon_pct=oc_pct
+    )
 
 @app.get("/v1/nasa/smap-imerg")
 def get_smap_imerg_data():
