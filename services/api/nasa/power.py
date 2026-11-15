@@ -38,13 +38,20 @@ class NasaPowerAdapter:
                 data = resp.json()
                 props = data.get("properties", {}).get("parameter", {})
                 
-                # Extract most recent valid temperature and rain
+                # Extract most recent valid temperature and rain (ignoring NASA -999.0 fill values)
                 t2m_series = props.get("T2M", {})
                 rain_series = props.get("PRECTOTCORR", {})
                 
-                recent_date = list(t2m_series.keys())[-1] if t2m_series else end_str
-                recent_temp = t2m_series.get(recent_date, 28.4)
-                recent_rain_30d = sum([v for v in rain_series.values() if v > 0])
+                valid_dates = [d for d, val in t2m_series.items() if val is not None and val > -900]
+                if valid_dates:
+                    recent_date = valid_dates[-1]
+                    recent_temp = t2m_series[recent_date]
+                else:
+                    recent_date = end_str
+                    recent_temp = 28.4
+
+                recent_rain_30d = sum([v for v in rain_series.values() if v is not None and v > 0])
+
 
                 return Provenanced(
                     value={

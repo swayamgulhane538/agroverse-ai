@@ -68,5 +68,47 @@ class TestAgriEngines(unittest.TestCase):
         pond = next(s for s in matched.value if s["scheme_id"] == "mh_magel_tyala_shet_tale")
         self.assertEqual(pond["verdict"], "likely")
 
+    def test_fertilizer_engine(self):
+        from services.api.engines.fertilizer import SmartFertilizerEngine
+        rec = SmartFertilizerEngine.calculate_recommendation(crop_id="chickpea", field_size_acres=2.5)
+        self.assertEqual(rec.value["crop_id"], "chickpea")
+        self.assertGreater(rec.value["commercial_bag_recommendation"]["dap_50kg_bags"], 0)
+        self.assertIn("jeevamrut", rec.value["organic_alternatives"])
+        self.assertIn("title", rec.value["diy_preparation_guide"])
+
+    def test_spraying_advisory(self):
+        from services.api.engines.spraying import SmartSprayingEngine
+        # Calm conditions -> suitable
+        calm = SmartSprayingEngine.evaluate_spraying_conditions(wind_speed_kmh=8.0, rain_prob_next_24h_pct=5)
+        self.assertTrue(calm.value["is_suitable_now"])
+        # High wind -> hazard
+        windy = SmartSprayingEngine.evaluate_spraying_conditions(wind_speed_kmh=22.0)
+        self.assertFalse(windy.value["is_suitable_now"])
+        self.assertEqual(windy.value["risk_rating"], "HAZARDOUS")
+
+    def test_disease_engine(self):
+        from services.api.engines.disease import PlantDiseaseEngine
+        diag = PlantDiseaseEngine.diagnose_image(filename="chickpea_pod_borer.jpg", crop_hint="chickpea")
+        self.assertEqual(diag.value["crop_species"], "Chickpea (Chana)")
+        self.assertIn("Gram Pod Borer", diag.value["diagnosis"])
+        self.assertGreaterEqual(diag.value["confidence_score_pct"], 80.0)
+        self.assertIn("NSKE", diag.value["organic_biological_treatments"][0])
+
+    def test_optimizer_engine(self):
+        from services.api.engines.optimizer import FarmerIncomeOptimizerEngine
+        opt = FarmerIncomeOptimizerEngine.calculate_custom_income(land_area_ha=2.0, crop_id="chickpea")
+        self.assertEqual(opt.value["land_area_ha"], 2.0)
+        self.assertGreater(opt.value["financial_metrics"]["gross_revenue_inr"], 0)
+        self.assertGreater(opt.value["financial_metrics"]["net_profit_inr"], 0)
+        self.assertEqual(len(opt.value["comparative_ranking"]), 4)
+
+    def test_earth_obs_adapter(self):
+        from services.api.nasa.earth_obs import NasaEarthObsAdapter
+        eo = NasaEarthObsAdapter.get_soil_moisture_and_precipitation()
+        self.assertEqual(eo.value["smap_soil_moisture"]["sensor"], "NASA SMAP L4_SM Global Soil Moisture")
+        self.assertGreater(eo.value["smap_soil_moisture"]["rootzone_sm_0_100cm_m3_m3"], 0.20)
+        self.assertIn("past_30d_cumulative_mm", eo.value["gpm_precipitation"])
+
 if __name__ == "__main__":
     unittest.main()
+

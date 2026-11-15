@@ -14,18 +14,29 @@ if str(_current_dir) not in sys.path:
 
 try:
     from .nasa.power import NasaPowerAdapter
+    from .nasa.earth_obs import NasaEarthObsAdapter
     from .market.agmarknet import AgmarknetAdapter
     from .engines.calculators import AgriCalculators
     from .engines.crop_calendar import SmartCalendarEngine
     from .engines.schemes import SchemeEngine
+    from .engines.fertilizer import SmartFertilizerEngine
+    from .engines.spraying import SmartSprayingEngine
+    from .engines.disease import PlantDiseaseEngine
+    from .engines.optimizer import FarmerIncomeOptimizerEngine
     from .data_loader import get_crops, get_msp, get_schemes
 except (ImportError, ValueError):
     from nasa.power import NasaPowerAdapter
+    from nasa.earth_obs import NasaEarthObsAdapter
     from market.agmarknet import AgmarknetAdapter
     from engines.calculators import AgriCalculators
     from engines.crop_calendar import SmartCalendarEngine
     from engines.schemes import SchemeEngine
+    from engines.fertilizer import SmartFertilizerEngine
+    from engines.spraying import SmartSprayingEngine
+    from engines.disease import PlantDiseaseEngine
+    from engines.optimizer import FarmerIncomeOptimizerEngine
     from data_loader import get_crops, get_msp, get_schemes
+
 
 
 # Read database URL from environment (external Postgres) - do not assume local DB or writable disk
@@ -156,16 +167,85 @@ def match_schemes(land_ha: float = 1.5, state: str = "Maharashtra", has_water_so
     }
     return SchemeEngine.match_schemes(profile)
 
-# --- Serverless-Safe ML Fallback ---
+# --- Advanced Agricultural Intelligence & NASA Earth Observation ---
+
+@app.get("/v1/nasa/smap-imerg")
+def get_smap_imerg_data():
+    """NASA SMAP L4 root-zone soil moisture and GPM IMERG multi-satellite precipitation."""
+    return NasaEarthObsAdapter.get_soil_moisture_and_precipitation()
+
+@app.get("/v1/fertilizer/recommend")
+def get_fertilizer_recommendation(
+    crop: str = Query("chickpea", description="Crop identifier (chickpea, wheat, cotton, soybean, tur)"),
+    soil_type: str = Query("black_cotton", description="Soil classification"),
+    soil_ph: float = Query(7.6, description="Soil pH value (4.5 to 9.0)"),
+    acres: float = Query(2.5, description="Field size in acres"),
+    n_status: str = Query("medium", description="Soil nitrogen status (low, medium, high)"),
+    p_status: str = Query("medium", description="Soil phosphorus status"),
+    k_status: str = Query("high", description="Soil potassium status")
+):
+    """Intelligent Fertilizer Recommendation Engine with balanced NPK, commercial bags, and organic recipes."""
+    return SmartFertilizerEngine.calculate_recommendation(
+        crop_id=crop,
+        soil_type=soil_type,
+        soil_ph=soil_ph,
+        field_size_acres=acres,
+        n_status=n_status,
+        p_status=p_status,
+        k_status=k_status
+    )
+
+@app.get("/v1/spray/advisory")
+def get_spraying_advisory(
+    crop: str = Query("chickpea", description="Target crop"),
+    pest: str = Query("pod_borer", description="Target pest (pod_borer, wilt, sucking_pests)"),
+    wind_kmh: float = Query(8.5, description="Current/forecasted wind speed in km/h"),
+    rain_prob: int = Query(5, description="24-hour rainfall probability percentage"),
+    temp_c: float = Query(28.5, description="Ambient temperature in °C"),
+    humidity: float = Query(55.0, description="Relative humidity percentage")
+):
+    """Weather-based Spraying Window Advisory with CIBRC IPM and chemical/organic guidelines."""
+    return SmartSprayingEngine.evaluate_spraying_conditions(
+        crop=crop,
+        target_pest_or_disease=pest,
+        wind_speed_kmh=wind_kmh,
+        rain_prob_next_24h_pct=rain_prob,
+        temp_c=temp_c,
+        humidity_pct=humidity
+    )
 
 @app.post("/v1/ml/disease-predict")
-def predict_disease():
-    """Serverless-safe endpoint: returns graceful fallback instead of failing to import heavy ML frameworks."""
-    return {
-        "status": "unavailable",
-        "mode": "rule_based_fallback",
-        "message": "Heavy ML inference model is unavailable in serverless function. Running lightweight edge-calibrated rules."
-    }
+def predict_disease(crop: str = "chickpea", filename: Optional[str] = None):
+    """AI Plant Disease Diagnostic Engine: leaf pathology classification, organic IPM remedies, and KVK referral."""
+    return PlantDiseaseEngine.diagnose_image(filename=filename, crop_hint=crop)
+
+@app.get("/v1/optimizer/compare")
+def compare_crop_economics(
+    land_ha: float = Query(2.0, description="Farm land area in hectares"),
+    crop: str = Query("chickpea", description="Selected primary crop"),
+    seed_cost: float = Query(10400.0, description="Seed expense in INR"),
+    fert_cost: float = Query(9600.0, description="Fertilizer expense in INR"),
+    pest_cost: float = Query(6400.0, description="Pesticide expense in INR"),
+    labor_cost: float = Query(19000.0, description="Labor and machinery expense in INR"),
+    irr_cost: float = Query(5000.0, description="Irrigation power expense in INR"),
+    trans_cost: float = Query(3600.0, description="Transport & APMC cess in INR"),
+    production_q: float = Query(37.0, description="Expected production in quintals"),
+    price_q: float = Query(5820.0, description="Expected selling price per quintal in INR")
+):
+    """Farmer Income Optimizer: cost breakdown, break-even selling price, and multi-crop economic ranking."""
+    return FarmerIncomeOptimizerEngine.calculate_custom_income(
+        land_area_ha=land_ha,
+        crop_id=crop,
+        seed_cost=seed_cost,
+        fertilizer_cost=fert_cost,
+        pesticide_cost=pest_cost,
+        labor_cost=labor_cost,
+        irrigation_cost=irr_cost,
+        transport_cost=trans_cost,
+        expected_production_q=production_q,
+        selling_price_q=price_q
+    )
+
 
 # --- Protected Ingest Job for Vercel Cron ---
 
