@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- NOTE: no user-scalable=no, so farmers can pinch-zoom -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGROVERSE AI - Disease Doctor</title>
+<style>
+  :root { --green:#14532d; --light:#dcfce7; --ink:#0f172a; --muted:#64748b; --card:#fff; --bg:#f4f7f5; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif; background:var(--bg); color:var(--ink); }
+  main { max-width: 760px; margin: 0 auto; padding: 16px; }
+  .card { background:var(--card); border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+  h1 { font-size:1.2rem; margin:0 0 4px; } h2 { font-size:1rem; margin:12px 0 6px; }
+  p.sub { margin:0 0 12px; color:var(--muted); font-size:.9rem; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+  button, select { font:inherit; padding:12px 14px; border-radius:12px; border:1px solid #cbd5e1; background:#fff; min-height:48px; }
+  button.primary { background:var(--green); color:#fff; border-color:var(--green); font-weight:600; }
+  button:disabled { opacity:.5; }
+  video, #preview { width:100%; max-height:60vh; background:#000; border-radius:12px; object-fit:contain; display:none; }
+  .msg { padding:10px 12px; border-radius:10px; font-size:.9rem; margin:8px 0; display:none; }
+  .msg.err { background:#fee2e2; color:#7f1d1d; } .msg.warn { background:#fef9c3; color:#713f12; } .msg.info { background:#e0f2fe; color:#0c4a6e; }
+  .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:.8rem; }
+  .likely { background:#dcfce7; color:#14532d; } .possible { background:#fef9c3; color:#713f12; }
+  .uncertain, .poor_image, .not_a_plant { background:#fee2e2; color:#7f1d1d; }
+  .issue { border:1px solid #e2e8f0; border-radius:12px; padding:10px; margin:8px 0; }
+  .tag { font-size:.75rem; color:var(--muted); }
+  ul { margin:6px 0 6px 20px; padding:0; } li { margin:3px 0; }
+  .spinner { display:none; margin:10px 0; color:var(--muted); }
+  small.foot { color:var(--muted); display:block; margin-top:10px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <h1>Disease Doctor</h1>
+    <p class="sub">Take or choose a clear photo of the affected leaf/plant. The AI tells you what it can see. It is a first check, not a lab test.</p>
+
+    <div class="row">
+      <label>Crop
+        <select id="crop">
+          <option value="chickpea">Chickpea (Chana)</option>
+          <option value="cotton">Cotton (Kapas)</option>
+          <option value="soybean">Soybean</option>
+          <option value="wheat">Wheat (Gehu)</option>
+          <option value="pigeonpea">Tur (Arhar)</option>
+          <option value="tomato">Tomato</option>
+          <option value="citrus">Orange / Citrus</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label>Language
+        <select id="lang"><option value="en">English</option><option value="hi">हिंदी</option><option value="mr">मराठी</option></select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="btnCamera" class="primary" type="button">Open Camera</button>
+      <button id="btnChoose" type="button">Choose Image</button>
+    </div>
+    <!-- file inputs: the 2nd one opens the phone camera directly (fallback when getUserMedia fails) -->
+    <input id="fileGallery" type="file" accept="image/*" hidden>
+    <input id="fileCapture" type="file" accept="image/*" capture="environment" hidden>
+
+    <video id="video" playsinline muted autoplay></video>
+    <div class="row" id="camControls" style="display:none">
+      <button id="btnSnap" class="primary" type="button">Capture</button>
+      <button id="btnCloseCam" type="button">Close camera</button>
+    </div>
+
+    <img id="preview" alt="Selected leaf photo">
+    <div class="row" id="previewControls" style="display:none">
+      <button id="btnAnalyse" class="primary" type="button">Analyse photo</button>
+      <button id="btnRetake" type="button">Retake / change</button>
+    </div>
+
+    <div id="msg" class="msg" role="alert"></div>
+    <div id="spinner" class="spinner">Analysing the photo... this can take 10-20 seconds.</div>
+  </div>
+
+  <div id="result" class="card" style="display:none" aria-live="polite"></div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  // ---- CONFIG -------------------------------------------------------------
+  const API_BASE = "";                 // same origin. If your API is elsewhere: "https://your-api.vercel.app"
+  const MAX_SIDE = 1280;               // resize long side to this many pixels
+  const JPEG_QUALITY = 0.8;
+  const MAX_BYTES = 3.5 * 1024 * 1024; // stay under Vercel's ~4.5 MB request limit
+  // -------------------------------------------------------------------------
+  const $ = (id) => document.getElementById(id);
+  const video = $("video"), preview = $("preview"), msg = $("msg"), spinner = $("spinner"), resultBox = $("result");
+  let stream = null, currentBlob = null, lastFollowUps = [];
+
+  function show(type, text) { msg.className = "msg " + type; msg.textContent = text; msg.style.display = text ? "block" : "none"; }
+  function stopCamera() {
+    if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+    video.srcObject = null; video.style.display = "none"; $("camControls").style.display = "none";
+  }
+
+  // ---- Camera ---------------------------------------------------------------
+  async function openCamera() {
+    show("", ""); resultBox.style.display = "none";
+    if (!window.isSecureContext) { show("err", "Camera needs a secure (https) page. Open the https link of the app, or use Choose Image."); return fallbackCapture(); }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { show("warn", "This browser cannot open the camera inside the page. Opening the phone camera instead."); return fallbackCapture(); }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+      video.srcObject = stream; await video.play();
+      video.style.display = "block"; $("camControls").style.display = "flex"; preview.style.display = "none"; $("previewControls").style.display = "none";
+    } catch (err) {
+      stopCamera();
+      const map = {
+        NotAllowedError: "Camera permission was blocked. Allow camera for this site in browser settings, then try again.",
+        PermissionDeniedError: "Camera permission was blocked. Allow camera for this site in browser settings, then try again.",
+        NotFoundError: "No camera found on this device. Use Choose Image.",
+        NotReadableError: "The camera is being used by another app. Close it and try again.",
+        OverconstrainedError: "This camera does not support the requested settings. Trying the phone camera instead."
+      };
+      show("err", map[err && err.name] || "Could not start the camera (" + (err && err.name) + "). Use Choose Image.");
+      if (err && (err.name === "OverconstrainedError" || err.name === "NotReadableError" || err.name === "NotFoundError")) fallbackCapture();
+    }
+  }
+  function fallbackCapture() { $("fileCapture").click(); }
+
+  async function snap() {
+    if (!video.videoWidth) { show("warn", "Camera is still starting. Try again in a second."); return; }
+    const c = document.createElement("canvas"); c.width = video.videoWidth; c.height = video.videoHeight;
+    c.getContext("2d").drawImage(video, 0, 0);
+    stopCamera();
+    await setImageFromSource(c);
+  }
+
+  // ---- Image handling -----------------------------------------------------
+  async function toBitmap(fileOrCanvas) {
+    if (fileOrCanvas instanceof HTMLCanvasElement) return fileOrCanvas;
+    if (window.createImageBitmap) { try { return await createImageBitmap(fileOrCanvas); } catch (e) { /* fall through */ } }
+    return await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(fileOrCanvas); const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("decode")); };
+      img.src = url;
+    });
+  }
+  function srcSize(s) { return { w: s.videoWidth || s.naturalWidth || s.width, h: s.videoHeight || s.naturalHeight || s.height }; }
+  function drawScaled(source, maxSide) {
+    const { w, h } = srcSize(source); const k = Math.min(1, maxSide / Math.max(w, h));
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+    c.getContext("2d").drawImage(source, 0, 0, c.width, c.height); return c;
+  }
+  const toBlob = (canvas, q) => new Promise((res) => canvas.toBlob(res, "image/jpeg", q));
+
+  // Simple quality hints (tips only): blur (variance of Laplacian) and brightness.
+  function qualityHints(canvas) {
+    const small = drawScaled(canvas, 256); const ctx = small.getContext("2d");
+    const { width: w, height: h } = small; const d = ctx.getImageData(0, 0, w, h).data;
+    const g = new Float32Array(w * h); let sum = 0;
+    for (let i = 0; i < w * h; i++) { g[i] = 0.299 * d[i*4] + 0.587 * d[i*4+1] + 0.114 * d[i*4+2]; sum += g[i]; }
+    const mean = sum / (w * h); let n = 0, s = 0, s2 = 0;
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x; const lap = g[i-1] + g[i+1] + g[i-w] + g[i+w] - 4 * g[i]; s += lap; s2 += lap * lap; n++;
+    }
+    const variance = s2 / n - (s / n) * (s / n); const tips = [];
+    if (mean < 45) tips.push("The photo looks dark. Take it in daylight.");
+    if (variance < 20) tips.push("The photo looks blurry. Hold steady and focus on the affected leaf.");
+    return tips;
+  }
+
+  async function setImageFromSource(source) {
+    try {
+      const bmp = await toBitmap(source);
+      let canvas = drawScaled(bmp, MAX_SIDE), q = JPEG_QUALITY, blob = await toBlob(canvas, q);
+      while (blob && blob.size > MAX_BYTES && q > 0.4) { q -= 0.1; blob = await toBlob(canvas, q); }
+      if (!blob || blob.size > MAX_BYTES) { show("err", "Photo is too large. Please choose a smaller photo."); return; }
+      currentBlob = blob;
+      if (preview.dataset.url) URL.revokeObjectURL(preview.dataset.url);
+      const url = URL.createObjectURL(blob); preview.dataset.url = url; preview.src = url;
+      preview.style.display = "block"; $("previewControls").style.display = "flex";
+      const tips = qualityHints(canvas);
+      show(tips.length ? "warn" : "", tips.join(" "));
+    } catch (e) {
+      show("err", "Could not read this image. Please choose a JPEG or PNG photo.");
+    }
+  }
+
+  // ---- Upload + result ------------------------------------------------------
+  async function analyse(answers) {
+    if (!currentBlob) { show("warn", "Please take or choose a photo first."); return; }
+    show("", ""); spinner.style.display = "block"; $("btnAnalyse").disabled = true; resultBox.style.display = "none";
+    const fd = new FormData();
+    fd.append("image", currentBlob, "leaf.jpg"); fd.append("crop", $("crop").value); fd.append("language", $("lang").value);
+    if (answers) fd.append("answers", answers);
+    try {
+      const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 75000);
+      const r = await fetch(API_BASE + "/v1/disease/scan", { method: "POST", body: fd, signal: ctrl.signal });
+      clearTimeout(t);
+      let data = null; try { data = await r.json(); } catch (e) { /* not JSON */ }
+      if (!r.ok) { show("err", (data && data.error && data.error.message) || ("Server error " + r.status + ". Please try again.")); return; }
+      renderResult(data);
+    } catch (e) {
+      show("err", e && e.name === "AbortError" ? "It took too long. Check your internet and try again." : "Could not reach the server. Check your internet and try again.");
+    } finally { spinner.style.display = "none"; $("btnAnalyse").disabled = false; }
+  }
+
+  function el(tag, text, cls) { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
+  function list(items) { const ul = document.createElement("ul"); items.forEach((t) => ul.appendChild(el("li", t))); return ul; }
+  const LABEL = { likely: "Likely", possible: "Possible - please verify", uncertain: "Uncertain - cannot say", not_a_plant: "No plant found", poor_image: "Photo not clear enough" };
+  const KIND = { disease: "Disease", insect_pest: "Insect pest", nutrient: "Nutrient problem", abiotic: "Weather / water stress", healthy: "Healthy", unknown: "Unknown" };
+
+  function renderResult(data) {
+    const r = data.result; resultBox.replaceChildren();
+    resultBox.appendChild(el("span", LABEL[r.overall_certainty] || r.overall_certainty, "badge " + r.overall_certainty));
+    resultBox.appendChild(el("h2", "What is happening on the plant"));
+    resultBox.appendChild(el("p", r.what_is_happening || "No clear finding."));
+    if (r.image_quality_issues && r.image_quality_issues.length) { resultBox.appendChild(el("h2", "Photo tips")); resultBox.appendChild(list(r.image_quality_issues)); }
+    if (r.possible_issues && r.possible_issues.length) {
+      resultBox.appendChild(el("h2", "Possible causes (most likely first)"));
+      r.possible_issues.forEach((i) => {
+        const box = el("div", null, "issue");
+        box.appendChild(el("strong", i.name)); box.appendChild(el("div", (KIND[i.kind] || i.kind) + " - " + i.likelihood + " likelihood", "tag"));
+        if (i.evidence_seen.length) { box.appendChild(el("div", "Seen in photo:", "tag")); box.appendChild(list(i.evidence_seen)); }
+        if (i.evidence_missing.length) { box.appendChild(el("div", "Not visible / cannot confirm:", "tag")); box.appendChild(list(i.evidence_missing)); }
+        resultBox.appendChild(box);
+      });
+    }
+    lastFollowUps = r.follow_up_questions || [];
+    if (lastFollowUps.length) {
+      resultBox.appendChild(el("h2", "Help the AI be more sure (answer yes/no, then re-check)"));
+      const inputs = [];
+      lastFollowUps.forEach((q, idx) => {
+        const row = el("div", null, "row"); row.appendChild(el("span", q));
+        const sel = document.createElement("select"); ["Not sure", "Yes", "No"].forEach((o) => { const op = document.createElement("option"); op.value = o; op.textContent = o; sel.appendChild(op); });
+        inputs.push(sel); row.appendChild(sel); resultBox.appendChild(row);
+      });
+      const b = el("button", "Re-check with my answers", "primary"); b.type = "button";
+      b.onclick = () => analyse(lastFollowUps.map((q, i) => q + " -> " + inputs[i].value).join("; "));
+      resultBox.appendChild(b);
+    }
+    if (r.safe_next_steps && r.safe_next_steps.length) { resultBox.appendChild(el("h2", "Safe next steps")); resultBox.appendChild(list(r.safe_next_steps)); }
+    if (r.see_expert_if && r.see_expert_if.length) { resultBox.appendChild(el("h2", "Contact your KVK / agriculture officer if")); resultBox.appendChild(list(r.see_expert_if)); }
+    resultBox.appendChild(el("p", "Kisan Call Centre: 1800-180-1551 (please verify the number)", "tag"));
+    const speak = el("button", "Speak result"); speak.type = "button";
+    speak.onclick = () => {
+      if (!("speechSynthesis" in window)) { show("warn", "Voice is not supported on this device."); return; }
+      const u = new SpeechSynthesisUtterance([r.what_is_happening].concat(r.safe_next_steps || []).join(". "));
+      u.lang = { hi: "hi-IN", mr: "mr-IN", en: "en-IN" }[data.language] || "en-IN"; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    };
+    resultBox.appendChild(speak);
+    resultBox.appendChild(el("small", data.disclaimer + " Source: " + (data.provenance && data.provenance.source) + " (AI estimate).", "foot"));
+    resultBox.style.display = "block"; resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ---- Events -----------------------------------------------------------------
+  $("btnCamera").onclick = openCamera;
+  $("btnChoose").onclick = () => $("fileGallery").click();
+  $("btnSnap").onclick = snap;
+  $("btnCloseCam").onclick = stopCamera;
+  $("btnRetake").onclick = () => { currentBlob = null; preview.style.display = "none"; $("previewControls").style.display = "none"; resultBox.style.display = "none"; show("", ""); openCamera(); };
+  $("btnAnalyse").onclick = () => analyse("");
+  ["fileGallery", "fileCapture"].forEach((id) => $(id).addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return; stopCamera(); setImageFromSource(f);
+  }));
+  window.addEventListener("pagehide", stopCamera);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stopCamera(); });
+})();
+</script>
+</body>
+</html>

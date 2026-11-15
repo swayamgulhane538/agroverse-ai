@@ -97,6 +97,47 @@ def serve_index():
     return HTMLResponse(content="<!DOCTYPE html><html><body><h1>AGROVERSE AI</h1><p>NASA Precision Agriculture Service Running</p></body></html>", status_code=200)
 
 
+@app.get("/presentation.html", include_in_schema=False, response_class=HTMLResponse)
+@app.get("/presentation", include_in_schema=False, response_class=HTMLResponse)
+def serve_presentation():
+    """Serves the hackathon presentation deck."""
+    candidates = [
+        Path(__file__).resolve().parent / "presentation.html",
+        Path(__file__).resolve().parent.parent.parent / "presentation.html",
+        Path(__file__).resolve().parent.parent.parent / "public" / "presentation.html",
+        Path("presentation.html"),
+        Path("public/presentation.html")
+    ]
+    for c in candidates:
+        if c.exists():
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    return HTMLResponse(content=f.read(), status_code=200)
+            except Exception:
+                return FileResponse(str(c), media_type="text/html")
+    return HTMLResponse(content="<h1>Presentation Deck</h1><p>Not found</p>", status_code=404)
+
+
+@app.get("/disease_doctor_camera.html", include_in_schema=False, response_class=HTMLResponse)
+@app.get("/camera", include_in_schema=False, response_class=HTMLResponse)
+def serve_camera_standalone():
+    """Serves the standalone camera triage view."""
+    candidates = [
+        Path(__file__).resolve().parent / "disease_doctor_camera.html",
+        Path(__file__).resolve().parent.parent.parent / "public" / "disease_doctor_camera.html",
+        Path("public/disease_doctor_camera.html"),
+        Path("disease_doctor_camera.html")
+    ]
+    for c in candidates:
+        if c.exists():
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    return HTMLResponse(content=f.read(), status_code=200)
+            except Exception:
+                return FileResponse(str(c), media_type="text/html")
+    return HTMLResponse(content="<h1>Camera UI</h1><p>Not found</p>", status_code=404)
+
+
 @app.get("/healthz")
 def health_check():
     """Serverless-safe health check with no external database dependency."""
