@@ -218,7 +218,7 @@
             <i class="fa-solid fa-store"></i>
           </div>
           <div class="font-bold text-xs text-gray-900">Mandi & MSP (M14)</div>
-          <div class="text-[10px] text-gray-500">Kalamna APMC Live Rates</div>
+          <div class="text-[10px] text-gray-500">Agmarknet Arrivals & MSP</div>
         </button>
 
         <!-- 7. Parcels Studio -->
@@ -1527,53 +1527,361 @@
     <!-- ======================================================== -->
     <!-- VIEW 8: MANDI RATES & MSP TRACKER (M14)                  -->
     <!-- ======================================================== -->
+    <!-- ======================================================== -->
+    <!-- VIEW 6: APMC MANDI INTELLIGENCE & MSP TRACKER (M14)       -->
+    <!-- ======================================================== -->
     <div id="view-mandi" class="space-y-6 hidden">
       <div class="clean-card p-6 sm:p-8 space-y-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg font-bold text-gray-900">Kalamna APMC Mandi Rates & MSP Tracker (M14)</h3>
-            <p class="text-xs text-gray-500">Live Agmarknet modal benchmarks vs Government Minimum Support Price (MSP 2026-27).</p>
+
+        <!-- Header Bar with Provenance, Location & Controls -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-gray-100 pb-5">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Agmarknet & CCEA Protocol</span>
+              <span id="mandiModeChip" class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300 uppercase tracking-wider flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="mandiModeText">LIVE AGMARKNET</span>
+              </span>
+              <span id="mandiLocationBadge" class="text-[11px] bg-gray-100 text-gray-700 font-semibold px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+                <i class="fa-solid fa-location-dot text-rose-500 text-[10px]"></i>
+                <span id="mandiLocationText">Nagpur (Wadi Main Field Centroid)</span>
+              </span>
+            </div>
+            <h3 id="mandiTabTitle" class="text-xl font-extrabold text-gray-900 tracking-tight">APMC Mandi Intelligence & MSP Tracker (M14)</h3>
+            <p id="mandiTabSub" class="text-xs text-gray-500">Auto-personalized Agmarknet arrivals · Multi-mandi distance & net realization · CCEA verified MSP benchmarks.</p>
           </div>
-          <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Kalamna APMC Live</span>
+
+          <!-- Header Actions -->
+          <div class="flex flex-wrap items-center gap-2 self-end lg:self-auto">
+            <button onclick="detectUserMandiGps()" title="Use Device GPS Location" class="clean-pill text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i class="fa-solid fa-crosshairs text-indigo-500"></i>
+              <span class="text-[11px]">GPS Location</span>
+            </button>
+            <button onclick="openPriceAlertModal()" class="clean-pill text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i class="fa-solid fa-bell text-amber-500"></i>
+              <span id="btnSetAlertText" class="text-[11px]">Price Alerts</span>
+            </button>
+            <button onclick="openSharePriceModal()" class="clean-pill text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i class="fa-solid fa-share-nodes text-blue-500"></i>
+              <span id="btnShareCardText" class="text-[11px]">Share Card</span>
+            </button>
+            <button id="btnRefreshMandi" onclick="fetchMandiIntelligence(true)" class="clean-pill text-xs font-bold px-3.5 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i id="mandiRefreshIcon" class="fa-solid fa-arrows-rotate text-emerald-600"></i>
+              <span id="btnRefreshMandiText">Refresh Rates</span>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="clean-card p-5 space-y-2">
-            <div class="flex justify-between items-start">
-              <span class="font-bold text-sm text-gray-900">Desi Chickpea (Chana)</span>
-              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">+₹170 Above MSP</span>
-            </div>
-            <div class="text-3xl font-extrabold text-gray-900">₹5,820 <span class="text-xs text-gray-500 font-normal">/ Q</span></div>
-            <div class="text-xs text-gray-500 border-t border-gray-100 pt-2 flex justify-between">
-              <span>MSP 2026-27:</span>
-              <strong class="text-gray-900">₹5,650 / Q</strong>
-            </div>
+        <!-- "My Crops" Auto-Personalization Bar -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5 text-[11px]">
+              <i class="fa-solid fa-seedling text-emerald-600"></i>
+              <span>My Crops (Auto-Detected from Farm Parcels & Cycle)</span>
+            </span>
+            <span class="text-[10px] text-gray-400">Click to switch commodity & update mandi benchmarks</span>
           </div>
 
-          <div class="clean-card p-5 space-y-2">
-            <div class="flex justify-between items-start">
-              <span class="font-bold text-sm text-gray-900">Wheat (Lokwan)</span>
-              <span class="text-[10px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-bold">At MSP Benchmark</span>
+          <div id="myCropsContainer" class="flex flex-wrap gap-2">
+            <!-- Populated dynamically: Chickpea, Wheat, Soybean, Cotton, Safflower -->
+          </div>
+        </div>
+
+        <!-- Cascading Filters & Search Controls -->
+        <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            
+            <!-- Commodity Search / Autocomplete -->
+            <div class="relative">
+              <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Search Commodity</label>
+              <div class="relative">
+                <input type="text" id="mandiSearchInput" placeholder="Search (e.g. चना, Soybean, Wheat)" oninput="handleCommoditySearch(event)" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-900 focus:outline-none focus:border-black pr-7">
+                <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2.5 text-gray-400 text-xs"></i>
+              </div>
+              <div id="mandiSearchResults" class="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-48 overflow-y-auto hidden text-xs"></div>
             </div>
-            <div class="text-3xl font-extrabold text-gray-900">₹2,425 <span class="text-xs text-gray-500 font-normal">/ Q</span></div>
-            <div class="text-xs text-gray-500 border-t border-gray-100 pt-2 flex justify-between">
-              <span>MSP 2026-27:</span>
-              <strong class="text-gray-900">₹2,425 / Q</strong>
+
+            <!-- Variety Selector -->
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Variety</label>
+              <select id="mandiVarietySelect" onchange="handleFilterChange()" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-gray-800 focus:outline-none focus:border-black">
+                <option value="All Varieties">All Varieties</option>
+              </select>
             </div>
+
+            <!-- State Selector -->
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">State</label>
+              <select id="mandiStateSelect" onchange="handleStateChange()" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-gray-800 focus:outline-none focus:border-black">
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+              </select>
+            </div>
+
+            <!-- District Selector -->
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">District</label>
+              <select id="mandiDistrictSelect" onchange="handleDistrictChange()" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-gray-800 focus:outline-none focus:border-black">
+                <option value="Nagpur">Nagpur</option>
+                <option value="Wardha">Wardha</option>
+                <option value="Amravati">Amravati</option>
+                <option value="Yavatmal">Yavatmal</option>
+              </select>
+            </div>
+
+            <!-- Mandi Selector -->
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Mandi / Market</label>
+              <select id="mandiMarketSelect" onchange="handleFilterChange()" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-gray-800 focus:outline-none focus:border-black">
+                <option value="all">All Mandis in District</option>
+              </select>
+            </div>
+
           </div>
 
-          <div class="clean-card p-5 space-y-2">
-            <div class="flex justify-between items-start">
-              <span class="font-bold text-sm text-gray-900">Soybean (Yellow)</span>
-              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">+₹88 Above MSP</span>
+          <!-- Secondary Row: Sort & Toggles -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-200/60 text-xs">
+            <div class="flex items-center space-x-3">
+              <label class="flex items-center space-x-2 cursor-pointer select-none">
+                <input type="checkbox" id="mandiNearbyToggle" onchange="handleFilterChange()" class="rounded border-gray-300 text-black focus:ring-0">
+                <span class="text-xs font-medium text-gray-700">Nearby Mandis only (&lt; 100 km)</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer select-none">
+                <input type="checkbox" id="mandiPinnedToggle" onchange="handleFilterChange()" class="rounded border-gray-300 text-black focus:ring-0">
+                <span class="text-xs font-medium text-gray-700"><i class="fa-solid fa-star text-amber-400 mr-1 text-[10px]"></i>Pinned Mandis</span>
+              </label>
             </div>
-            <div class="text-3xl font-extrabold text-gray-900">₹4,980 <span class="text-xs text-gray-500 font-normal">/ Q</span></div>
-            <div class="text-xs text-gray-500 border-t border-gray-100 pt-2 flex justify-between">
-              <span>MSP 2026-27:</span>
-              <strong class="text-gray-900">₹4,892 / Q</strong>
+
+            <div class="flex items-center space-x-2">
+              <span class="text-[11px] text-gray-500 font-semibold">Sort By:</span>
+              <select id="mandiSortSelect" onchange="handleFilterChange()" class="bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-semibold text-gray-800 focus:outline-none">
+                <option value="modal_price">Modal Price (High to Low)</option>
+                <option value="net_price">Net Price (after transport & cess)</option>
+                <option value="distance">Distance (Nearest First)</option>
+              </select>
             </div>
           </div>
         </div>
+
+        <!-- Active Commodity & MSP Benchmark Hero Card -->
+        <div id="mandiHeroCard" class="clean-card p-6 border border-gray-100 bg-gradient-to-br from-white via-white to-gray-50/50 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <h4 id="heroCommodityTitle" class="text-lg font-black text-gray-900">Gram (Chickpea / Chana)</h4>
+                <span id="heroCommodityAliases" class="text-xs text-gray-400 font-medium">चना · हरभरा</span>
+              </div>
+              <p id="heroMandiSubtitle" class="text-xs text-gray-500 mt-0.5">Primary benchmark across reporting APMCs in Central India</p>
+            </div>
+            <div id="heroMspGapBadge" class="text-xs font-extrabold px-3 py-1.5 rounded-full border flex items-center space-x-1.5 bg-emerald-50 text-emerald-800 border-emerald-300">
+              <span>Checking MSP...</span>
+            </div>
+          </div>
+
+          <!-- Price & MSP Triplet Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-y border-gray-100 py-4">
+            
+            <!-- 1. Modal Mandi Price -->
+            <div class="space-y-1">
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Top APMC Modal Price</span>
+              <div class="flex items-baseline space-x-1">
+                <div id="heroModalPrice" class="text-3xl font-black text-gray-900 font-mono">₹5,820</div>
+                <span class="text-xs text-gray-500">/ Quintal</span>
+              </div>
+              <div class="text-[11px] text-gray-500 flex items-center space-x-2">
+                <span>Min: <strong id="heroMinPrice" class="text-gray-800 font-mono">₹5,470</strong></span>
+                <span>•</span>
+                <span>Max: <strong id="heroMaxPrice" class="text-gray-800 font-mono">₹6,110</strong></span>
+              </div>
+            </div>
+
+            <!-- 2. CCEA Official MSP Benchmark -->
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">CCEA Official MSP</span>
+                <span id="heroMspSeasonBadge" class="text-[10px] bg-indigo-50 text-indigo-700 font-extrabold px-2 py-0.5 rounded">RMS 2027-28</span>
+              </div>
+              <div class="flex items-baseline space-x-1">
+                <div id="heroMspPrice" class="text-3xl font-black text-indigo-900 font-mono">₹5,958</div>
+                <span class="text-xs text-gray-500">/ Quintal</span>
+              </div>
+              <div class="text-[11px] text-gray-500">
+                Source: <a id="heroMspSourceLink" href="https://pib.gov.in/PressReleasePage.aspx?PRID=2065842" target="_blank" class="underline text-indigo-600 font-medium">PIB / CCEA Gazette</a>
+              </div>
+            </div>
+
+            <!-- 3. Net Realized after Freight & Cess -->
+            <div class="space-y-1 sm:border-l sm:border-gray-100 sm:pl-4">
+              <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Estimated Net Realization (M16)</span>
+              <div class="flex items-baseline space-x-1">
+                <div id="heroNetPrice" class="text-3xl font-black text-emerald-700 font-mono">₹5,723</div>
+                <span class="text-xs text-gray-500">/ Quintal</span>
+              </div>
+              <div class="text-[11px] text-gray-500">
+                After ~32 km freight (₹80) + 1.05% APMC cess
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Neutral Explanation Box (if Below MSP or Info) -->
+          <div id="heroMspExplanationBox" class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 flex items-start space-x-3">
+            <i class="fa-solid fa-circle-info text-amber-600 text-sm mt-0.5"></i>
+            <div class="space-y-1">
+              <p id="heroMspExplanationText" class="leading-relaxed">
+                Modal price is ₹138/Q below the RMS 2027-28 MSP (₹5,958/Q). Note: MSP is an assured government floor price; commercial APMC transactions fluctuate based on daily arrival volume, moisture, and FAQ quality standards.
+              </p>
+              <div class="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-semibold">
+                <button onclick="switchView('view-schemes')" class="text-indigo-700 hover:underline flex items-center space-x-1">
+                  <i class="fa-solid fa-building-columns text-[10px]"></i>
+                  <span>Govt Schemes & PM-AASHA Procurement (S1)</span>
+                </button>
+                <span>•</span>
+                <button onclick="switchView('view-transport')" class="text-emerald-700 hover:underline flex items-center space-x-1">
+                  <i class="fa-solid fa-truck text-[10px]"></i>
+                  <span>Net Mandi Transport Ledger (M16)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best Nearby Mandi Opportunity Banner -->
+        <div id="bestNearbyMandiBox" class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center text-sm flex-shrink-0 mt-0.5">
+              <i class="fa-solid fa-route"></i>
+            </div>
+            <div>
+              <strong class="font-bold text-indigo-950 block text-xs">BEST NEARBY MANDI OPPORTUNITY</strong>
+              <span id="bestNearbyMandiDesc" class="text-[11px] text-indigo-900">
+                Calculating multi-mandi transport logistics...
+              </span>
+            </div>
+          </div>
+          <button onclick="switchView('view-transport')" class="clean-pill text-[11px] font-bold px-3 py-1.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition flex-shrink-0">
+            Open Transport Ledger
+          </button>
+        </div>
+
+        <!-- Interactive Price Trend Chart & Momentum Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          
+          <!-- Chart Column (2 Cols on lg) -->
+          <div class="lg:col-span-2 clean-card p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-3">
+              <div>
+                <h4 class="font-bold text-sm text-gray-900 flex items-center space-x-2">
+                  <i class="fa-solid fa-chart-line text-indigo-600"></i>
+                  <span>Historical Price Trend & Min-Max Band</span>
+                </h4>
+                <p id="mandiCoverageNotice" class="text-[10px] text-gray-400 mt-0.5">History building since Nov 2025 (Agmarknet verified database)</p>
+              </div>
+
+              <!-- Timeframe Selector -->
+              <div class="flex items-center space-x-1 bg-gray-100 p-1 rounded-xl text-xs font-semibold">
+                <button onclick="setChartInterval('7D')" id="btn-interval-7D" class="interval-pill px-2.5 py-1 rounded-lg text-gray-600 hover:text-black transition">7D</button>
+                <button onclick="setChartInterval('30D')" id="btn-interval-30D" class="interval-pill px-2.5 py-1 rounded-lg bg-black text-white transition active">30D</button>
+                <button onclick="setChartInterval('90D')" id="btn-interval-90D" class="interval-pill px-2.5 py-1 rounded-lg text-gray-600 hover:text-black transition">90D</button>
+                <button onclick="setChartInterval('1Y')" id="btn-interval-1Y" class="interval-pill px-2.5 py-1 rounded-lg text-gray-600 hover:text-black transition">1Y</button>
+              </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="w-full h-60 relative">
+              <canvas id="mandiPriceTrendChart"></canvas>
+            </div>
+
+            <!-- Legend & Notes -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-gray-500 pt-2 border-t border-gray-100">
+              <div class="flex items-center space-x-3">
+                <span class="flex items-center space-x-1"><span class="w-2.5 h-0.5 bg-black"></span><span>Modal Price</span></span>
+                <span class="flex items-center space-x-1"><span class="w-2.5 h-2 bg-indigo-100 border border-indigo-200"></span><span>Min-Max Band</span></span>
+                <span class="flex items-center space-x-1"><span class="w-2.5 h-0.5 bg-indigo-500 border-dashed border-t"></span><span>MSP Line</span></span>
+                <span class="flex items-center space-x-1"><span class="w-2.5 h-0.5 bg-gray-400 border-dotted border-t"></span><span>Last Year</span></span>
+              </div>
+              <span>Updated daily from official e-NAM / Agmarknet</span>
+            </div>
+          </div>
+
+          <!-- Price Momentum & Fast Facts Column -->
+          <div class="space-y-4">
+            
+            <div class="clean-card p-5 space-y-3">
+              <h5 class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+                <i class="fa-solid fa-bolt text-amber-500"></i>
+                <span>Price Momentum</span>
+              </h5>
+
+              <div class="space-y-2.5 text-xs">
+                <div class="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+                  <span class="text-gray-600 font-medium">7-Day Change</span>
+                  <strong id="mandiDelta7d" class="font-mono font-bold text-emerald-700">+₹70 (+1.2%)</strong>
+                </div>
+
+                <div class="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+                  <span class="text-gray-600 font-medium">30-Day Change</span>
+                  <strong id="mandiDelta30d" class="font-mono font-bold text-emerald-700">+₹140 (+2.5%)</strong>
+                </div>
+
+                <div class="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+                  <span class="text-gray-600 font-medium">30-Day Volatility Band</span>
+                  <strong id="mandiVolatilityBand" class="font-mono font-bold text-gray-900">₹5,470 – ₹6,110</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Links -->
+            <div class="clean-card p-5 space-y-3 border border-gray-100">
+              <h5 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Related Decisions</h5>
+              <div class="space-y-2 text-xs">
+                <div onclick="switchView('view-simulator')" class="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition cursor-pointer flex items-center justify-between">
+                  <div>
+                    <strong class="text-gray-900 block font-bold">Store vs Sell (M15)</strong>
+                    <span class="text-[10px] text-gray-500">Cold storage break-even rally price</span>
+                  </div>
+                  <i class="fa-solid fa-arrow-right text-gray-400 text-xs"></i>
+                </div>
+
+                <div onclick="switchView('view-transport')" class="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition cursor-pointer flex items-center justify-between">
+                  <div>
+                    <strong class="text-gray-900 block font-bold">Transport Ledger (M16)</strong>
+                    <span class="text-[10px] text-gray-500">Freight & cess net profit analysis</span>
+                  </div>
+                  <i class="fa-solid fa-arrow-right text-gray-400 text-xs"></i>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Multi-Mandi Reporting Cards / Table -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-store text-emerald-600"></i>
+              <span>Reporting APMC Mandis (<span id="mandiReportingCount">12</span> Markets Active)</span>
+            </h4>
+            <span class="text-[10px] text-gray-400">All prices in ₹ / Quintal</span>
+          </div>
+
+          <!-- Grid of Mandi Cards -->
+          <div id="mandiCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Dynamically populated from API -->
+            <div class="clean-card p-5 text-center text-xs text-gray-400 col-span-3">Loading Mandi rates...</div>
+          </div>
+        </div>
+
+        <!-- Persistent Transparency & Statutory Footer -->
+        <div class="pt-4 border-t border-gray-100 text-[11px] text-gray-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div id="mandiPersistentFooter" class="leading-relaxed">
+            Source: AGMARKNET (data.gov.in) • Price Date: <span id="footerPriceDate">2026-11-14</span> • Fetched At: <span id="footerFetchedAt">Today</span> • Mode: <span id="footerModeText">LIVE</span>.
+          </div>
+          <div class="text-[10px] text-gray-400 italic">Prices are indicative APMC arrival rates, not guaranteed government procurement rates.</div>
+        </div>
+
       </div>
     </div>
 
@@ -2014,6 +2322,137 @@
     </div>
   </nav>
 
+  <!-- ========================================================================= -->
+  <!-- MANDI PRICE ALERT & SHARE MODALS                                          -->
+  <!-- ========================================================================= -->
+
+  <!-- Mandi Price Alert Modal -->
+  <div id="mandiAlertModal" class="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-gray-100">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-gray-900">Mandi Price Target Alerts</h3>
+            <p class="text-[10px] text-gray-500">Instant push notifications upon APMC arrival ingest</p>
+          </div>
+        </div>
+        <button onclick="closePriceAlertModal()" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 hover:text-black flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <!-- Add New Alert Form -->
+      <div class="p-4 bg-gray-50 rounded-2xl space-y-3 border border-gray-100 text-xs">
+        <div class="font-bold text-gray-800 text-[11px] uppercase tracking-wider">Set New Price Target</div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Commodity</label>
+            <select id="alertCropSelect" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:outline-none"></select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Target Mandi</label>
+            <select id="alertMandiSelect" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:outline-none"></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Target Price (₹/Q)</label>
+            <input type="number" id="alertTargetPrice" placeholder="5700" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-900 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Condition</label>
+            <select id="alertConditionSelect" class="w-full bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-800 focus:outline-none">
+              <option value="above_or_equal">At or Above (>=)</option>
+              <option value="below_or_equal">At or Below (<=)</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="savePriceAlert()" class="w-full btn-black text-xs font-bold py-2 flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-plus text-emerald-400 text-xs"></i>
+          <span>Save Alert Rule</span>
+        </button>
+      </div>
+
+      <!-- Active Alerts List -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+          <span>Active Alert Triggers</span>
+          <span id="activeAlertCount" class="text-gray-400">0 rules</span>
+        </div>
+        <div id="activeAlertsList" class="max-h-40 overflow-y-auto space-y-1.5 text-xs">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Statutory Safety Notice -->
+      <div class="p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl text-[10px] text-amber-900 leading-snug flex items-start space-x-2">
+        <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 text-xs"></i>
+        <span><strong>Safety Guarantee:</strong> Price alerts are evaluated ONLY against verified live Agmarknet arrival feeds and will NEVER trigger on demo or simulated data.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mandi Share Card Modal -->
+  <div id="mandiShareModal" class="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-share-nodes"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-gray-900">Share APMC Price Card</h3>
+            <p class="text-[10px] text-gray-500">Export verified Agmarknet rates to WhatsApp or SMS</p>
+          </div>
+        </div>
+        <button onclick="closeSharePriceModal()" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 hover:text-black flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <!-- Card Preview Box -->
+      <div id="shareCardPreview" class="p-4 rounded-2xl bg-gradient-to-br from-gray-900 to-black text-white space-y-3 font-sans shadow-lg">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="text-[10px] text-emerald-400 font-extrabold uppercase tracking-wider">Agroverse AI • APMC Mandi Rates</div>
+            <div id="shareCardTitle" class="text-base font-black text-white mt-0.5">Gram (Chickpea / Chana)</div>
+            <div id="shareCardSubtitle" class="text-[10px] text-gray-400">Nagpur & Vidarbha APMCs</div>
+          </div>
+          <span id="shareCardSeasonBadge" class="text-[9px] bg-white/20 text-white font-mono px-2 py-0.5 rounded-full">RMS 2027-28</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 border-y border-white/10 py-2.5">
+          <div>
+            <div class="text-[9px] text-gray-400 uppercase font-semibold">Top Modal Rate</div>
+            <div id="shareCardModalPrice" class="text-xl font-black text-white font-mono">₹5,820<span class="text-xs text-gray-400 font-sans">/Q</span></div>
+          </div>
+          <div>
+            <div class="text-[9px] text-gray-400 uppercase font-semibold">CCEA MSP Benchmark</div>
+            <div id="shareCardMspPrice" class="text-xl font-black text-emerald-400 font-mono">₹5,958<span class="text-xs text-gray-400 font-sans">/Q</span></div>
+          </div>
+        </div>
+
+        <div class="text-[10px] text-gray-300 leading-snug">
+          <span id="shareCardBestMandi">Best Net Realization: Saoner APMC (₹5,723/Q net after transport & cess)</span>
+        </div>
+
+        <div class="text-[9px] text-gray-400 flex justify-between pt-1 border-t border-white/10">
+          <span id="shareCardTimestamp">Verified Agmarknet • 2026-11-14</span>
+          <span>agroverse-ai.vercel.app</span>
+        </div>
+      </div>
+
+      <!-- Copy Action Buttons -->
+      <div class="space-y-2">
+        <button onclick="copyShareCardText()" id="btnCopyShareCard" class="w-full btn-black text-xs font-bold py-2.5 flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-copy text-emerald-400"></i>
+          <span id="btnCopyShareText">Copy Rates Message (WhatsApp / SMS)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- ========================================================================= -->
   <!-- 5. JAVASCRIPT LOGIC, ENGINES & VOICE SPEECH SYNTHESIS                     -->
@@ -2076,6 +2515,11 @@
         sprayTabTitle: "Smart Spraying Calendar & Meteorological Advisory",
         sprayTabSub: "Auto-detected Open-Meteo 72h forecast · Stull (2011) Delta-T · CIB&RC Verified IPM envelope (non-NASA forecast).",
         btnRefreshSpray: "Refresh Forecast",
+        mandiTabTitle: "APMC Mandi Intelligence & MSP Tracker (M14)",
+        mandiTabSub: "Auto-personalized Agmarknet arrivals · Multi-mandi distance & net realization · CCEA verified MSP benchmarks.",
+        btnRefreshMandi: "Refresh Rates",
+        btnSetAlert: "Price Alerts",
+        btnShareCard: "Share Card",
         voiceAdvisory: "Nagpur weather is currently 28.4 degrees Celsius. SMAP soil moisture is at the 64th percentile, which is optimal for Chickpea seed drilling. Wind speed is 8.5 km/h, safe for foliar spraying.",
         speakDiagnosisLabel: "Diagnosis: Gram Pod Borer. Visible symptoms: Holes in pods. Recommended organic treatment: Spray 5% Neem Seed Kernel Extract and install pheromone traps."
       },
@@ -2092,6 +2536,11 @@
         sprayTabTitle: "स्मार्ट कीटनाशक छिड़काव कैलेंडर एवं मौसम सलाह",
         sprayTabSub: "ओपन-मेटियो 72 घंटे का मौसम पूर्वानुमान · स्टल (2011) डेल्टा-टी · सीआईबीआरसी सत्यापित आईपीएम ढांचा।",
         btnRefreshSpray: "मौसम रीफ़्रेश करें",
+        mandiTabTitle: "एपीएमसी मंडी भाव एवं एमएसपी ट्रैकर (M14)",
+        mandiTabSub: "एगमार्कनेट दैनिक आवक · बहु-मंडी दूरी एवं शुद्ध आय · सीसीईए प्रमाणित एमएसपी बेंचमार्क।",
+        btnRefreshMandi: "भाव रीफ़्रेश करें",
+        btnSetAlert: "मूल्य अलर्ट",
+        btnShareCard: "कार्ड साझा करें",
         voiceAdvisory: "नागपुर का तापमान 28.4 डिग्री सेल्सियस है। नासा स्मॅप के अनुसार मिट्टी की नमी 64वें पर्सेंटाइल पर है, जो चना बुवाई के लिए बिल्कुल सही है। हवा की गति 8.5 किमी प्रति घंटा है, छिड़काव के लिए सुरक्षित है।",
         speakDiagnosisLabel: "निदान: चना घाटे अळी या पोड बोरर। 5 प्रतिशत नीम अर्क का छिड़काव करें और फेरोमोन ट्रैप लगाएं।"
       },
@@ -2108,6 +2557,11 @@
         sprayTabTitle: "स्मार्ट फवारणी दिनदर्शिका आणि हवामान सल्ला",
         sprayTabSub: "ओपन-मेटिओ 72 तास हवामान अंदाज · स्टल (2011) डेल्टा-टी · सीआयबीआरसी प्रमाणित एकात्मिक कीड व्यवस्थापन.",
         btnRefreshSpray: "हवामान रिफ्रेश करा",
+        mandiTabTitle: "एपीएमसी कृषी उत्पन्न बाजार समिती भाव व हमीभाव (M14)",
+        mandiTabSub: "अ‍ॅगमार्कनेट दैनंदिन आवक · वाहतूक खर्च वजा जाता निव्वळ नफा · केंद्र सरकारचे अधिकृत हमीभाव.",
+        btnRefreshMandi: "बाजारभाव रिफ्रेश करा",
+        btnSetAlert: "किंमत सूचना",
+        btnShareCard: "कार्ड शेअर करा",
         voiceAdvisory: "नागपूरचे तापमान सध्या 28.4 अंश सेल्सिअस आहे. नासा स्मॅप उपग्रहाच्या माहितीनुसार जमिनीतील ओलावा 64 व्या पर्सेंटाईलवर आहे, जो हरभरा पेरणीसाठी अत्यंत पोषक आहे. हवेचा वेग 8.5 किमी प्रति तास असून फवारणीसाठी सुरक्षित आहे.",
         speakDiagnosisLabel: "रोग निदान: हरभरा घाटे अळी. उपाय: 5 टक्के निंबोळी अर्काची फवारणी करा आणि कामगंध सापळे लावा."
       }
@@ -2136,7 +2590,12 @@
         'bnav-tools-text': t.bnavTools,
         'sprayTabTitle': t.sprayTabTitle,
         'sprayTabSub': t.sprayTabSub,
-        'btnRefreshSprayText': t.btnRefreshSpray
+        'btnRefreshSprayText': t.btnRefreshSpray,
+        'mandiTabTitle': t.mandiTabTitle,
+        'mandiTabSub': t.mandiTabSub,
+        'btnRefreshMandiText': t.btnRefreshMandi,
+        'btnSetAlertText': t.btnSetAlert,
+        'btnShareCardText': t.btnShareCard
       };
       for (const [id, val] of Object.entries(map)) {
         const el = document.getElementById(id);
@@ -2248,6 +2707,9 @@
       }
       if (viewId === 'view-spraying') {
         loadAutomaticSprayingAdvisory();
+      }
+      if (viewId === 'view-mandi') {
+        initMandiIntelligence();
       }
     }
 
@@ -3098,6 +3560,780 @@
       });
     }
 
+    // =========================================================================
+    // APMC MANDI INTELLIGENCE & MSP TRACKER (M14)
+    // =========================================================================
+
+    let activeMandiCommodity = 'chickpea';
+    let activeMandiState = 'Maharashtra';
+    let activeMandiDistrict = 'Nagpur';
+    let activeMandiMarket = 'all';
+    let activeChartInterval = '30D';
+    let mandiChartInstance = null;
+    let pinnedMandis = JSON.parse(localStorage.getItem('agro_pinned_mandis') || '["Kalamna", "Saoner"]');
+    let pinnedCrops = JSON.parse(localStorage.getItem('agro_pinned_crops') || '[]');
+    let userMandiGps = null;
+    let mandiLocationsCache = null;
+    let mandiRatesCache = null;
+    let mandiInitialized = false;
+
+    // Available "My Crops" auto-detected from user's parcels and crop cycle
+    const userMyCrops = [
+      { key: 'chickpea', nameEn: 'Chickpea (Desi Chana) 🥇', nameHi: 'चना', nameMr: 'हरभरा', parcel: 'Gat 142/A (Active)' },
+      { key: 'wheat', nameEn: 'Wheat (Gehun) 🥈', nameHi: 'गेहूं', nameMr: 'गहू', parcel: 'Gat 89 (Active)' },
+      { key: 'safflower', nameEn: 'Safflower (Kardi) 🥉', nameHi: 'कुसुम', nameMr: 'करडई', parcel: 'Gat 204 (Active)' },
+      { key: 'soybean', nameEn: 'Soybean (Yellow)', nameHi: 'सोयाबीन', nameMr: 'सोयाबीन', parcel: 'Kharif Harvested' },
+      { key: 'cotton', nameEn: 'Cotton (Kapas)', nameHi: 'कपास', nameMr: 'कापूस', parcel: 'Vidarbha Cash Crop' }
+    ];
+
+    async function initMandiIntelligence() {
+      renderMyCropsChips();
+      await loadMandiLocations();
+      await fetchMandiIntelligence();
+      loadActivePriceAlerts();
+    }
+
+    function renderMyCropsChips() {
+      const container = document.getElementById('myCropsContainer');
+      if (!container) return;
+
+      container.innerHTML = userMyCrops.map(crop => {
+        const isActive = crop.key === activeMandiCommodity;
+        const activeClass = isActive
+          ? 'bg-black text-white border-black shadow-sm'
+          : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400';
+        return `
+          <button onclick="selectMyCrop('${crop.key}')" class="px-3.5 py-1.5 rounded-full border text-xs font-bold transition flex items-center space-x-1.5 ${activeClass}">
+            <span>${crop.nameEn}</span>
+            <span class="text-[9px] opacity-75 font-normal">(${crop.parcel})</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectMyCrop(cropKey) {
+      activeMandiCommodity = cropKey;
+      const sInput = document.getElementById('mandiSearchInput');
+      if (sInput) sInput.value = '';
+      renderMyCropsChips();
+      fetchMandiIntelligence();
+    }
+
+    async function loadMandiLocations() {
+      if (mandiLocationsCache) return;
+      try {
+        const res = await fetch('/v1/market/locations');
+        if (res.ok) {
+          mandiLocationsCache = await res.json();
+          populateLocationSelectors();
+        }
+      } catch (e) {
+        console.warn('Failed to load mandi locations:', e);
+      }
+    }
+
+    function populateLocationSelectors() {
+      if (!mandiLocationsCache) return;
+      const stateSelect = document.getElementById('mandiStateSelect');
+      const districtSelect = document.getElementById('mandiDistrictSelect');
+      const marketSelect = document.getElementById('mandiMarketSelect');
+      if (!stateSelect || !districtSelect || !marketSelect) return;
+
+      const states = Object.keys(mandiLocationsCache);
+      stateSelect.innerHTML = states.map(s => `<option value="${s}" ${s === activeMandiState ? 'selected' : ''}>${s}</option>`).join('');
+
+      const districts = Object.keys(mandiLocationsCache[activeMandiState] || {});
+      districtSelect.innerHTML = districts.map(d => `<option value="${d}" ${d === activeMandiDistrict ? 'selected' : ''}>${d}</option>`).join('');
+
+      const markets = (mandiLocationsCache[activeMandiState] && mandiLocationsCache[activeMandiState][activeMandiDistrict]) || [];
+      marketSelect.innerHTML = `<option value="all">All Mandis in District</option>` +
+        markets.map(m => `<option value="${m.toLowerCase()}" ${m.toLowerCase() === activeMandiMarket ? 'selected' : ''}>${m} APMC</option>`).join('');
+    }
+
+    function handleStateChange() {
+      const stateSelect = document.getElementById('mandiStateSelect');
+      if (!stateSelect) return;
+      activeMandiState = stateSelect.value;
+      if (mandiLocationsCache && mandiLocationsCache[activeMandiState]) {
+        const districts = Object.keys(mandiLocationsCache[activeMandiState]);
+        activeMandiDistrict = districts[0] || 'Nagpur';
+      }
+      populateLocationSelectors();
+      fetchMandiIntelligence();
+    }
+
+    function handleDistrictChange() {
+      const districtSelect = document.getElementById('mandiDistrictSelect');
+      if (!districtSelect) return;
+      activeMandiDistrict = districtSelect.value;
+      activeMandiMarket = 'all';
+      populateLocationSelectors();
+      fetchMandiIntelligence();
+    }
+
+    function handleFilterChange() {
+      const marketSelect = document.getElementById('mandiMarketSelect');
+      if (marketSelect) activeMandiMarket = marketSelect.value;
+      fetchMandiIntelligence();
+    }
+
+    async function handleCommoditySearch(event) {
+      const q = event.target.value.trim();
+      const resultsContainer = document.getElementById('mandiSearchResults');
+      if (!resultsContainer) return;
+
+      if (!q || q.length < 2) {
+        resultsContainer.classList.add('hidden');
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/v1/market/commodities?q=${encodeURIComponent(q)}`);
+        if (res.ok) {
+          const list = await res.json();
+          if (list.length === 0) {
+            resultsContainer.innerHTML = `<div class="p-2 text-gray-400 italic">No matching commodities in Agmarknet</div>`;
+          } else {
+            resultsContainer.innerHTML = list.map(item => `
+              <div onclick="selectSearchedCommodity('${item.id}', '${escapeHtml(item.name_en)}')" class="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center border-b border-gray-100 last:border-b-0">
+                <span class="font-bold text-gray-900">${escapeHtml(item.name_en)}</span>
+                <span class="text-[10px] text-gray-400">${item.aliases ? item.aliases.join(', ') : ''}</span>
+              </div>
+            `).join('');
+          }
+          resultsContainer.classList.remove('hidden');
+        }
+      } catch (e) {
+        console.warn('Commodity search error:', e);
+      }
+    }
+
+    function selectSearchedCommodity(key, name) {
+      activeMandiCommodity = key;
+      const sInput = document.getElementById('mandiSearchInput');
+      if (sInput) sInput.value = name;
+      const resultsContainer = document.getElementById('mandiSearchResults');
+      if (resultsContainer) resultsContainer.classList.add('hidden');
+      renderMyCropsChips();
+      fetchMandiIntelligence();
+    }
+
+    function detectUserMandiGps() {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser. Using Gat 142/A parcel centroid.");
+        return;
+      }
+
+      const locText = document.getElementById('mandiLocationText');
+      if (locText) locText.innerText = "Requesting device GPS...";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userMandiGps = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+          if (locText) locText.innerText = `GPS: ${userMandiGps.lat.toFixed(4)}° N, ${userMandiGps.lon.toFixed(4)}° E (approx.)`;
+          fetchMandiIntelligence(true);
+        },
+        (err) => {
+          console.warn("Mandi GPS error:", err);
+          alert("Location access denied or unavailable. Using Gat 142/A parcel location.");
+          userMandiGps = null;
+          if (locText) locText.innerText = "Nagpur (Wadi Main Field Centroid)";
+          fetchMandiIntelligence(true);
+        },
+        { timeout: 8000 }
+      );
+    }
+
+    async function fetchMandiIntelligence(forceRefresh = false) {
+      const refreshIcon = document.getElementById('mandiRefreshIcon');
+      if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+      const sortBy = document.getElementById('mandiSortSelect')?.value || 'modal_price';
+      const nearbyOnly = document.getElementById('mandiNearbyToggle')?.checked || false;
+      const pinnedOnly = document.getElementById('mandiPinnedToggle')?.checked || false;
+
+      let url = `/v1/market/rates?commodity=${encodeURIComponent(activeMandiCommodity)}&state=${encodeURIComponent(activeMandiState)}&district=${encodeURIComponent(activeMandiDistrict)}&sort_by=${sortBy}&nearby_only=${nearbyOnly}`;
+      if (activeMandiMarket && activeMandiMarket !== 'all') {
+        url += `&market=${encodeURIComponent(activeMandiMarket)}`;
+      }
+      if (userMandiGps) {
+        url += `&lat=${userMandiGps.lat}&lon=${userMandiGps.lon}`;
+      }
+      if (forceRefresh) {
+        url += `&force=true`;
+      }
+
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const envelope = await res.json();
+          mandiRatesCache = envelope.value || envelope;
+          renderMandiHero(mandiRatesCache);
+          renderMandiCards(mandiRatesCache, pinnedOnly);
+          renderBestNearbyMandi(mandiRatesCache);
+          renderMandiFooter(mandiRatesCache, envelope.provenance);
+          renderMandiChart();
+        }
+      } catch (e) {
+        console.warn('Error fetching mandi rates:', e);
+      } finally {
+        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+      }
+    }
+
+    function renderMandiHero(data) {
+      if (!data) return;
+
+      const titleEl = document.getElementById('heroCommodityTitle');
+      if (titleEl) titleEl.innerText = data.commodity || 'Commodity Rates';
+
+      const aliasesEl = document.getElementById('heroCommodityAliases');
+      if (aliasesEl && data.crop_aliases) {
+        aliasesEl.innerText = data.crop_aliases.slice(1).join(' · ');
+      }
+
+      const top = data.top_mandi || (data.rates && data.rates[0]) || {};
+      const modalEl = document.getElementById('heroModalPrice');
+      if (modalEl) modalEl.innerText = '₹' + (top.modal_price || 0).toLocaleString('en-IN');
+
+      const minEl = document.getElementById('heroMinPrice');
+      if (minEl) minEl.innerText = '₹' + (top.min_price || 0).toLocaleString('en-IN');
+
+      const maxEl = document.getElementById('heroMaxPrice');
+      if (maxEl) maxEl.innerText = '₹' + (top.max_price || 0).toLocaleString('en-IN');
+
+      // Net Realized Price
+      const netEl = document.getElementById('heroNetPrice');
+      if (netEl) {
+        const netVal = top.net_realized_price_q || (top.net_price_details ? top.net_price_details.net_realized_price_q : top.modal_price);
+        netEl.innerText = '₹' + Math.round(netVal).toLocaleString('en-IN');
+      }
+
+      // MSP Benchmark Section
+      const msp = data.msp_benchmark || {};
+      const mspEl = document.getElementById('heroMspPrice');
+      const seasonEl = document.getElementById('heroMspSeasonBadge');
+      const sourceLink = document.getElementById('heroMspSourceLink');
+      const gapBadge = document.getElementById('heroMspGapBadge');
+      const expBox = document.getElementById('heroMspExplanationBox');
+      const expText = document.getElementById('heroMspExplanationText');
+
+      if (msp.has_msp && msp.msp_inr_quintal) {
+        if (mspEl) mspEl.innerText = '₹' + msp.msp_inr_quintal.toLocaleString('en-IN');
+        if (seasonEl) seasonEl.innerText = msp.marketing_season || 'CCEA Gazette';
+        if (sourceLink && msp.source_url) sourceLink.href = msp.source_url;
+
+        // Gap calculation against top modal price
+        const gapVal = top.msp_gap || {};
+        const isAbove = gapVal.is_above_msp;
+        const gapInr = gapVal.gap_inr || (top.modal_price - msp.msp_inr_quintal);
+        const gapPct = gapVal.gap_pct || ((gapInr / msp.msp_inr_quintal) * 100);
+
+        if (gapBadge) {
+          if (isAbove) {
+            gapBadge.className = 'text-xs font-extrabold px-3 py-1.5 rounded-full border flex items-center space-x-1.5 bg-emerald-50 text-emerald-800 border-emerald-300';
+            gapBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-600"></i><span>+₹${Math.round(gapInr)}/Q Above MSP (+${gapPct.toFixed(1)}%)</span>`;
+          } else {
+            gapBadge.className = 'text-xs font-extrabold px-3 py-1.5 rounded-full border flex items-center space-x-1.5 bg-amber-50 text-amber-900 border-amber-300';
+            gapBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i><span>₹${Math.abs(Math.round(gapInr))}/Q Below MSP (${gapPct.toFixed(1)}%)</span>`;
+          }
+        }
+
+        if (expBox && expText) {
+          expBox.classList.remove('hidden');
+          expText.innerText = gapVal.explanation || `Modal price is ${isAbove ? 'above' : 'below'} the ${msp.marketing_season} MSP (₹${msp.msp_inr_quintal.toLocaleString('en-IN')}/Q). Note: MSP is a statutory floor support price. Commercial arrivals fluctuate by moisture, extraneous matter, and daily arrival volume.`;
+        }
+      } else {
+        if (mspEl) mspEl.innerText = 'N/A';
+        if (seasonEl) seasonEl.innerText = 'MSP not verified';
+        if (gapBadge) {
+          gapBadge.className = 'text-xs font-bold px-3 py-1.5 rounded-full border bg-gray-50 text-gray-600 border-gray-200';
+          gapBadge.innerText = 'MSP not verified';
+        }
+        if (expBox) expBox.classList.add('hidden');
+      }
+    }
+
+    function renderMandiCards(data, pinnedOnly = false) {
+      const container = document.getElementById('mandiCardsContainer');
+      const countEl = document.getElementById('mandiReportingCount');
+      if (!container) return;
+
+      let rates = data.rates || [];
+      if (pinnedOnly) {
+        rates = rates.filter(r => pinnedMandis.includes(r.market_id) || pinnedMandis.some(p => r.market.toLowerCase().includes(p.toLowerCase())));
+      }
+
+      if (countEl) countEl.innerText = rates.length;
+
+      if (rates.length === 0) {
+        container.innerHTML = `
+          <div class="clean-card p-6 text-center text-xs text-gray-500 col-span-3 space-y-2">
+            <i class="fa-solid fa-inbox text-2xl text-gray-300"></i>
+            <div>No APMC mandis found matching current criteria. Try toggling off "Nearby mandis" or "Pinned mandis".</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rates.map(r => {
+        const isPinned = pinnedMandis.includes(r.market_id) || pinnedMandis.some(p => r.market.toLowerCase().includes(p.toLowerCase()));
+        const starColor = isPinned ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400';
+        const netRealized = r.net_realized_price_q || (r.net_price_details ? r.net_price_details.net_realized_price_q : r.modal_price);
+        const transportCost = r.net_price_details ? r.net_price_details.transport_cost_q : 0;
+        const cessCost = r.net_price_details ? r.net_price_details.mandi_cess_q : 0;
+
+        return `
+          <div class="clean-card p-5 space-y-3.5 hover:border-gray-300 transition relative">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h5 class="font-extrabold text-sm text-gray-900">${escapeHtml(r.market)}</h5>
+                  <button onclick="togglePinMandi('${r.market_id || r.market}')" title="Pin / Favourite Mandi" class="text-xs transition">
+                    <i class="fa-solid fa-star ${starColor}"></i>
+                  </button>
+                </div>
+                <div class="text-[11px] text-gray-500">${escapeHtml(r.district)}, ${escapeHtml(r.state)} • ${escapeHtml(r.variety || 'FAQ Grade')}</div>
+              </div>
+              <span class="text-[10px] bg-gray-100 text-gray-700 font-semibold px-2 py-0.5 rounded-full flex items-center space-x-1">
+                <i class="fa-solid fa-location-dot text-[9px] text-gray-500"></i>
+                <span>${r.distance_label || (r.distance_km ? r.distance_km.toFixed(1) + ' km approx.' : 'Local')}</span>
+              </span>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="grid grid-cols-2 gap-2 border-y border-gray-100 py-2.5">
+              <div>
+                <span class="text-[10px] text-gray-400 uppercase font-semibold">Modal Rate</span>
+                <div class="text-xl font-black text-gray-900 font-mono">₹${r.modal_price.toLocaleString('en-IN')}</div>
+                <div class="text-[10px] text-gray-500 font-mono">Min ₹${r.min_price} · Max ₹${r.max_price}</div>
+              </div>
+              <div>
+                <span class="text-[10px] text-emerald-800 uppercase font-semibold">Net Realized</span>
+                <div class="text-xl font-black text-emerald-700 font-mono">₹${Math.round(netRealized).toLocaleString('en-IN')}</div>
+                <div class="text-[10px] text-gray-500">-₹${Math.round(transportCost + cessCost)} freight & cess</div>
+              </div>
+            </div>
+
+            <!-- Arrival Timestamp & Details -->
+            <div class="flex items-center justify-between text-[10px] text-gray-400">
+              <span>Arrival: <strong class="text-gray-700">${r.arrival_date || 'Today'}</strong></span>
+              <span>Fetched: ${r.fetched_at ? r.fetched_at.split('T')[0] : 'Today'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function togglePinMandi(mandiId) {
+      if (!mandiId) return;
+      const index = pinnedMandis.indexOf(mandiId);
+      if (index >= 0) {
+        pinnedMandis.splice(index, 1);
+      } else {
+        pinnedMandis.push(mandiId);
+      }
+      localStorage.setItem('agro_pinned_mandis', JSON.stringify(pinnedMandis));
+      if (mandiRatesCache) {
+        const pinnedOnly = document.getElementById('mandiPinnedToggle')?.checked || false;
+        renderMandiCards(mandiRatesCache, pinnedOnly);
+      }
+    }
+
+    function renderBestNearbyMandi(data) {
+      const banner = document.getElementById('bestNearbyMandiBox');
+      const descEl = document.getElementById('bestNearbyMandiDesc');
+      if (!banner || !descEl) return;
+
+      const best = data.best_nearby_mandi;
+      if (best && best.recommendation_text) {
+        banner.classList.remove('hidden');
+        descEl.innerText = best.recommendation_text;
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function renderMandiFooter(data, provenance) {
+      const pDate = document.getElementById('footerPriceDate');
+      const fTime = document.getElementById('footerFetchedAt');
+      const fMode = document.getElementById('footerModeText');
+      const chip = document.getElementById('mandiModeChip');
+      const chipText = document.getElementById('mandiModeText');
+
+      const meta = data.metadata || {};
+      const mode = (meta.mode || 'demo').toLowerCase();
+
+      if (pDate) pDate.innerText = meta.observed_at || '2026-11-14';
+      if (fTime) fTime.innerText = meta.fetched_at || 'Today';
+      if (fMode) fMode.innerText = mode.toUpperCase();
+
+      if (chip && chipText) {
+        if (mode === 'live') {
+          chip.className = 'text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = 'LIVE AGMARKNET';
+        } else if (mode === 'cached') {
+          chip.className = 'text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full border border-blue-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = `CACHED (${meta.fetched_at || 'Agmarknet'})`;
+        } else {
+          chip.className = 'text-[10px] bg-amber-100 text-amber-900 font-extrabold px-2.5 py-0.5 rounded-full border border-amber-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = 'DEMO (Calibrated Agmarknet Feed)';
+        }
+      }
+    }
+
+    function setChartInterval(interval) {
+      activeChartInterval = interval;
+      ['7D', '30D', '90D', '1Y'].forEach(i => {
+        const btn = document.getElementById('btn-interval-' + i);
+        if (btn) {
+          if (i === interval) {
+            btn.className = 'interval-pill px-2.5 py-1 rounded-lg bg-black text-white transition active';
+          } else {
+            btn.className = 'interval-pill px-2.5 py-1 rounded-lg text-gray-600 hover:text-black transition';
+          }
+        }
+      });
+      renderMandiChart();
+    }
+
+    async function renderMandiChart() {
+      const ctx = document.getElementById('mandiPriceTrendChart')?.getContext('2d');
+      if (!ctx) return;
+
+      let url = `/v1/market/history?commodity=${encodeURIComponent(activeMandiCommodity)}&interval=${activeChartInterval}`;
+      if (activeMandiMarket && activeMandiMarket !== 'all') {
+        url += `&market_id=${encodeURIComponent(activeMandiMarket)}`;
+      }
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const hist = await res.json();
+
+        // Update Momentum Badges
+        const m = hist.metrics || {};
+        const d7El = document.getElementById('mandiDelta7d');
+        if (d7El) {
+          const sign7 = m.delta_7d_inr >= 0 ? '+' : '';
+          d7El.innerText = `${sign7}₹${m.delta_7d_inr || 0} (${sign7}${(m.delta_7d_pct || 0).toFixed(1)}%)`;
+          d7El.className = m.delta_7d_inr >= 0 ? 'font-mono font-bold text-emerald-700' : 'font-mono font-bold text-rose-700';
+        }
+
+        const d30El = document.getElementById('mandiDelta30d');
+        if (d30El) {
+          const sign30 = m.delta_30d_inr >= 0 ? '+' : '';
+          d30El.innerText = `${sign30}₹${m.delta_30d_inr || 0} (${sign30}${(m.delta_30d_pct || 0).toFixed(1)}%)`;
+          d30El.className = m.delta_30d_inr >= 0 ? 'font-mono font-bold text-emerald-700' : 'font-mono font-bold text-rose-700';
+        }
+
+        const volEl = document.getElementById('mandiVolatilityBand');
+        if (volEl && m.volatility_band) {
+          volEl.innerText = `₹${m.volatility_band.min.toLocaleString('en-IN')} – ₹${m.volatility_band.max.toLocaleString('en-IN')}`;
+        }
+
+        const noticeEl = document.getElementById('mandiCoverageNotice');
+        if (noticeEl && hist.coverage_notice) {
+          noticeEl.innerText = hist.coverage_notice;
+        }
+
+        if (mandiChartInstance) {
+          mandiChartInstance.destroy();
+        }
+
+        const dates = hist.dates || [];
+        const modalPrices = hist.modal_prices || [];
+        const minPrices = hist.min_prices || [];
+        const maxPrices = hist.max_prices || [];
+        const mspLine = hist.msp_benchmark_line || [];
+        const lastYearPrices = hist.last_year_modal_prices || [];
+
+        mandiChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: 'Modal Price',
+                data: modalPrices,
+                borderColor: '#111827',
+                backgroundColor: '#111827',
+                borderWidth: 2.5,
+                tension: 0.3,
+                pointRadius: dates.length <= 14 ? 3 : 0,
+                order: 1
+              },
+              {
+                label: 'MSP Benchmark',
+                data: mspLine,
+                borderColor: '#6366f1',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false,
+                order: 2
+              },
+              {
+                label: 'Last Year (Same Period)',
+                data: lastYearPrices,
+                borderColor: '#9ca3af',
+                borderWidth: 1.5,
+                borderDash: [2, 2],
+                pointRadius: 0,
+                fill: false,
+                order: 3
+              },
+              {
+                label: 'Max Price Band',
+                data: maxPrices,
+                borderColor: 'rgba(99, 102, 241, 0.15)',
+                borderWidth: 0,
+                pointRadius: 0,
+                fill: '+1',
+                backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                order: 4
+              },
+              {
+                label: 'Min Price Band',
+                data: minPrices,
+                borderColor: 'rgba(99, 102, 241, 0.15)',
+                borderWidth: 0,
+                pointRadius: 0,
+                fill: false,
+                order: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    if (ctx.dataset.label.includes('Band')) return null;
+                    return `${ctx.dataset.label}: ₹${ctx.parsed.y.toLocaleString('en-IN')}/Q`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  color: '#9ca3af',
+                  font: { size: 10 },
+                  maxTicksLimit: 7
+                }
+              },
+              y: {
+                grid: { color: 'rgba(0,0,0,0.05)' },
+                ticks: {
+                  color: '#9ca3af',
+                  font: { size: 10 },
+                  callback: (v) => '₹' + v
+                }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.warn('Error rendering mandi chart:', e);
+      }
+    }
+
+    // ==========================================
+    // MANDI PRICE ALERTS MODAL LOGIC
+    // ==========================================
+
+    function openPriceAlertModal() {
+      const modal = document.getElementById('mandiAlertModal');
+      if (!modal) return;
+
+      const cropSelect = document.getElementById('alertCropSelect');
+      if (cropSelect) {
+        cropSelect.innerHTML = userMyCrops.map(c => `
+          <option value="${c.key}" ${c.key === activeMandiCommodity ? 'selected' : ''}>${c.nameEn}</option>
+        `).join('');
+      }
+
+      const mandiSelect = document.getElementById('alertMandiSelect');
+      if (mandiSelect) {
+        mandiSelect.innerHTML = `
+          <option value="kalamna">Kalamna APMC (Nagpur)</option>
+          <option value="saoner">Saoner APMC</option>
+          <option value="hinganghat">Hinganghat APMC (Wardha)</option>
+          <option value="all">Any Nearby APMC Mandi</option>
+        `;
+      }
+
+      const priceInput = document.getElementById('alertTargetPrice');
+      if (priceInput && mandiRatesCache) {
+        const topModal = mandiRatesCache.top_mandi?.modal_price || 5800;
+        priceInput.value = topModal + 100;
+      }
+
+      loadActivePriceAlerts();
+      modal.classList.remove('hidden');
+    }
+
+    function closePriceAlertModal() {
+      const modal = document.getElementById('mandiAlertModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function loadActivePriceAlerts() {
+      const listEl = document.getElementById('activeAlertsList');
+      const countEl = document.getElementById('activeAlertCount');
+      if (!listEl) return;
+
+      try {
+        const res = await fetch('/v1/market/alerts');
+        if (res.ok) {
+          const alerts = await res.json();
+          if (countEl) countEl.innerText = `${alerts.length} rules active`;
+
+          if (alerts.length === 0) {
+            listEl.innerHTML = `<div class="p-3 text-center text-gray-400 italic bg-gray-50 rounded-xl">No active alerts set yet.</div>`;
+            return;
+          }
+
+          listEl.innerHTML = alerts.map(a => `
+            <div class="p-2.5 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-between">
+              <div>
+                <strong class="font-bold text-gray-900 block">${escapeHtml(a.commodity_id.toUpperCase())} ${a.condition === 'above_or_equal' ? '≥' : '≤'} ₹${a.target_price.toLocaleString('en-IN')}/Q</strong>
+                <span class="text-[10px] text-gray-500">${escapeHtml(a.market_id)} • Verified Live APMC</span>
+              </div>
+              <button onclick="deletePriceAlert('${a.alert_id || a.id}')" class="text-rose-500 hover:text-rose-700 text-xs px-2 py-1">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.warn('Error loading price alerts:', e);
+      }
+    }
+
+    async function savePriceAlert() {
+      const crop = document.getElementById('alertCropSelect')?.value || activeMandiCommodity;
+      const market = document.getElementById('alertMandiSelect')?.value || 'kalamna';
+      const targetPrice = parseFloat(document.getElementById('alertTargetPrice')?.value || 5800);
+      const condition = document.getElementById('alertConditionSelect')?.value || 'above_or_equal';
+
+      try {
+        const res = await fetch('/v1/market/alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            commodity_id: crop,
+            market_id: market,
+            target_price: targetPrice,
+            condition: condition,
+            farmer_phone: '+91 98220 12345'
+          })
+        });
+
+        if (res.ok) {
+          alert(`Alert set: When ${crop.toUpperCase()} reaches ₹${targetPrice}/Q, you will receive an instant notification.`);
+          loadActivePriceAlerts();
+        }
+      } catch (e) {
+        console.warn('Error saving price alert:', e);
+      }
+    }
+
+    async function deletePriceAlert(alertId) {
+      try {
+        const res = await fetch(`/v1/market/alerts/${alertId}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadActivePriceAlerts();
+        }
+      } catch (e) {
+        console.warn('Error deleting alert:', e);
+      }
+    }
+
+    // ==========================================
+    // MANDI SHARE PRICE CARD MODAL
+    // ==========================================
+
+    function openSharePriceModal() {
+      const modal = document.getElementById('mandiShareModal');
+      if (!modal) return;
+
+      if (mandiRatesCache) {
+        const title = document.getElementById('shareCardTitle');
+        if (title) title.innerText = mandiRatesCache.commodity || 'Gram (Chickpea / Chana)';
+
+        const season = document.getElementById('shareCardSeasonBadge');
+        if (season && mandiRatesCache.msp_benchmark) {
+          season.innerText = mandiRatesCache.msp_benchmark.marketing_season || 'RMS 2027-28';
+        }
+
+        const modalEl = document.getElementById('shareCardModalPrice');
+        if (modalEl && mandiRatesCache.top_mandi) {
+          modalEl.innerHTML = `₹${mandiRatesCache.top_mandi.modal_price.toLocaleString('en-IN')}<span class="text-xs text-gray-400 font-sans">/Q</span>`;
+        }
+
+        const mspEl = document.getElementById('shareCardMspPrice');
+        if (mspEl && mandiRatesCache.msp_benchmark) {
+          mspEl.innerHTML = `₹${mandiRatesCache.msp_benchmark.msp_inr_quintal.toLocaleString('en-IN')}<span class="text-xs text-gray-400 font-sans">/Q</span>`;
+        }
+
+        const bestEl = document.getElementById('shareCardBestMandi');
+        if (bestEl && mandiRatesCache.best_nearby_mandi) {
+          bestEl.innerText = mandiRatesCache.best_nearby_mandi.recommendation_text || '';
+        }
+
+        const tsEl = document.getElementById('shareCardTimestamp');
+        if (tsEl && mandiRatesCache.metadata) {
+          tsEl.innerText = `Verified Agmarknet • ${mandiRatesCache.metadata.observed_at || 'Today'}`;
+        }
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeSharePriceModal() {
+      const modal = document.getElementById('mandiShareModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copyShareCardText() {
+      if (!mandiRatesCache) return;
+      const crop = mandiRatesCache.commodity || 'Gram (Chickpea / Chana)';
+      const modalPrice = mandiRatesCache.top_mandi ? mandiRatesCache.top_mandi.modal_price : 5820;
+      const mspPrice = mandiRatesCache.msp_benchmark ? mandiRatesCache.msp_benchmark.msp_inr_quintal : 5958;
+      const season = mandiRatesCache.msp_benchmark ? mandiRatesCache.msp_benchmark.marketing_season : 'RMS 2027-28';
+      const best = mandiRatesCache.best_nearby_mandi ? mandiRatesCache.best_nearby_mandi.recommendation_text : '';
+
+      const text = `🌾 *AGROVERSE AI — Mandi Price & MSP Intelligence*\n` +
+        `📦 *Commodity:* ${crop}\n` +
+        `💰 *Top APMC Modal Rate:* ₹${modalPrice.toLocaleString('en-IN')}/Quintal\n` +
+        `🏛️ *Official CCEA MSP:* ₹${mspPrice.toLocaleString('en-IN')}/Quintal (${season})\n` +
+        `🚛 *Best Realization:* ${best}\n` +
+        `📊 *Source:* AGMARKNET verified via data.gov.in\n` +
+        `🔗 Track live at: https://agroverse-ai-iota.vercel.app/?view=view-mandi`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btnText = document.getElementById('btnCopyShareText');
+          if (btnText) {
+            const original = btnText.innerText;
+            btnText.innerText = "✓ Copied to Clipboard!";
+            setTimeout(() => { btnText.innerText = original; }, 2500);
+          }
+        });
+      } else {
+        alert("Copied card details:\n\n" + text);
+      }
+    }
+
     // Run on startup
     window.addEventListener('DOMContentLoaded', () => {
       initFarmerProfile();
@@ -3108,6 +4344,7 @@
       runCleanSimulator();
       runCleanIncome();
       runStoreMath();
+      initMandiIntelligence();
 
       // Switch to URL requested view if provided (e.g. ?view=view-fertilizer)
       const urlParams = new URLSearchParams(window.location.search);
@@ -3124,11 +4361,23 @@
         }
       }, 30 * 60 * 1000);
 
+      // Auto-refresh mandi rates every 30 minutes
+      setInterval(() => {
+        const mv = document.getElementById('view-mandi');
+        if (mv && !mv.classList.contains('hidden')) {
+          fetchMandiIntelligence();
+        }
+      }, 30 * 60 * 1000);
+
       // Auto-refresh on window focus & document visibility change
       window.addEventListener('focus', () => {
         const sp = document.getElementById('view-spraying');
         if (sp && !sp.classList.contains('hidden')) {
           loadAutomaticSprayingAdvisory();
+        }
+        const mv = document.getElementById('view-mandi');
+        if (mv && !mv.classList.contains('hidden')) {
+          fetchMandiIntelligence();
         }
       });
       document.addEventListener('visibilitychange', () => {
@@ -3136,6 +4385,10 @@
           const sp = document.getElementById('view-spraying');
           if (sp && !sp.classList.contains('hidden')) {
             loadAutomaticSprayingAdvisory();
+          }
+          const mv = document.getElementById('view-mandi');
+          if (mv && !mv.classList.contains('hidden')) {
+            fetchMandiIntelligence();
           }
         }
       });

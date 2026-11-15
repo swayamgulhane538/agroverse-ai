@@ -9,6 +9,10 @@
     {
       "path": "/v1/jobs/ingest-nasa",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/v1/jobs/ingest-mandi",
+      "schedule": "0 12 * * *"
     }
   ]
 }

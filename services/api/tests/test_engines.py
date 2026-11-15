@@ -192,6 +192,85 @@ class TestAgriEngines(unittest.TestCase):
         self.assertGreater(eo.value["smap_soil_moisture"]["rootzone_sm_0_100cm_m3_m3"], 0.20)
         self.assertIn("past_30d_cumulative_mm", eo.value["gpm_precipitation"])
 
+    def test_mandi_and_msp(self):
+        from services.api.engines.msp import MSPEngine
+        from services.api.market.agmarknet import AgmarknetAdapter, calculate_haversine_distance, calculate_net_mandi_price
+
+        # 1. Test Name Normalisation across English, Hindi, Marathi, and Agmarknet feed names
+        self.assertEqual(MSPEngine.normalize_commodity_name("bengal gram(gram)(whole)"), "chickpea")
+        self.assertEqual(MSPEngine.normalize_commodity_name("हरभरा"), "chickpea")
+        self.assertEqual(MSPEngine.normalize_commodity_name("चना"), "chickpea")
+        self.assertEqual(MSPEngine.normalize_commodity_name("Soyabean"), "soybean")
+        self.assertEqual(MSPEngine.normalize_commodity_name("सोयाबीन"), "soybean")
+        self.assertEqual(MSPEngine.normalize_commodity_name("Lokwan Wheat"), "wheat")
+        self.assertEqual(MSPEngine.normalize_commodity_name("गहू"), "wheat")
+
+        # 2. Test Marketing Season Selection
+        # Rabi crop sown in Nov 2026 marketed in 2027 -> RMS 2027-28
+        rabi_season = MSPEngine.auto_pick_marketing_season(crop_type="rabi", reference_date_str="2026-11-15")
+        self.assertEqual(rabi_season, "RMS 2027-28")
+
+        # Kharif crop sold in Nov 2026 -> KMS 2026-27
+        kharif_season = MSPEngine.auto_pick_marketing_season(crop_type="kharif", reference_date_str="2026-11-15")
+        self.assertEqual(kharif_season, "KMS 2026-27")
+
+        # 3. Test Verified Seed Values from CCEA/PIB
+        chickpea_msp = MSPEngine.get_msp_for_commodity("chickpea")
+        self.assertEqual(chickpea_msp["status"], "verified")
+        self.assertEqual(chickpea_msp["msp_inr_quintal"], 5958)
+        self.assertEqual(chickpea_msp["marketing_season"], "RMS 2027-28")
+
+        wheat_msp = MSPEngine.get_msp_for_commodity("wheat")
+        self.assertEqual(wheat_msp["status"], "verified")
+        self.assertEqual(wheat_msp["msp_inr_quintal"], 2610)
+        self.assertEqual(wheat_msp["marketing_season"], "RMS 2027-28")
+
+        soybean_msp = MSPEngine.get_msp_for_commodity("soybean")
+        self.assertEqual(soybean_msp["status"], "verified")
+        self.assertEqual(soybean_msp["msp_inr_quintal"], 5708)
+        self.assertEqual(soybean_msp["marketing_season"], "KMS 2026-27")
+
+        # 4. Test MSP Gap Calculation and Neutral Explanation
+        gap_above = MSPEngine.calculate_msp_gap(6200, chickpea_msp)
+        self.assertTrue(gap_above["is_above_msp"])
+        self.assertGreater(gap_above["gap_inr"], 0)
+        self.assertIn("Above MSP", gap_above["status_badge"])
+
+        gap_below = MSPEngine.calculate_msp_gap(5820, chickpea_msp)
+        self.assertFalse(gap_below["is_above_msp"])
+        self.assertLess(gap_below["gap_inr"], 0)
+        self.assertIn("Below MSP", gap_below["status_badge"])
+        self.assertIn("NAFED", gap_below["explanation"])
+
+        # 5. Test Distance & Net Mandi Price Realization
+        dist = calculate_haversine_distance(21.1458, 79.0882, 21.3850, 78.9180) # Nagpur to Saoner
+        self.assertGreater(dist, 25.0)
+        self.assertLess(dist, 45.0)
+
+        net_calc = calculate_net_mandi_price(gross_modal_price_q=5890.0, distance_km=32.0)
+        self.assertLess(net_calc["net_realized_price_q"], 5890.0)
+        self.assertGreater(net_calc["net_realized_price_q"], 5600.0)
+
+        # 6. Test Price Alert Evaluation (Rule: Never trigger on demo data)
+        AgmarknetAdapter.set_price_alert(commodity="soybean", target_price_q=5600, condition="gte", market="kalamna")
+        test_prices = [{"commodity_id": "soybean", "market_id": "kalamna", "market": "Kalamna APMC", "modal_price": 5700, "arrival_date": "2026-11-15"}]
+
+        # Must NOT trigger when is_demo is True
+        alerts_demo = AgmarknetAdapter.evaluate_price_alerts(test_prices, is_demo=True)
+        self.assertEqual(len(alerts_demo), 0)
+
+        # Must trigger when is_demo is False
+        alerts_live = AgmarknetAdapter.evaluate_price_alerts(test_prices, is_demo=False)
+        self.assertEqual(len(alerts_live), 1)
+        self.assertEqual(alerts_live[0]["price"], 5700)
+
+        # 7. Test Historical Price Series Coverage
+        hist = AgmarknetAdapter.get_historical_price_series(commodity="chickpea", interval="30D")
+        self.assertEqual(len(hist["dates"]), 31)
+        self.assertIn("History building since", hist["coverage_notice"])
+        self.assertIn("delta_7d_inr", hist["metrics"])
+
 if __name__ == "__main__":
     unittest.main()
+
 

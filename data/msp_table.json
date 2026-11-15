@@ -1,0 +1,190 @@
+[
+  {
+    "commodity_id": "chickpea",
+    "commodity_name": "Gram (Chickpea / Chana)",
+    "hindi_name": "चना",
+    "marathi_name": "हरभरा",
+    "crop_type": "rabi",
+    "seasons": {
+      "RMS 2026-27": {
+        "marketing_season": "RMS 2026-27",
+        "msp_inr_quintal": 5875,
+        "effective_date": "2026-04-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      },
+      "RMS 2027-28": {
+        "marketing_season": "RMS 2027-28",
+        "msp_inr_quintal": 5958,
+        "effective_date": "2027-04-01",
+        "retrieved_date": "2026-10-25",
+        "status": "verified",
+        "source": "CCEA MSP for Rabi Crops 2027-28 / PIB Gazette",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      }
+    },
+    "default_active_season": "RMS 2027-28"
+  },
+  {
+    "commodity_id": "wheat",
+    "commodity_name": "Wheat",
+    "hindi_name": "गेहूं",
+    "marathi_name": "गहू",
+    "crop_type": "rabi",
+    "seasons": {
+      "RMS 2026-27": {
+        "marketing_season": "RMS 2026-27",
+        "msp_inr_quintal": 2585,
+        "effective_date": "2026-04-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      },
+      "RMS 2027-28": {
+        "marketing_season": "RMS 2027-28",
+        "msp_inr_quintal": 2610,
+        "effective_date": "2027-04-01",
+        "retrieved_date": "2026-10-25",
+        "status": "verified",
+        "source": "CCEA MSP for Rabi Crops 2027-28 / PIB Gazette",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      }
+    },
+    "default_active_season": "RMS 2027-28"
+  },
+  {
+    "commodity_id": "soybean",
+    "commodity_name": "Soybean (Yellow)",
+    "hindi_name": "सोयाबीन (पीला)",
+    "marathi_name": "सोयाबीन",
+    "crop_type": "kharif",
+    "seasons": {
+      "KMS 2026-27": {
+        "marketing_season": "KMS 2026-27",
+        "msp_inr_quintal": 5708,
+        "effective_date": "2026-10-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "CCEA MSP for Kharif Crops 2026-27 / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829"
+      }
+    },
+    "default_active_season": "KMS 2026-27"
+  },
+  {
+    "commodity_id": "cotton",
+    "commodity_name": "Cotton (Medium Staple)",
+    "hindi_name": "कपास (मध्यम रेशा)",
+    "marathi_name": "कापूस (मध्यम धागा)",
+    "crop_type": "kharif",
+    "seasons": {
+      "KMS 2026-27": {
+        "marketing_season": "KMS 2026-27",
+        "msp_inr_quintal": 7521,
+        "effective_date": "2026-10-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "CCEA MSP for Kharif Crops 2026-27 / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829"
+      }
+    },
+    "default_active_season": "KMS 2026-27"
+  },
+  {
+    "commodity_id": "tur",
+    "commodity_name": "Tur / Arhar (Pigeon Pea)",
+    "hindi_name": "अरहर / तूर",
+    "marathi_name": "तूर",
+    "crop_type": "kharif",
+    "seasons": {
+      "KMS 2026-27": {
+        "marketing_season": "KMS 2026-27",
+        "msp_inr_quintal": 8000,
+        "effective_date": "2026-10-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "CCEA MSP for Kharif Crops 2026-27 / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829"
+      }
+    },
+    "default_active_season": "KMS 2026-27"
+  },
+  {
+    "commodity_id": "safflower",
+    "commodity_name": "Safflower (Kardi)",
+    "hindi_name": "कुसुम",
+    "marathi_name": "करडई",
+    "crop_type": "rabi",
+    "seasons": {
+      "RMS 2026-27": {
+        "marketing_season": "RMS 2026-27",
+        "msp_inr_quintal": 5940,
+        "effective_date": "2026-04-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      },
+      "RMS 2027-28": {
+        "marketing_season": "RMS 2027-28",
+        "msp_inr_quintal": 6000,
+        "effective_date": "2027-04-01",
+        "retrieved_date": "2026-10-25",
+        "status": "verified",
+        "source": "CCEA MSP for Rabi Crops 2027-28 / PIB Gazette",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      }
+    },
+    "default_active_season": "RMS 2027-28"
+  },
+  {
+    "commodity_id": "mustard",
+    "commodity_name": "Mustard / Rapeseed",
+    "hindi_name": "सरसों / राई",
+    "marathi_name": "मोहरी",
+    "crop_type": "rabi",
+    "seasons": {
+      "RMS 2026-27": {
+        "marketing_season": "RMS 2026-27",
+        "msp_inr_quintal": 5950,
+        "effective_date": "2026-04-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      },
+      "RMS 2027-28": {
+        "marketing_season": "RMS 2027-28",
+        "msp_inr_quintal": 6025,
+        "effective_date": "2027-04-01",
+        "retrieved_date": "2026-10-25",
+        "status": "verified",
+        "source": "CCEA MSP for Rabi Crops 2027-28 / PIB Gazette",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842"
+      }
+    },
+    "default_active_season": "RMS 2027-28"
+  },
+  {
+    "commodity_id": "maize",
+    "commodity_name": "Maize (Corn)",
+    "hindi_name": "मक्का",
+    "marathi_name": "मका",
+    "crop_type": "kharif",
+    "seasons": {
+      "KMS 2026-27": {
+        "marketing_season": "KMS 2026-27",
+        "msp_inr_quintal": 2225,
+        "effective_date": "2026-10-01",
+        "retrieved_date": "2026-10-15",
+        "status": "verified",
+        "source": "CCEA MSP for Kharif Crops 2026-27 / PIB",
+        "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829"
+      }
+    },
+    "default_active_season": "KMS 2026-27"
+  }
+]

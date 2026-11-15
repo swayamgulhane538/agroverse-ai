@@ -1,42 +1,74 @@
 [
   {
     "commodity": "Soybean (Yellow)",
-    "season": "Kharif 2026",
-    "msp_inr_quintal": 4892,
-    "effective_year": "2025-26 / 2026",
-    "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
-    "source_url": "https://cacp.dacnet.nic.in"
+    "season": "KMS 2026-27",
+    "msp_inr_quintal": 5708,
+    "effective_year": "2026-27",
+    "source": "Commission for Agricultural Costs and Prices (CACP) / CCEA Gazette",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829",
+    "status": "verified"
   },
   {
     "commodity": "Cotton (Medium Staple)",
-    "season": "Kharif 2026",
-    "msp_inr_quintal": 7121,
-    "effective_year": "2025-26 / 2026",
-    "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
-    "source_url": "https://cacp.dacnet.nic.in"
+    "season": "KMS 2026-27",
+    "msp_inr_quintal": 7521,
+    "effective_year": "2026-27",
+    "source": "Commission for Agricultural Costs and Prices (CACP) / CCEA Gazette",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829",
+    "status": "verified"
   },
   {
     "commodity": "Gram (Chickpea / Chana)",
-    "season": "Rabi 2026-27",
-    "msp_inr_quintal": 5650,
+    "season": "RMS 2027-28",
+    "msp_inr_quintal": 5958,
+    "effective_year": "2027-28",
+    "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842",
+    "status": "verified"
+  },
+  {
+    "commodity": "Gram (Chickpea / Chana) - RMS 2026-27",
+    "season": "RMS 2026-27",
+    "msp_inr_quintal": 5875,
     "effective_year": "2026-27",
-    "source": "Cabinet Committee on Economic Affairs (CCEA)",
-    "source_url": "https://cacp.dacnet.nic.in"
+    "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842",
+    "status": "verified"
   },
   {
     "commodity": "Wheat",
-    "season": "Rabi 2026-27",
-    "msp_inr_quintal": 2425,
+    "season": "RMS 2027-28",
+    "msp_inr_quintal": 2610,
+    "effective_year": "2027-28",
+    "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842",
+    "status": "verified"
+  },
+  {
+    "commodity": "Wheat - RMS 2026-27",
+    "season": "RMS 2026-27",
+    "msp_inr_quintal": 2585,
     "effective_year": "2026-27",
-    "source": "Cabinet Committee on Economic Affairs (CCEA)",
-    "source_url": "https://cacp.dacnet.nic.in"
+    "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842",
+    "status": "verified"
   },
   {
     "commodity": "Tur / Arhar",
-    "season": "Kharif 2026",
-    "msp_inr_quintal": 7550,
-    "effective_year": "2025-26 / 2026",
+    "season": "KMS 2026-27",
+    "msp_inr_quintal": 8000,
+    "effective_year": "2026-27",
     "source": "Commission for Agricultural Costs and Prices (CACP) Gazette",
-    "source_url": "https://cacp.dacnet.nic.in"
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2026829",
+    "status": "verified"
+  },
+  {
+    "commodity": "Safflower (Kardi)",
+    "season": "RMS 2027-28",
+    "msp_inr_quintal": 6000,
+    "effective_year": "2027-28",
+    "source": "Cabinet Committee on Economic Affairs (CCEA) / PIB",
+    "source_url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2065842",
+    "status": "verified"
   }
 ]

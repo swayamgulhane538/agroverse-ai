@@ -1,0 +1,53 @@
+{
+  "resource_id": "9ef84268-d588-465a-a308-a864a43d0070",
+  "status": "ok",
+  "total": 4,
+  "count": 4,
+  "limit": "100",
+  "records": [
+    {
+      "state": "Maharashtra",
+      "district": "Nagpur",
+      "market": "Kalamna",
+      "commodity": "Bengal Gram(Gram)(Whole)",
+      "variety": "Desi Chana",
+      "arrival_date": "14/11/2026",
+      "min_price": "5470",
+      "max_price": "6110",
+      "modal_price": "5820"
+    },
+    {
+      "state": "Maharashtra",
+      "district": "Nagpur",
+      "market": "Saoner",
+      "commodity": "Bengal Gram(Gram)(Whole)",
+      "variety": "Desi Chana",
+      "arrival_date": "14/11/2026",
+      "min_price": "5530",
+      "max_price": "6180",
+      "modal_price": "5890"
+    },
+    {
+      "state": "Maharashtra",
+      "district": "Nagpur",
+      "market": "Kalamna",
+      "commodity": "Soyabean",
+      "variety": "Yellow",
+      "arrival_date": "14/11/2026",
+      "min_price": "5340",
+      "max_price": "5960",
+      "modal_price": "5680"
+    },
+    {
+      "state": "Maharashtra",
+      "district": "Nagpur",
+      "market": "Kalamna",
+      "commodity": "Wheat",
+      "variety": "Lokwan",
+      "arrival_date": "14/11/2026",
+      "min_price": "2460",
+      "max_price": "2750",
+      "modal_price": "2620"
+    }
+  ]
+}

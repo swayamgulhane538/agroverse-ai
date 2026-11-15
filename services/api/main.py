@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 
 
+from pydantic import BaseModel
+
 # Ensure current package directory is on sys.path
 _current_dir = Path(__file__).resolve().parent
 if str(_current_dir) not in sys.path:
@@ -23,7 +25,8 @@ try:
     from .engines.spraying import SmartSprayingEngine
     from .engines.disease import PlantDiseaseEngine
     from .engines.optimizer import FarmerIncomeOptimizerEngine
-    from .data_loader import get_crops, get_msp, get_schemes
+    from .engines.msp import MSPEngine
+    from .data_loader import get_crops, get_msp, get_schemes, get_msp_table
 except (ImportError, ValueError):
     from nasa.power import NasaPowerAdapter
     from nasa.earth_obs import NasaEarthObsAdapter
@@ -35,7 +38,17 @@ except (ImportError, ValueError):
     from engines.spraying import SmartSprayingEngine
     from engines.disease import PlantDiseaseEngine
     from engines.optimizer import FarmerIncomeOptimizerEngine
-    from data_loader import get_crops, get_msp, get_schemes
+    from engines.msp import MSPEngine
+    from data_loader import get_crops, get_msp, get_schemes, get_msp_table
+
+
+class PriceAlertRequest(BaseModel):
+    commodity: str = "soybean"
+    target_price_q: float = 5700.0
+    condition: str = "gte"
+    market: str = "kalamna"
+    user_id: str = "farmer_1"
+
 
 
 
@@ -108,10 +121,86 @@ def get_nagpur_weather():
     """Fetch live/cached NASA POWER data for Nagpur coordinates."""
     return NasaPowerAdapter.fetch_nagpur_weather()
 
+@app.get("/v1/market/rates")
+def get_market_rates(
+    commodity: str = Query("chickpea", description="Commodity identifier or name"),
+    variety: Optional[str] = Query(None, description="Specific variety filter"),
+    state: Optional[str] = Query(None, description="State filter"),
+    district: Optional[str] = Query(None, description="District filter"),
+    lat: Optional[float] = Query(None, description="User latitude for distance calculation"),
+    lon: Optional[float] = Query(None, description="User longitude for distance calculation"),
+    sort_by: str = Query("modal_price", description="Sort by modal_price, distance, or net_price"),
+    nearby_only: bool = Query(False, description="Filter mandis within distance threshold"),
+    max_distance_km: float = Query(100.0, description="Max distance threshold in km")
+):
+    """M14 — Personalized Agmarknet Mandi Rates with distance ranking, M16 net price, and CCEA MSP benchmark."""
+    return AgmarknetAdapter.get_mandi_rates(
+        commodity=commodity,
+        variety=variety,
+        state=state,
+        district=district,
+        user_lat=lat,
+        user_lon=lon,
+        sort_by=sort_by,
+        nearby_only=nearby_only,
+        max_distance_km=max_distance_km
+    )
+
 @app.get("/v1/market/nagpur-rates")
-def get_mandi_rates():
-    """Fetch official Agmarknet modal rates for Kalamna APMC Mandi, Nagpur."""
-    return AgmarknetAdapter.get_nagpur_rates()
+def get_legacy_mandi_rates():
+    """Backwards-compatible endpoint for Kalamna APMC Mandi rates."""
+    return AgmarknetAdapter.get_mandi_rates(commodity="chickpea")
+
+@app.get("/v1/market/history")
+def get_market_history(
+    commodity: str = Query("chickpea", description="Target commodity"),
+    mandi_id: str = Query("kalamna", description="Target APMC mandi"),
+    interval: str = Query("30D", description="Time interval: 7D, 30D, 90D, 1Y")
+):
+    """M14 — Historical Agmarknet min/max/modal time-series with last-year comparison and momentum metrics."""
+    return AgmarknetAdapter.get_historical_price_series(commodity=commodity, mandi_id=mandi_id, interval=interval)
+
+@app.get("/v1/market/commodities")
+def list_market_commodities():
+    """Returns directory of all supported Agmarknet commodities with multilingual names."""
+    return AgmarknetAdapter.get_supported_commodities()
+
+@app.get("/v1/market/locations")
+def list_market_locations():
+    """Returns cascading State -> District -> Mandi location tree."""
+    return AgmarknetAdapter.get_cascading_locations()
+
+@app.post("/v1/market/alerts")
+def create_price_alert(alert_req: PriceAlertRequest):
+    """M14 — Sets a user-configured price target push alert."""
+    return AgmarknetAdapter.set_price_alert(
+        commodity=alert_req.commodity,
+        target_price_q=alert_req.target_price_q,
+        condition=alert_req.condition,
+        market=alert_req.market,
+        user_id=alert_req.user_id
+    )
+
+@app.get("/v1/market/alerts")
+def list_price_alerts(user_id: str = Query("farmer_1", description="User identifier")):
+    """Lists all active price alerts for a user."""
+    return AgmarknetAdapter.list_price_alerts(user_id=user_id)
+
+@app.delete("/v1/market/alerts/{alert_id}")
+def delete_price_alert(alert_id: str):
+    """Deletes an active price alert."""
+    success = AgmarknetAdapter.delete_price_alert(alert_id=alert_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Alert not found")
+    return {"status": "deleted", "alert_id": alert_id}
+
+@app.get("/v1/market/msp-lookup")
+def lookup_crop_msp(
+    crop: str = Query("chickpea", description="Commodity identifier or name"),
+    season: Optional[str] = Query(None, description="Marketing season (e.g. RMS 2027-28)")
+):
+    """Auto-picks marketing season and looks up verified CCEA MSP with gap analysis."""
+    return MSPEngine.get_msp_for_commodity(crop, marketing_season=season)
 
 @app.get("/v1/calendar/schedule")
 def get_crop_schedule(crop_id: str = "chickpea", sowing_date: str = "2026-11-15"):
@@ -279,6 +368,31 @@ def ingest_nasa_cron(authorization: Optional[str] = Header(None)):
         "job": "ingest-nasa",
         "target": "Nagpur (21.1458° N, 79.0882° E)",
         "datasets": ["POWER_T2M", "SMAP_ROOTZONE", "IMERG_PRECIP"]
+    }
+
+@app.api_route("/v1/jobs/ingest-mandi", methods=["GET", "POST"])
+def ingest_mandi_cron(authorization: Optional[str] = Header(None)):
+    """Scheduled ingest job: stores rows in market_prices, normalizes names, evaluates active alerts."""
+    cron_secret = os.getenv("CRON_SECRET")
+    if cron_secret and authorization != f"Bearer {cron_secret}":
+        raise HTTPException(status_code=401, detail="Unauthorized cron invocation")
+
+    ingested = 0
+    triggered = []
+    for comm in ["chickpea", "wheat", "soybean", "cotton"]:
+        res = AgmarknetAdapter.get_mandi_rates(commodity=comm)
+        recs = res.value.get("mandi_records", [])
+        ingested += len(recs)
+        is_demo = res.provenance.mode == "demo"
+        alerts = AgmarknetAdapter.evaluate_price_alerts(recs, is_demo=is_demo)
+        triggered.extend(alerts)
+
+    return {
+        "status": "success",
+        "job": "ingest-mandi",
+        "ingested_records": ingested,
+        "triggered_alerts_count": len(triggered),
+        "alerts": triggered
     }
 
 @app.get("/v1/system/data-sources")
