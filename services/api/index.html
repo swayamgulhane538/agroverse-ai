@@ -1162,17 +1162,17 @@
 
 
     <!-- ======================================================== -->
-    <!-- VIEW 4: AI PLANT DISEASE SCANNER (GENUINE IMAGE UPLOAD)  -->
+    <!-- VIEW 4: AI PLANT DISEASE SCANNER & CAMERA TRIAGE (M17)   -->
     <!-- ======================================================== -->
     <div id="view-disease" class="space-y-6 hidden">
       <div class="clean-card p-6 sm:p-8 space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-4">
           <div>
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase">ICAR Diagnostic Model</span>
+              <span id="diseaseBadgeModel" class="text-[10px] bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase">ICAR Diagnostic Model</span>
               <h3 class="text-lg font-bold text-gray-900">AI Plant Disease Diagnostic & Doctor (M17)</h3>
             </div>
-            <p class="text-xs text-gray-500 mt-1">Upload plant leaf photograph or click via camera for scientific pathological analysis.</p>
+            <p class="text-xs text-gray-500 mt-1">Real-time camera capture or leaf upload with live AI triage, IPM-first safe guidance, and KVK consultation triggers.</p>
           </div>
           <button onclick="speakDiagnosis()" class="clean-pill text-xs font-bold px-3 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
             <i class="fa-solid fa-volume-high text-emerald-500"></i>
@@ -1180,38 +1180,98 @@
           </button>
         </div>
 
+        <!-- Crop and Language Selection Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-100">
+          <div class="flex items-center space-x-2 text-xs">
+            <label for="diseaseCropSelect" class="font-bold text-gray-700 flex items-center space-x-1">
+              <i class="fa-solid fa-seedling text-emerald-600"></i>
+              <span>Target Crop:</span>
+            </label>
+            <select id="diseaseCropSelect" class="bg-white border border-gray-200 text-xs font-semibold rounded-xl px-2.5 py-1.5 text-gray-800 outline-none">
+              <option value="chickpea">Chickpea / Chana (चने)</option>
+              <option value="cotton">Cotton / Kapas (कापूस)</option>
+              <option value="soybean">Soybean (सोयाबीन)</option>
+              <option value="wheat">Wheat / Gehu (गहू)</option>
+              <option value="pigeonpea">Tur / Arhar (तूर)</option>
+              <option value="tomato">Tomato (टोमॅटो)</option>
+              <option value="citrus">Orange / Citrus (संत्री / मोसंबी)</option>
+              <option value="other">Other / General Plant</option>
+            </select>
+          </div>
+          <div class="flex items-center space-x-2 text-xs">
+            <span class="text-gray-500 text-[11px] font-medium">Diagnostic Language:</span>
+            <select id="diseaseLangSelect" class="bg-white border border-gray-200 text-xs font-semibold rounded-xl px-2.5 py-1.5 text-gray-800 outline-none" onchange="syncDiseaseLang(this.value)">
+              <option value="en">English (Official)</option>
+              <option value="hi">हिंदी (Hindi)</option>
+              <option value="mr">मराठी (Marathi)</option>
+            </select>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <!-- Upload Box with File & Camera Capture -->
+          <!-- Upload & Camera Box -->
           <div class="clean-card p-6 border-2 border-dashed border-gray-300 text-center space-y-4 relative">
-            <input type="file" id="diseaseInputFile" accept="image/*" class="hidden" onchange="handleDiseaseUpload(event)">
-            <input type="file" id="diseaseInputCamera" accept="image/*" capture="environment" class="hidden" onchange="handleDiseaseUpload(event)">
+            <input type="file" id="diseaseInputFile" accept="image/*" class="hidden">
+            <input type="file" id="diseaseInputCamera" accept="image/*" capture="environment" class="hidden">
 
-            <!-- Leaf Image Preview Container -->
-            <div id="diseasePreviewBox" class="w-full h-44 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center justify-center overflow-hidden relative">
-              <img id="diseaseImgPreview" src="" alt="Leaf preview" class="w-full h-full object-cover hidden">
-              <div id="diseasePlaceholder" class="text-center p-4">
-                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl mb-2">
+            <!-- Leaf Image / Camera Preview Container -->
+            <div id="diseasePreviewBox" class="w-full min-h-[220px] bg-gray-900 rounded-2xl border border-gray-100 flex flex-col items-center justify-center overflow-hidden relative">
+              <video id="diseaseCamVideo" playsinline muted autoplay class="w-full max-h-[280px] object-contain hidden"></video>
+              <img id="diseaseImgPreview" src="" alt="Leaf preview" class="w-full max-h-[280px] object-contain hidden">
+              
+              <div id="diseasePlaceholder" class="text-center p-6 text-white">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 text-rose-400 flex items-center justify-center mx-auto text-2xl mb-2 backdrop-blur-sm">
                   <i class="fa-solid fa-camera"></i>
                 </div>
-                <div class="font-bold text-xs text-gray-800">Upload or Snap Leaf Photograph</div>
-                <p class="text-[10px] text-gray-400 mt-1">High resolution, focused on lesion / leaf margin</p>
+                <div class="font-bold text-sm">Upload or Snap Leaf Photograph</div>
+                <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Focus on lesion spots, curled margins, or discoloration in daylight</p>
               </div>
-              <div id="diseaseScanSpinner" class="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center hidden">
-                <i class="fa-solid fa-circle-notch fa-spin text-2xl text-rose-600"></i>
-                <span class="text-xs font-bold text-gray-800 mt-2">Analyzing leaf chlorophyll & pathology...</span>
+
+              <!-- Loading spinner during AI processing -->
+              <div id="diseaseScanSpinner" class="absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center hidden z-20">
+                <div class="w-12 h-12 border-4 border-rose-200 border-t-rose-600 rounded-full animate-spin"></div>
+                <span class="text-xs font-bold text-gray-900 mt-3">Analyzing leaf chlorophyll & pathology...</span>
+                <span class="text-[11px] text-gray-500 mt-0.5">Running AI vision triage & IPM cross-verification</span>
               </div>
             </div>
 
-            <!-- Upload Controls -->
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              <button onclick="document.getElementById('diseaseInputFile').click()" class="btn-black text-xs font-bold py-2.5 flex items-center justify-center space-x-1.5">
+            <!-- Quality Feedback Notice Banner -->
+            <div id="diseaseQualityNotice" class="text-xs p-2.5 rounded-xl hidden text-left flex items-start space-x-2"></div>
+
+            <!-- Live Camera Controls (active while camera stream is on) -->
+            <div id="diseaseCamControls" class="grid grid-cols-2 gap-2 pt-1 hidden">
+              <button id="btnDiseaseSnap" type="button" class="btn-black text-xs font-bold py-2.5 flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-circle-dot"></i>
+                <span>Capture Photo</span>
+              </button>
+              <button id="btnDiseaseCloseCam" type="button" class="clean-pill text-xs font-bold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-gray-200">
+                <i class="fa-solid fa-xmark"></i>
+                <span>Close Camera</span>
+              </button>
+            </div>
+
+            <!-- Initial Controls (Choose Image / Open Camera) -->
+            <div id="diseaseDefaultControls" class="grid grid-cols-2 gap-2 pt-1">
+              <button id="btnDiseaseFile" type="button" class="btn-black text-xs font-bold py-2.5 flex items-center justify-center space-x-1.5">
                 <i class="fa-solid fa-folder-open text-xs"></i>
                 <span>Choose Image</span>
               </button>
-              <button onclick="document.getElementById('diseaseInputCamera').click()" class="clean-pill text-xs font-bold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-gray-200">
+              <button id="btnDiseaseOpenCam" type="button" class="clean-pill text-xs font-bold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-gray-200">
                 <i class="fa-solid fa-camera text-xs"></i>
                 <span>Open Camera</span>
+              </button>
+            </div>
+
+            <!-- Photo Action Controls (when image is loaded) -->
+            <div id="diseaseActionControls" class="grid grid-cols-2 gap-2 pt-1 hidden">
+              <button id="btnDiseaseAnalyse" type="button" class="btn-black text-xs font-bold py-2.5 flex items-center justify-center space-x-1.5 bg-rose-600 hover:bg-rose-700 text-white">
+                <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                <span>Analyse Photo with AI</span>
+              </button>
+              <button id="btnDiseaseRetake" type="button" class="clean-pill text-xs font-bold py-2.5 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-gray-200">
+                <i class="fa-solid fa-rotate-right text-xs"></i>
+                <span>Retake / Change</span>
               </button>
             </div>
 
@@ -1219,31 +1279,55 @@
             <div class="pt-2 border-t border-gray-100">
               <span class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Or Test Instant Sample Leaf:</span>
               <div class="flex flex-wrap gap-1.5 justify-center">
-                <button onclick="runSampleScan('pod_borer')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Pod Borer (Chana)</button>
-                <button onclick="runSampleScan('fusarium_wilt')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Fusarium Wilt</button>
-                <button onclick="runSampleScan('cotton_curl')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Leaf Curl (Cotton)</button>
-                <button onclick="runSampleScan('soybean_rust')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Asian Rust</button>
+                <button type="button" onclick="runSampleScan('pod_borer')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Pod Borer (Chana)</button>
+                <button type="button" onclick="runSampleScan('fusarium_wilt')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Fusarium Wilt</button>
+                <button type="button" onclick="runSampleScan('cotton_curl')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Leaf Curl (Cotton)</button>
+                <button type="button" onclick="runSampleScan('soybean_rust')" class="text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg">Asian Rust</button>
               </div>
             </div>
           </div>
 
           <!-- Diagnostic Results Card -->
           <div id="v_diag_card" class="clean-card p-6 space-y-4">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start gap-2">
               <div>
-                <span class="text-[10px] font-bold text-rose-600 uppercase">Scientific Pathology Report</span>
-                <h4 id="v_diag_name" class="text-base font-bold text-gray-900 mt-0.5">Gram Pod Borer (Helicoverpa armigera)</h4>
+                <div class="flex items-center space-x-2">
+                  <span class="text-[10px] font-bold text-rose-600 uppercase">Scientific Pathology Report</span>
+                  <span id="v_diag_mode_badge" class="text-[9px] bg-gray-100 text-gray-700 font-extrabold px-2 py-0.5 rounded-full border border-gray-200">CALIBRATED REFERENCE</span>
+                </div>
+                <h4 id="v_diag_name" class="text-base font-bold text-gray-900 mt-1">Gram Pod Borer (Helicoverpa armigera)</h4>
                 <div id="v_diag_crop" class="text-xs text-gray-500">Crop: Chickpea (Chana) • Larval Foliar Stage</div>
               </div>
-              <span id="v_diag_conf" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">92.4% Calibrated</span>
+              <span id="v_diag_conf" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap">92.4% Calibrated</span>
             </div>
 
             <div class="space-y-3 text-xs text-gray-700 border-t border-gray-100 pt-3">
               <div>
-                <strong class="text-gray-900 block font-bold mb-0.5">Visible Symptoms:</strong>
+                <strong class="text-gray-900 block font-bold mb-0.5">What is Happening on the Plant:</strong>
                 <p id="v_diag_symptoms" class="text-gray-600 leading-relaxed">
                   Circular holes chewed into developing pods; empty pods with larval excreta (frass) visible inside; young green larvae found feeding on foliage and flower buds.
                 </p>
+              </div>
+
+              <!-- Possible Issues Container (for multi-candidate triage) -->
+              <div id="v_diag_possible_box" class="space-y-2 hidden">
+                <strong class="text-gray-900 block font-bold">Possible Causes (Ranked by Likelihood):</strong>
+                <div id="v_diag_possible_issues" class="space-y-2"></div>
+              </div>
+
+              <!-- Follow-up Questions Interactive Container -->
+              <div id="v_diag_followups_box" class="p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-2 hidden">
+                <div class="flex items-center justify-between">
+                  <strong class="text-blue-900 text-xs font-bold flex items-center space-x-1.5">
+                    <i class="fa-solid fa-circle-question text-blue-600"></i>
+                    <span>Help AI Refine Diagnosis (Interactive)</span>
+                  </strong>
+                  <span class="text-[10px] text-blue-700 font-semibold">Answer to increase certainty</span>
+                </div>
+                <div id="v_diag_followup_list" class="space-y-2 text-xs"></div>
+                <button id="btnDiseaseRecheck" type="button" class="btn-black text-xs font-bold py-1.5 px-3 bg-blue-700 hover:bg-blue-800 text-white w-full rounded-lg mt-2">
+                  Re-check with my answers
+                </button>
               </div>
 
               <div>
@@ -1265,8 +1349,18 @@
                   <span>Kisan Call Centre (Toll-Free): 1800-180-1551</span>
                 </div>
               </div>
+
+              <!-- Provenance and Disclaimer note -->
+              <div id="v_diag_provenance" class="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center justify-between">
+                <span>AI-assisted triage • ICAR/KVK verified guidance</span>
+                <span>Toll-Free: 1800-180-1551</span>
+              </div>
             </div>
           </div>
+
+        </div>
+      </div>
+    </div>
 
         </div>
       </div>
@@ -2623,9 +2717,15 @@
       speakText(t.voiceAdvisory);
     }
 
+    let currentDiagnosisSpeechText = null;
+
     function speakDiagnosis() {
-      const t = translations[currentLang] || translations.en;
-      speakText(t.speakDiagnosisLabel);
+      if (currentDiagnosisSpeechText) {
+        speakText(currentDiagnosisSpeechText);
+      } else {
+        const t = translations[currentLang] || translations.en;
+        speakText(t.speakDiagnosisLabel);
+      }
     }
 
     // View Switching Router
@@ -2637,6 +2737,10 @@
     ];
 
     function switchView(viewId) {
+      if (viewId !== 'view-disease' && typeof stopDiseaseCamera === 'function') {
+        stopDiseaseCamera();
+      }
+
       ALL_VIEWS.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -2710,6 +2814,9 @@
       }
       if (viewId === 'view-mandi') {
         initMandiIntelligence();
+      }
+      if (viewId === 'view-disease') {
+        initDiseaseScannerEvents();
       }
     }
 
@@ -3314,27 +3421,440 @@
       loadAutomaticSprayingAdvisory();
     }
 
-    // Genuine Disease Scanner File & Camera Upload
-    function handleDiseaseUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+    // ========================================================
+    // M17: AI DISEASE DOCTOR & LIVE CAMERA TRIAGE
+    // ========================================================
+    const DISEASE_MAX_SIDE = 1280;
+    const DISEASE_JPEG_QUALITY = 0.8;
+    const DISEASE_MAX_BYTES = 3.5 * 1024 * 1024;
+    let diseaseCamStream = null;
+    let currentDiseaseBlob = null;
+    let diseaseLastFollowUps = [];
 
-      const reader = new FileReader();
-      const spinner = document.getElementById('diseaseScanSpinner');
-      spinner.classList.remove('hidden');
+    function syncDiseaseLang(lang) {
+      if (typeof changeLanguage === 'function' && ['en', 'hi', 'mr'].includes(lang)) {
+        changeLanguage(lang);
+      }
+      const select = document.getElementById('diseaseLangSelect');
+      if (select && select.value !== lang) {
+        select.value = lang;
+      }
+    }
 
-      reader.onload = function(e) {
+    function showDiseaseNotice(type, text) {
+      const box = document.getElementById('diseaseQualityNotice');
+      if (!box) return;
+      if (!text) {
+        box.classList.add('hidden');
+        box.innerText = '';
+        return;
+      }
+      box.classList.remove('hidden', 'bg-rose-50', 'text-rose-800', 'border-rose-200', 'bg-amber-50', 'text-amber-800', 'border-amber-200', 'bg-blue-50', 'text-blue-800', 'border-blue-200');
+      if (type === 'err') {
+        box.className = 'text-xs p-2.5 rounded-xl border bg-rose-50 text-rose-800 border-rose-200 flex items-start space-x-2';
+        box.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5"></i><span>${text}</span>`;
+      } else if (type === 'warn') {
+        box.className = 'text-xs p-2.5 rounded-xl border bg-amber-50 text-amber-800 border-amber-200 flex items-start space-x-2';
+        box.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5"></i><span>${text}</span>`;
+      } else {
+        box.className = 'text-xs p-2.5 rounded-xl border bg-blue-50 text-blue-800 border-blue-200 flex items-start space-x-2';
+        box.innerHTML = `<i class="fa-solid fa-circle-info text-blue-600 mt-0.5"></i><span>${text}</span>`;
+      }
+    }
+
+    function stopDiseaseCamera() {
+      if (diseaseCamStream) {
+        diseaseCamStream.getTracks().forEach(t => t.stop());
+        diseaseCamStream = null;
+      }
+      const video = document.getElementById('diseaseCamVideo');
+      if (video) {
+        video.srcObject = null;
+        video.classList.add('hidden');
+      }
+      const camControls = document.getElementById('diseaseCamControls');
+      if (camControls) camControls.classList.add('hidden');
+      const defControls = document.getElementById('diseaseDefaultControls');
+      if (defControls && !currentDiseaseBlob) defControls.classList.remove('hidden');
+    }
+
+    async function openDiseaseCamera() {
+      showDiseaseNotice('', '');
+      if (!window.isSecureContext) {
+        showDiseaseNotice('warn', 'In-browser camera requires secure HTTPS. Opening device camera app instead.');
+        document.getElementById('diseaseInputCamera')?.click();
+        return;
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showDiseaseNotice('warn', 'Browser does not support in-page camera stream. Opening phone camera instead.');
+        document.getElementById('diseaseInputCamera')?.click();
+        return;
+      }
+
+      try {
+        diseaseCamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+          audio: false
+        });
+        const video = document.getElementById('diseaseCamVideo');
+        video.srcObject = diseaseCamStream;
+        await video.play();
+        video.classList.remove('hidden');
+
+        document.getElementById('diseasePlaceholder')?.classList.add('hidden');
+        document.getElementById('diseaseImgPreview')?.classList.add('hidden');
+        document.getElementById('diseaseCamControls')?.classList.remove('hidden');
+        document.getElementById('diseaseDefaultControls')?.classList.add('hidden');
+        document.getElementById('diseaseActionControls')?.classList.add('hidden');
+      } catch (err) {
+        stopDiseaseCamera();
+        console.warn('Camera access error:', err);
+        const map = {
+          NotAllowedError: 'Camera permission was denied. Please allow camera access in browser settings.',
+          NotFoundError: 'No camera found on this device. Use Choose Image.',
+          NotReadableError: 'The camera is currently used by another app. Close it and try again.'
+        };
+        showDiseaseNotice('err', map[err && err.name] || 'Could not open in-page camera. Falling back to camera upload.');
+        document.getElementById('diseaseInputCamera')?.click();
+      }
+    }
+
+    async function snapDiseasePhoto() {
+      const video = document.getElementById('diseaseCamVideo');
+      if (!video || !video.videoWidth) {
+        showDiseaseNotice('warn', 'Camera is still initializing. Please wait a moment.');
+        return;
+      }
+      const c = document.createElement('canvas');
+      c.width = video.videoWidth;
+      c.height = video.videoHeight;
+      c.getContext('2d').drawImage(video, 0, 0);
+      stopDiseaseCamera();
+      await setDiseaseImageFromSource(c);
+    }
+
+    async function toBitmap(fileOrCanvas) {
+      if (fileOrCanvas instanceof HTMLCanvasElement) return fileOrCanvas;
+      if (window.createImageBitmap) {
+        try { return await createImageBitmap(fileOrCanvas); } catch (e) { /* fall through */ }
+      }
+      return await new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(fileOrCanvas);
+        const img = new Image();
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+        img.src = url;
+      });
+    }
+
+    function srcSize(s) {
+      return { w: s.videoWidth || s.naturalWidth || s.width, h: s.videoHeight || s.naturalHeight || s.height };
+    }
+
+    function drawScaled(source, maxSide) {
+      const { w, h } = srcSize(source);
+      const k = Math.min(1, maxSide / Math.max(w, h));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(w * k));
+      c.height = Math.max(1, Math.round(h * k));
+      c.getContext('2d').drawImage(source, 0, 0, c.width, c.height);
+      return c;
+    }
+
+    const toBlobAsync = (canvas, q) => new Promise(res => canvas.toBlob(res, 'image/jpeg', q));
+
+    function qualityHints(canvas) {
+      const small = drawScaled(canvas, 256);
+      const ctx = small.getContext('2d');
+      const { width: w, height: h } = small;
+      const d = ctx.getImageData(0, 0, w, h).data;
+      const g = new Float32Array(w * h);
+      let sum = 0;
+      for (let i = 0; i < w * h; i++) {
+        g[i] = 0.299 * d[i*4] + 0.587 * d[i*4+1] + 0.114 * d[i*4+2];
+        sum += g[i];
+      }
+      const mean = sum / (w * h);
+      let n = 0, s = 0, s2 = 0;
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = y * w + x;
+          const lap = g[i-1] + g[i+1] + g[i-w] + g[i+w] - 4 * g[i];
+          s += lap;
+          s2 += lap * lap;
+          n++;
+        }
+      }
+      const variance = s2 / n - (s / n) * (s / n);
+      const tips = [];
+      if (mean < 45) tips.push('Photo looks dark. Capture in direct daylight for sharper lesion detection.');
+      if (variance < 20) tips.push('Photo looks blurry. Hold steady and focus closely on the affected leaf surface.');
+      return tips;
+    }
+
+    async function setDiseaseImageFromSource(source) {
+      try {
+        const bmp = await toBitmap(source);
+        let canvas = drawScaled(bmp, DISEASE_MAX_SIDE);
+        let q = DISEASE_JPEG_QUALITY;
+        let blob = await toBlobAsync(canvas, q);
+
+        while (blob && blob.size > DISEASE_MAX_BYTES && q > 0.4) {
+          q -= 0.1;
+          blob = await toBlobAsync(canvas, q);
+        }
+
+        if (!blob || blob.size > DISEASE_MAX_BYTES) {
+          showDiseaseNotice('err', 'Photo is too large for upload. Please choose a smaller photo.');
+          return;
+        }
+
+        currentDiseaseBlob = blob;
         const img = document.getElementById('diseaseImgPreview');
-        img.src = e.target.result;
+        if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+        const url = URL.createObjectURL(blob);
+        img.dataset.url = url;
+        img.src = url;
         img.classList.remove('hidden');
-        document.getElementById('diseasePlaceholder').classList.add('hidden');
 
-        setTimeout(() => {
-          spinner.classList.add('hidden');
-          runDiseaseDiagnosis(file.name);
-        }, 800);
-      };
-      reader.readAsDataURL(file);
+        document.getElementById('diseasePlaceholder')?.classList.add('hidden');
+        document.getElementById('diseaseCamVideo')?.classList.add('hidden');
+        document.getElementById('diseaseCamControls')?.classList.add('hidden');
+        document.getElementById('diseaseDefaultControls')?.classList.add('hidden');
+        document.getElementById('diseaseActionControls')?.classList.remove('hidden');
+
+        const tips = qualityHints(canvas);
+        if (tips.length) {
+          showDiseaseNotice('warn', tips.join(' '));
+        } else {
+          showDiseaseNotice('info', `Photo ready (${Math.round(blob.size / 1024)} KB). Click 'Analyse Photo with AI' to start triage.`);
+        }
+      } catch (e) {
+        console.error('Error processing leaf image:', e);
+        showDiseaseNotice('err', 'Could not read this image. Please choose a standard JPEG, PNG or WebP photograph.');
+      }
+    }
+
+    function resetDiseasePhoto() {
+      currentDiseaseBlob = null;
+      const img = document.getElementById('diseaseImgPreview');
+      if (img) {
+        if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+        img.src = '';
+        img.classList.add('hidden');
+      }
+      document.getElementById('diseasePlaceholder')?.classList.remove('hidden');
+      document.getElementById('diseaseCamVideo')?.classList.add('hidden');
+      document.getElementById('diseaseCamControls')?.classList.add('hidden');
+      document.getElementById('diseaseActionControls')?.classList.add('hidden');
+      document.getElementById('diseaseDefaultControls')?.classList.remove('hidden');
+      showDiseaseNotice('', '');
+    }
+
+    async function handleDiseaseUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+      stopDiseaseCamera();
+      await setDiseaseImageFromSource(file);
+    }
+
+    async function analyseDiseasePhoto(answers = '') {
+      if (!currentDiseaseBlob) {
+        showDiseaseNotice('warn', 'Please take or choose a leaf photo first.');
+        return;
+      }
+
+      showDiseaseNotice('', '');
+      const spinner = document.getElementById('diseaseScanSpinner');
+      const btn = document.getElementById('btnDiseaseAnalyse');
+      if (spinner) spinner.classList.remove('hidden');
+      if (btn) btn.disabled = true;
+
+      const cropVal = document.getElementById('diseaseCropSelect')?.value || 'chickpea';
+      const langVal = document.getElementById('diseaseLangSelect')?.value || currentLang || 'en';
+
+      const fd = new FormData();
+      fd.append('image', currentDiseaseBlob, 'leaf.jpg');
+      fd.append('crop', cropVal);
+      fd.append('language', langVal);
+      if (answers) fd.append('answers', answers);
+
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 75000);
+        const res = await fetch('/v1/disease/scan', { method: 'POST', body: fd, signal: ctrl.signal });
+        clearTimeout(timer);
+
+        let data = null;
+        try { data = await res.json(); } catch (e) {}
+
+        if (res.ok && data && data.result) {
+          renderVisionScanResult(data);
+          showDiseaseNotice('info', 'Live AI vision triage complete. Review diagnostic findings and safe next steps below.');
+        } else if (res.status === 503) {
+          showDiseaseNotice('warn', 'AI Vision API key not configured on server. Showing ICAR reference pathology diagnostic for demonstration.');
+          runSampleScanForCrop(cropVal);
+        } else {
+          const errText = (data && data.error && data.error.message) || `Server triage error (${res.status}). Switching to ICAR reference diagnostic.`;
+          showDiseaseNotice('warn', errText);
+          runSampleScanForCrop(cropVal);
+        }
+      } catch (err) {
+        console.warn('Vision scan error:', err);
+        showDiseaseNotice('warn', 'Vision triage service reached timeout or is offline. Switching to ICAR reference diagnostic.');
+        runSampleScanForCrop(cropVal);
+      } finally {
+        if (spinner) spinner.classList.add('hidden');
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    const CERTAINTY_LABELS = {
+      likely: { text: "Likely Confirmed", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
+      possible: { text: "Possible - Field Verify", cls: "bg-amber-50 text-amber-800 border-amber-300" },
+      uncertain: { text: "Uncertain - Inconclusive", cls: "bg-rose-50 text-rose-800 border-rose-300" },
+      poor_image: { text: "Photo Not Clear", cls: "bg-rose-50 text-rose-800 border-rose-300" },
+      not_a_plant: { text: "No Plant Detected", cls: "bg-rose-50 text-rose-800 border-rose-300" }
+    };
+
+    const KIND_LABELS = {
+      disease: "Fungal/Bacterial Disease",
+      insect_pest: "Insect Pest Damage",
+      nutrient: "Nutrient Deficiency",
+      abiotic: "Abiotic Stress (Water/Heat)",
+      healthy: "Healthy Tissue",
+      unknown: "Unknown Issue"
+    };
+
+    function renderVisionScanResult(data) {
+      const r = data.result;
+      if (!r) return;
+
+      const certInfo = CERTAINTY_LABELS[r.overall_certainty] || { text: r.overall_certainty, cls: "bg-emerald-50 text-emerald-800 border-emerald-300" };
+      const confBadge = document.getElementById('v_diag_conf');
+      if (confBadge) {
+        confBadge.className = `text-xs font-bold px-2.5 py-1 rounded-full border whitespace-nowrap ${certInfo.cls}`;
+        confBadge.innerText = certInfo.text;
+      }
+
+      const modeBadge = document.getElementById('v_diag_mode_badge');
+      if (modeBadge) {
+        modeBadge.className = 'text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200';
+        modeBadge.innerText = 'LIVE AI VISION';
+      }
+
+      const topIssue = (r.possible_issues && r.possible_issues[0]) ? r.possible_issues[0].name : "Plant Pathology Scan";
+      document.getElementById('v_diag_name').innerText = topIssue;
+      document.getElementById('v_diag_crop').innerText = `Crop: ${data.crop_selected ? data.crop_selected.toUpperCase() : 'PARCEL CROP'} • AI Vision Triage`;
+      document.getElementById('v_diag_symptoms').innerText = r.what_is_happening || "No pathological lesions detected.";
+
+      // Render possible causes list
+      const possibleBox = document.getElementById('v_diag_possible_box');
+      const possibleIssuesContainer = document.getElementById('v_diag_possible_issues');
+      if (possibleBox && possibleIssuesContainer) {
+        if (r.possible_issues && r.possible_issues.length) {
+          possibleBox.classList.remove('hidden');
+          possibleIssuesContainer.innerHTML = r.possible_issues.map(issue => `
+            <div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-gray-900">${issue.name}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${issue.likelihood === 'high' ? 'bg-rose-100 text-rose-800' : (issue.likelihood === 'medium' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700')}">${(issue.likelihood || 'medium').toUpperCase()} LIKELIHOOD</span>
+              </div>
+              <div class="text-[11px] text-gray-500 font-semibold">${KIND_LABELS[issue.kind] || issue.kind}</div>
+              ${issue.evidence_seen && issue.evidence_seen.length ? `<div class="text-[11px] text-gray-700"><span class="font-semibold text-emerald-700">Seen in photo:</span> ${issue.evidence_seen.join(', ')}</div>` : ''}
+              ${issue.evidence_missing && issue.evidence_missing.length ? `<div class="text-[11px] text-gray-500"><span class="font-semibold text-gray-600">Not visible/unconfirmed:</span> ${issue.evidence_missing.join(', ')}</div>` : ''}
+            </div>
+          `).join('');
+        } else {
+          possibleBox.classList.add('hidden');
+          possibleIssuesContainer.innerHTML = '';
+        }
+      }
+
+      // Render follow up questions loop
+      const followBox = document.getElementById('v_diag_followups_box');
+      const followList = document.getElementById('v_diag_followup_list');
+      diseaseLastFollowUps = r.follow_up_questions || [];
+      if (followBox && followList) {
+        if (diseaseLastFollowUps.length) {
+          followBox.classList.remove('hidden');
+          followList.innerHTML = diseaseLastFollowUps.map((q, idx) => `
+            <div class="flex items-center justify-between gap-2 p-1.5 bg-white rounded-lg border border-blue-100">
+              <span class="text-[11px] text-blue-950 font-medium flex-1">${q}</span>
+              <select id="disease_fu_${idx}" class="text-xs bg-gray-50 border border-gray-200 rounded px-2 py-1 font-semibold text-gray-800">
+                <option value="Not sure">Not sure</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          `).join('');
+          const recheckBtn = document.getElementById('btnDiseaseRecheck');
+          if (recheckBtn) {
+            recheckBtn.onclick = () => {
+              const answers = diseaseLastFollowUps.map((q, idx) => {
+                const sel = document.getElementById(`disease_fu_${idx}`);
+                return `${q} -> ${sel ? sel.value : 'Not sure'}`;
+              }).join('; ');
+              analyseDiseasePhoto(answers);
+            };
+          }
+        } else {
+          followBox.classList.add('hidden');
+          followList.innerHTML = '';
+        }
+      }
+
+      // Safe next steps
+      const stepsList = document.getElementById('v_diag_steps');
+      if (stepsList) {
+        if (r.safe_next_steps && r.safe_next_steps.length) {
+          stepsList.innerHTML = r.safe_next_steps.map(s => `<li>${s}</li>`).join('');
+        } else {
+          stepsList.innerHTML = `<li>Monitor parcel weekly; maintain soil moisture balance.</li>`;
+        }
+      }
+
+      // Expert consultation
+      const expertBox = document.getElementById('v_diag_expert');
+      if (expertBox) {
+        if (r.see_expert_if && r.see_expert_if.length) {
+          expertBox.innerText = r.see_expert_if.join(' • ');
+        } else {
+          expertBox.innerText = "Consult local Krishi Vigyan Kendra (KVK) if symptoms spread to more than 10% of parcel plants.";
+        }
+      }
+
+      // Provenance
+      const prov = document.getElementById('v_diag_provenance');
+      if (prov) {
+        const fetchedAt = (data.provenance && data.provenance.fetchedAt) ? new Date(data.provenance.fetchedAt).toLocaleTimeString() : 'Just now';
+        prov.innerHTML = `
+          <span>Source: AI Vision Model (${data.crop_selected || 'Crop'}) • As of ${fetchedAt}</span>
+          <span>Toll-Free: 1800-180-1551</span>
+        `;
+      }
+
+      // Update speech diagnosis text
+      currentDiagnosisSpeechText = `Diagnosis for ${topIssue}. What is happening: ${r.what_is_happening}. Safe next steps: ${(r.safe_next_steps || []).join('. ')}`;
+    }
+
+    function runSampleScanForCrop(crop) {
+      const modeBadge = document.getElementById('v_diag_mode_badge');
+      if (modeBadge) {
+        modeBadge.className = 'text-[9px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full border border-amber-200';
+        modeBadge.innerText = 'CALIBRATED REFERENCE (DEMO)';
+      }
+      const c = (crop || '').toLowerCase();
+      if (c === 'cotton') {
+        runSampleScan('cotton_curl');
+      } else if (c === 'soybean') {
+        runSampleScan('soybean_rust');
+      } else if (c === 'wheat') {
+        runSampleScan('fusarium_wilt');
+      } else {
+        runSampleScan('pod_borer');
+      }
     }
 
     function runDiseaseDiagnosis(filename) {
@@ -3351,9 +3871,18 @@
     }
 
     function runSampleScan(type) {
+      document.getElementById('v_diag_possible_box')?.classList.add('hidden');
+      document.getElementById('v_diag_followups_box')?.classList.add('hidden');
+      const modeBadge = document.getElementById('v_diag_mode_badge');
+      if (modeBadge) {
+        modeBadge.className = 'text-[9px] bg-gray-100 text-gray-700 font-extrabold px-2 py-0.5 rounded-full border border-gray-200';
+        modeBadge.innerText = 'CALIBRATED REFERENCE';
+      }
+
       if (type === 'pod_borer') {
         document.getElementById('v_diag_name').innerText = 'Gram Pod Borer (Helicoverpa armigera)';
         document.getElementById('v_diag_crop').innerText = 'Crop: Chickpea (Desi Chana) • Larval Stage';
+        document.getElementById('v_diag_conf').className = 'text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap';
         document.getElementById('v_diag_conf').innerText = '92.4% Calibrated';
         document.getElementById('v_diag_symptoms').innerText = 'Circular holes chewed into pods; empty pods with larval excreta inside; young green larvae feeding on foliage and flower buds.';
         document.getElementById('v_diag_steps').innerHTML = `
@@ -3362,9 +3891,11 @@
           <li>Spray HaNPV @ 250 LE/ha in evening hours with 0.1% jaggery.</li>
         `;
         document.getElementById('v_diag_expert').innerText = 'Consult local Krishi Vigyan Kendra (KVK) if larval count exceeds 2 larvae per meter row or larvae have penetrated pods.';
+        currentDiagnosisSpeechText = "Diagnosis: Gram Pod Borer in Chickpea. Visible symptoms: Circular holes chewed into pods. Recommended organic treatment: Spray 5% Neem Seed Kernel Extract and install pheromone traps.";
       } else if (type === 'fusarium_wilt') {
         document.getElementById('v_diag_name').innerText = 'Fusarium Wilt (कोरडी मूळकुज)';
         document.getElementById('v_diag_crop').innerText = 'Crop: Chickpea / Tur • Vascular Root System';
+        document.getElementById('v_diag_conf').className = 'text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap';
         document.getElementById('v_diag_conf').innerText = '89.1% Early Stage';
         document.getElementById('v_diag_symptoms').innerText = 'Drooping petioles; internal vascular browning when root collar split longitudinally; patch wilting without prior yellowing.';
         document.getElementById('v_diag_steps').innerHTML = `
@@ -3373,9 +3904,11 @@
           <li>Follow 3-year crop rotation next season with mustard or safflower.</li>
         `;
         document.getElementById('v_diag_expert').innerText = 'Escalate to university plant pathologist if >15% field shows systemic wilting, as chlamydospores persist 6 years in Vertisols.';
+        currentDiagnosisSpeechText = "Diagnosis: Fusarium Wilt in Chickpea. Visible symptoms: Drooping petioles and internal vascular browning. Treatment: Drench root zone with Trichoderma viride.";
       } else if (type === 'cotton_curl') {
         document.getElementById('v_diag_name').innerText = 'Cotton Leaf Curl Virus (CLCuV)';
         document.getElementById('v_diag_crop').innerText = 'Crop: Bt Cotton • Foliar Enation Stage';
+        document.getElementById('v_diag_conf').className = 'text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap';
         document.getElementById('v_diag_conf').innerText = '91.0% Confirmed';
         document.getElementById('v_diag_symptoms').innerText = 'Upward curling of leaf margins; thickening of minor veins; enation outgrowths under leaf surface; plant stunting.';
         document.getElementById('v_diag_steps').innerHTML = `
@@ -3384,9 +3917,11 @@
           <li>Foliar spray of 10% sour cow buttermilk (ताक) diluted with water.</li>
         `;
         document.getElementById('v_diag_expert').innerText = 'Contact CICR Nagpur immediately if enations appear on >20% plants before 60 DAS.';
+        currentDiagnosisSpeechText = "Diagnosis: Cotton Leaf Curl Virus. Visible symptoms: Upward curling of leaf margins and vein thickening. Treatment: Spray 2% Neem oil to suppress whitefly vectors.";
       } else if (type === 'soybean_rust') {
         document.getElementById('v_diag_name').innerText = 'Asian Soybean Rust (तांबेरा)';
         document.getElementById('v_diag_crop').innerText = 'Crop: Soybean • Reproductive Pod Stage';
+        document.getElementById('v_diag_conf').className = 'text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap';
         document.getElementById('v_diag_conf').innerText = '93.5% Calibrated';
         document.getElementById('v_diag_symptoms').innerText = 'Reddish-brown polygonal lesions on lower leaves; raised volcano-like uredinia on undersides; rapid defoliation.';
         document.getElementById('v_diag_steps').innerHTML = `
@@ -3395,7 +3930,39 @@
           <li>Ensure good plant spacing (45 x 5 cm) to promote air circulation.</li>
         `;
         document.getElementById('v_diag_expert').innerText = 'Notify District Agriculture Officer if rust reaches middle canopy, as defoliation can occur in 10 days.';
+        currentDiagnosisSpeechText = "Diagnosis: Asian Soybean Rust. Visible symptoms: Reddish-brown polygonal lesions on lower leaves. Treatment: Spray Copper Oxychloride and Pseudomonas fluorescens.";
       }
+    }
+
+    function initDiseaseScannerEvents() {
+      const btnFile = document.getElementById('btnDiseaseFile');
+      if (btnFile) btnFile.onclick = () => document.getElementById('diseaseInputFile')?.click();
+
+      const btnCam = document.getElementById('btnDiseaseOpenCam');
+      if (btnCam) btnCam.onclick = openDiseaseCamera;
+
+      const btnSnap = document.getElementById('btnDiseaseSnap');
+      if (btnSnap) btnSnap.onclick = snapDiseasePhoto;
+
+      const btnCloseCam = document.getElementById('btnDiseaseCloseCam');
+      if (btnCloseCam) btnCloseCam.onclick = stopDiseaseCamera;
+
+      const btnRetake = document.getElementById('btnDiseaseRetake');
+      if (btnRetake) btnRetake.onclick = () => { resetDiseasePhoto(); openDiseaseCamera(); };
+
+      const btnAnalyse = document.getElementById('btnDiseaseAnalyse');
+      if (btnAnalyse) btnAnalyse.onclick = () => analyseDiseasePhoto('');
+
+      const inpFile = document.getElementById('diseaseInputFile');
+      if (inpFile) inpFile.onchange = handleDiseaseUpload;
+
+      const inpCam = document.getElementById('diseaseInputCamera');
+      if (inpCam) inpCam.onchange = handleDiseaseUpload;
+
+      window.addEventListener('pagehide', stopDiseaseCamera);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopDiseaseCamera();
+      });
     }
 
     // Income Optimizer Math
@@ -4345,6 +4912,7 @@
       runCleanIncome();
       runStoreMath();
       initMandiIntelligence();
+      initDiseaseScannerEvents();
 
       // Switch to URL requested view if provided (e.g. ?view=view-fertilizer)
       const urlParams = new URLSearchParams(window.location.search);

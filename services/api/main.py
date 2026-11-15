@@ -27,6 +27,7 @@ try:
     from .engines.optimizer import FarmerIncomeOptimizerEngine
     from .engines.msp import MSPEngine
     from .data_loader import get_crops, get_msp, get_schemes, get_msp_table
+    from .disease_scan_api import router as disease_scan_router
 except (ImportError, ValueError):
     from nasa.power import NasaPowerAdapter
     from nasa.earth_obs import NasaEarthObsAdapter
@@ -40,6 +41,7 @@ except (ImportError, ValueError):
     from engines.optimizer import FarmerIncomeOptimizerEngine
     from engines.msp import MSPEngine
     from data_loader import get_crops, get_msp, get_schemes, get_msp_table
+    from disease_scan_api import router as disease_scan_router
 
 
 class PriceAlertRequest(BaseModel):
@@ -71,6 +73,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Real AI Disease Scanner Router
+app.include_router(disease_scan_router)
 
 @app.get("/", include_in_schema=False, response_class=HTMLResponse)
 def serve_index():
