@@ -29,3 +29,7 @@ def get_msp() -> List[Dict[str, Any]]:
 
 def get_schemes() -> List[Dict[str, Any]]:
     return load_json_file("schemes.json")
+
+def get_spray_products() -> List[Dict[str, Any]]:
+    return load_json_file("spray_products.json")
+

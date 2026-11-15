@@ -77,14 +77,97 @@ class TestAgriEngines(unittest.TestCase):
         self.assertIn("title", rec.value["diy_preparation_guide"])
 
     def test_spraying_advisory(self):
-        from services.api.engines.spraying import SmartSprayingEngine
-        # Calm conditions -> suitable
-        calm = SmartSprayingEngine.evaluate_spraying_conditions(wind_speed_kmh=8.0, rain_prob_next_24h_pct=5)
-        self.assertTrue(calm.value["is_suitable_now"])
-        # High wind -> hazard
-        windy = SmartSprayingEngine.evaluate_spraying_conditions(wind_speed_kmh=22.0)
-        self.assertFalse(windy.value["is_suitable_now"])
-        self.assertEqual(windy.value["risk_rating"], "HAZARDOUS")
+        from services.api.engines.spraying import (
+            SmartSprayingEngine,
+            calculate_wet_bulb_stull,
+            calculate_delta_t
+        )
+        from services.api.data_loader import get_spray_products
+
+        # 1. Test Stull (2011) Wet Bulb and Delta-T formula
+        # Known benchmark: T=20°C, RH=50% -> Tw ~ 13.7°C, Delta-T ~ 6.3°C
+        tw = calculate_wet_bulb_stull(20.0, 50.0)
+        self.assertAlmostEqual(tw, 13.70, delta=0.25)
+        dt = calculate_delta_t(20.0, 50.0)
+        self.assertAlmostEqual(dt, 6.30, delta=0.25)
+
+        # 2. Test Hourly Suitability Rules
+        # Drift hazard (> 15 km/h)
+        eval_drift = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=25.0, rh_pct=50.0, wind_kmh=18.0,
+            gust_kmh=20.0, rain_prob_pct=5, precip_mm=0.0, is_day=1
+        )
+        self.assertEqual(eval_drift["status"], "do_not_spray")
+        self.assertIn("drift", eval_drift["primary_reason"].lower())
+
+        # Calm inversion caution (< 3 km/h)
+        eval_calm = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=22.0, rh_pct=60.0, wind_kmh=2.0,
+            gust_kmh=3.0, rain_prob_pct=0, precip_mm=0.0, is_day=1
+        )
+        self.assertEqual(eval_calm["status"], "caution")
+        self.assertIn("inversion", eval_calm["primary_reason"].lower())
+
+        # Rain wash-off (> 35%)
+        eval_rain = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=26.0, rh_pct=60.0, wind_kmh=8.0,
+            gust_kmh=10.0, rain_prob_pct=45, precip_mm=1.5, is_day=1
+        )
+        self.assertEqual(eval_rain["status"], "do_not_spray")
+        self.assertIn("rain", eval_rain["primary_reason"].lower())
+
+        # Extreme temperature (> 33°C) -> do_not_spray
+        eval_hot = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=35.0, rh_pct=30.0, wind_kmh=9.0,
+            gust_kmh=12.0, rain_prob_pct=0, precip_mm=0.0, is_day=1
+        )
+        self.assertEqual(eval_hot["status"], "do_not_spray")
+        self.assertIn("evaporation", eval_hot["primary_reason"].lower())
+
+        # Elevated temperature (30-33°C) -> caution
+        eval_warm = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=31.5, rh_pct=40.0, wind_kmh=9.0,
+            gust_kmh=12.0, rain_prob_pct=0, precip_mm=0.0, is_day=1
+        )
+        self.assertEqual(eval_warm["status"], "caution")
+        self.assertIn("temperature", eval_warm["primary_reason"].lower())
+
+        # Optimal daylight hour
+        eval_opt = SmartSprayingEngine.evaluate_hourly_suitability(
+            temp_c=24.0, rh_pct=55.0, wind_kmh=8.0,
+            gust_kmh=10.0, rain_prob_pct=5, precip_mm=0.0, is_day=1
+        )
+        self.assertEqual(eval_opt["status"], "optimal")
+
+        # 3. Test Sensitive Zone Drift check
+        # Wind blowing FROM 270 (W) -> downwind heading is 90 (E).
+        # Beehives at bearing 85 (E) -> within +/- 45 deg cone -> warning
+        warnings = SmartSprayingEngine.check_sensitive_zone_drift(270)
+        self.assertTrue(any("Beehives" in w["zone_name"] for w in warnings))
+
+        # 4. Test Verified Product Knowledge Base
+        products = get_spray_products()
+        self.assertGreaterEqual(len(products), 5)
+        emamectin = next(p for p in products if p.get("id") == "chickpea_pod_borer_emamectin")
+        self.assertEqual(emamectin["status"], "verified")
+        self.assertTrue(emamectin["cibrc_registered"])
+        self.assertIsNotNone(emamectin["label_dose_ha"])
+        self.assertEqual(emamectin["phi_days"], 11)
+
+        unverified = next(p for p in products if p.get("id") == "experimental_combo_unverified")
+        self.assertEqual(unverified["status"], "unverified")
+        self.assertFalse(unverified["cibrc_registered"])
+        self.assertIsNone(unverified["label_dose_ha"])
+        self.assertIsNone(unverified["phi_days"])
+
+        # 5. Full Automatic Advisory Integration Test
+        adv = SmartSprayingEngine.get_automatic_spraying_advisory(parcel_id="p1")
+        self.assertIn(adv.provenance.mode, ["live", "cached", "demo"])
+        self.assertIn("spray_windows", adv.value)
+        self.assertEqual(len(adv.value["hourly_evaluations_72h"]), 72)
+        self.assertIn("overall_banner", adv.value)
+        self.assertIn("sensitive_zone_drift", adv.value)
+        self.assertIn("verified_products", adv.value)
 
     def test_disease_engine(self):
         from services.api.engines.disease import PlantDiseaseEngine

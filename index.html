@@ -852,117 +852,311 @@
     <!-- ======================================================== -->
     <div id="view-spraying" class="space-y-6 hidden">
       <div class="clean-card p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-4">
-          <div>
+        
+        <!-- Header Bar with Location, Mode, and Controls -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-gray-100 pb-5">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] bg-amber-600 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">CIB&RC & IPM Protocol</span>
+              <span id="spraySourceChip" class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300 uppercase tracking-wider flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="spraySourceText">LIVE FORECAST</span>
+              </span>
+              <span id="sprayLocationBadge" class="text-[11px] bg-gray-100 text-gray-700 font-semibold px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+                <i class="fa-solid fa-location-dot text-rose-500 text-[10px]"></i>
+                <span id="sprayLocationText">Wadi Main Gat 142/A (21.1458° N, 79.0882° E)</span>
+              </span>
+            </div>
+            <h3 id="sprayTabTitle" class="text-xl font-extrabold text-gray-900 tracking-tight">Smart Spraying Calendar & Meteorological Advisory</h3>
+            <p id="sprayTabSub" class="text-xs text-gray-500">Auto-detected Open-Meteo 72h forecast · Stull (2011) Delta-T · CIB&RC Verified IPM envelope (non-NASA forecast).</p>
+          </div>
+
+          <!-- Header Actions: Refresh & GPS -->
+          <div class="flex items-center space-x-2 self-end lg:self-auto">
+            <span id="sprayObservedAt" class="text-[10px] text-gray-400 font-mono hidden sm:inline">Checking telemetry...</span>
+            <button onclick="detectUserGpsLocation()" title="Use Device GPS Location" class="clean-pill text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i class="fa-solid fa-crosshairs text-indigo-500"></i>
+              <span class="text-[11px]">GPS Location</span>
+            </button>
+            <button id="btnRefreshSpray" onclick="loadAutomaticSprayingAdvisory(true)" class="clean-pill text-xs font-bold px-3.5 py-1.5 rounded-xl flex items-center space-x-1.5 hover:bg-black hover:text-white transition">
+              <i id="sprayRefreshIcon" class="fa-solid fa-arrows-rotate text-emerald-600"></i>
+              <span id="btnRefreshSprayText">Refresh Forecast</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Overall Advisory Banner (Computed for Current Hour) -->
+        <div id="sprayOverallBanner" class="p-4 sm:p-5 rounded-2xl bg-emerald-50 border border-emerald-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-start space-x-3.5">
+            <div id="sprayBannerIconBox" class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0">
+              <i id="sprayBannerIcon" class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="space-y-0.5">
+              <div class="flex items-center space-x-2">
+                <span id="sprayStatusBadge" class="text-xs bg-emerald-200 text-emerald-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide">
+                  SUITABLE FOR SPRAYING
+                </span>
+                <span id="sprayStageChip" class="text-[11px] text-gray-500 font-medium">Chickpea · Flowering & Pod Initiation</span>
+              </div>
+              <p id="sprayOverallReason" class="text-xs text-emerald-950 font-medium leading-relaxed">
+                Atmospheric conditions are within optimal parameters: gentle breeze, safe Delta-T, and no rain forecast within rainfast window.
+              </p>
+            </div>
+          </div>
+          <div class="sm:text-right flex-shrink-0 text-xs text-gray-600 space-y-0.5 border-t sm:border-t-0 border-emerald-200 pt-2 sm:pt-0 w-full sm:w-auto">
+            <div class="text-[10px] text-gray-400 uppercase font-semibold">Current Hour Delta-T</div>
+            <div class="text-base font-extrabold text-emerald-700 font-mono" id="bannerDeltaTVal">6.1°C (Optimal)</div>
+          </div>
+        </div>
+
+        <!-- Pest & Disease Action Signal Banner (IPM-first) -->
+        <div id="sprayPestSignalBox" class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-sm flex-shrink-0 mt-0.5">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="space-y-0.5">
+              <strong id="sprayPestSignalTitle" class="block font-bold text-amber-950 text-xs">ACTION NEEDED: Pest Threshold Exceeded</strong>
+              <p id="sprayPestSignalDesc" class="text-[11px] text-amber-900 leading-normal">
+                Scouting / pheromone trap report indicates 1.5 larvae/m row (ETL threshold: 1.0/m) and Disease Doctor confirmed with 92.4% confidence. Immediate targeted IPM intervention is required.
+              </p>
+            </div>
+          </div>
+          <div class="text-[11px] font-semibold text-amber-800 bg-amber-100 px-3 py-1.5 rounded-xl flex-shrink-0">
+            Target: <span id="sprayTargetPestText" class="font-bold">Gram Pod Borer</span>
+          </div>
+        </div>
+
+        <!-- Live Read-Only Telemetry Gauges (NO MANUAL ENTRY) -->
+        <div>
+          <div class="flex justify-between items-center mb-2.5">
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-gauge text-indigo-500"></i>
+              <span>Live Hourly Telemetry Gauges (Auto-Detected)</span>
+            </h4>
+            <span class="text-[10px] text-gray-400">Values update automatically every 30m</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <!-- 1. Temp -->
+            <div class="clean-card p-3.5 space-y-1 border border-gray-100">
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Temperature</span>
+              <div class="text-lg font-black text-gray-900 font-mono" id="gaugeTemp">--°C</div>
+              <div class="text-[10px] text-gray-400">Safe: &lt; 33°C</div>
+            </div>
+
+            <!-- 2. Stull Wet Bulb -->
+            <div class="clean-card p-3.5 space-y-1 border border-gray-100">
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Wet-Bulb (Tw)</span>
+              <div class="text-lg font-black text-blue-700 font-mono" id="gaugeWetBulb">--°C</div>
+              <div class="text-[10px] text-blue-500">Stull (2011) Model</div>
+            </div>
+
+            <!-- 3. Delta-T -->
+            <div class="clean-card p-3.5 space-y-1 border border-emerald-100 bg-emerald-50/30">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Delta-T (T-Tw)</span>
+              </div>
+              <div class="text-lg font-black text-emerald-700 font-mono" id="gaugeDeltaT">--°C</div>
+              <div class="text-[10px] text-emerald-600 font-semibold" id="gaugeDeltaTTarget">Target: 2°–8°C</div>
+            </div>
+
+            <!-- 4. Relative Humidity -->
+            <div class="clean-card p-3.5 space-y-1 border border-gray-100">
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Rel Humidity</span>
+              <div class="text-lg font-black text-gray-900 font-mono" id="gaugeRh">--%</div>
+              <div class="text-[10px] text-gray-400">Spore Risk: &gt; 75%</div>
+            </div>
+
+            <!-- 5. Wind Speed & Dir -->
+            <div class="clean-card p-3.5 space-y-1 border border-gray-100">
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Wind & Heading</span>
+              <div class="text-lg font-black text-gray-900 font-mono" id="gaugeWind">-- km/h</div>
+              <div class="text-[10px] text-gray-500" id="gaugeWindDir">Dir: --°</div>
+            </div>
+
+            <!-- 6. Rain Probability -->
+            <div class="clean-card p-3.5 space-y-1 border border-gray-100">
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">24h Rain Prob</span>
+              <div class="text-lg font-black text-gray-900 font-mono" id="gaugeRain">--%</div>
+              <div class="text-[10px] text-gray-400">Wash-off: &gt; 35%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced: Manual What-If Simulator (Collapsible Toggle) -->
+        <details id="sprayManualWhatIfDetails" class="clean-card p-4 rounded-2xl border border-dashed border-gray-200">
+          <summary class="flex items-center justify-between cursor-pointer select-none">
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] bg-amber-600 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase">CIBRC & IPM Guidelines</span>
-              <h3 class="text-lg font-bold text-gray-900">Smart Spraying Calendar & Meteorological Advisory</h3>
+              <i class="fa-solid fa-sliders text-gray-500 text-xs"></i>
+              <span class="text-xs font-bold text-gray-700">Advanced: Manual What-If Scenario Simulator</span>
             </div>
-            <p class="text-xs text-gray-500 mt-1">Weather-constrained chemical & organic spraying envelope preventing drift, wash-off, and pollinator harm.</p>
-          </div>
-          <span id="sprayStatusBadge" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1.5 rounded-full border border-emerald-300">
-            SUITABLE FOR SPRAYING
-          </span>
-        </div>
-
-        <!-- Weather Sliders & Simulators -->
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
-          <div>
-            <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
-              <span>Wind Speed:</span>
-              <span id="sprayWindVal" class="text-emerald-700">8.5 km/h</span>
+            <div class="flex items-center space-x-2">
+              <span id="manualOverrideBadge" class="hidden text-[10px] bg-amber-500 text-white font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                MANUAL OVERRIDE
+              </span>
+              <span class="text-xs text-gray-400"><i class="fa-solid fa-chevron-down text-[10px]"></i></span>
             </div>
-            <input type="range" id="sprayWind" min="0" max="30" step="0.5" value="8.5" oninput="evaluateSpraying()" class="w-full">
-            <span class="text-[10px] text-gray-400">Drift Hazard above 15 km/h</span>
-          </div>
+          </summary>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
-              <span>24h Rain Prob:</span>
-              <span id="sprayRainVal" class="text-emerald-700">5%</span>
+          <div class="pt-4 mt-3 border-t border-gray-100 space-y-4">
+            <p class="text-[11px] text-gray-500">
+              Simulate hypothetic weather conditions without changing live telemetry. Overrides calculate advisory locally and never trigger push notifications.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                  <span>Wind Speed:</span>
+                  <span id="sprayWindVal" class="text-emerald-700 font-mono">8.5 km/h</span>
+                </div>
+                <input type="range" id="sprayWind" min="0" max="30" step="0.5" value="8.5" oninput="handleManualWhatIfInput()" class="w-full">
+                <span class="text-[10px] text-gray-400">Drift Hazard &gt; 15 km/h</span>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                  <span>24h Rain Prob:</span>
+                  <span id="sprayRainVal" class="text-emerald-700 font-mono">5%</span>
+                </div>
+                <input type="range" id="sprayRain" min="0" max="100" step="5" value="5" oninput="handleManualWhatIfInput()" class="w-full">
+                <span class="text-[10px] text-gray-400">Wash-off Risk &gt; 35%</span>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                  <span>Temperature:</span>
+                  <span id="sprayTempVal" class="text-gray-900 font-mono">28.5°C</span>
+                </div>
+                <input type="range" id="sprayTemp" min="15" max="45" step="0.5" value="28.5" oninput="handleManualWhatIfInput()" class="w-full">
+                <span class="text-[10px] text-gray-400">Evaporation risk &gt; 33°C</span>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
+                  <span>Relative Humidity:</span>
+                  <span id="sprayRhVal" class="text-gray-900 font-mono">55%</span>
+                </div>
+                <input type="range" id="sprayRh" min="20" max="100" step="1" value="55" oninput="handleManualWhatIfInput()" class="w-full">
+                <span class="text-[10px] text-gray-400">Fungal spore trigger &gt; 75%</span>
+              </div>
             </div>
-            <input type="range" id="sprayRain" min="0" max="100" step="5" value="5" oninput="evaluateSpraying()" class="w-full">
-            <span class="text-[10px] text-gray-400">Wash-off Risk above 35%</span>
-          </div>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
-              <span>Temperature:</span>
-              <span id="sprayTempVal" class="text-gray-900">28.5°C</span>
+            <div class="flex justify-end pt-1">
+              <button onclick="resetManualWhatIf()" class="clean-pill text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-gray-100 text-gray-700 transition flex items-center space-x-1">
+                <i class="fa-solid fa-rotate-left text-xs"></i>
+                <span>Reset to Live Forecast</span>
+              </button>
             </div>
-            <input type="range" id="sprayTemp" min="15" max="45" step="0.5" value="28.5" oninput="evaluateSpraying()" class="w-full">
-            <span class="text-[10px] text-gray-400">Evaporation risk above 33°C</span>
           </div>
+        </details>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
-              <span>Relative Humidity:</span>
-              <span id="sprayRhVal" class="text-gray-900">55%</span>
-            </div>
-            <input type="range" id="sprayRh" min="20" max="100" step="1" value="55" oninput="evaluateSpraying()" class="w-full">
-            <span class="text-[10px] text-gray-400">Fungal spore trigger > 75%</span>
-          </div>
-        </div>
-
-        <!-- Warning Box -->
-        <div id="sprayWarningBox" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start space-x-3">
-          <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
-          <div>
-            <strong class="block font-bold">Optimal Atmospheric Conditions:</strong>
-            <span id="sprayWarningText">Wind speed is gentle (8.5 km/h), rain probability is very low (5%), and temperatures are moderate. Ideal conditions for foliar application.</span>
-          </div>
-        </div>
-
-        <!-- Recommended Spray Windows & Approved Pest Treatments -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="clean-card p-6 space-y-3">
-            <h4 class="font-bold text-sm text-gray-900 flex items-center space-x-2">
-              <i class="fa-solid fa-sun text-amber-500"></i>
-              <span>Recommended Daily Spraying Windows</span>
+        <!-- Downwind Sensitive Zone Drift Check Card -->
+        <div id="sprayDriftCard" class="clean-card p-5 space-y-3 border border-indigo-100 bg-indigo-50/20">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs text-gray-900 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-compass-drafting text-indigo-600"></i>
+              <span>Sensitive Zone Downwind Drift Monitoring</span>
             </h4>
-            <div class="space-y-3 text-xs text-gray-700">
-              <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
-                <div>
-                  <strong class="text-gray-900 block">Morning Window: 06:30 AM – 09:30 AM</strong>
-                  <span class="text-[11px] text-gray-500">Calm winds, high leaf turgor, minimal drift, closed pollinator activity.</span>
-                </div>
-                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Optimal</span>
-              </div>
-
-              <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
-                <div>
-                  <strong class="text-gray-900 block">Evening Window: 04:30 PM – 06:30 PM</strong>
-                  <span class="text-[11px] text-gray-500">Declining solar radiation, cooler leaf surface, ideal for biologicals (Bt / HaNPV).</span>
-                </div>
-                <span class="text-xs bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">Suitable</span>
-              </div>
-
-              <div class="p-3 bg-rose-50 rounded-xl border border-rose-100 flex items-center justify-between text-rose-900">
-                <div>
-                  <strong class="block">Midday: 11:30 AM – 03:30 PM (DO NOT SPRAY)</strong>
-                  <span class="text-[11px] text-rose-700">Thermal updrafts evaporate droplets rapidly causing phytotoxicity leaf burn.</span>
-                </div>
-                <span class="text-xs bg-rose-200 text-rose-900 font-bold px-2 py-0.5 rounded">Prohibited</span>
-              </div>
-            </div>
+            <span class="text-[10px] text-gray-500 font-mono" id="sprayDriftHeadingSummary">Wind Dir: 261° (W) · Downwind Drift: 81° (E)</span>
           </div>
 
-          <div class="clean-card p-6 space-y-3 border border-amber-200">
-            <h4 class="font-bold text-sm text-gray-900 flex items-center space-x-2">
-              <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-              <span>CIBRC Approved Product & Safety Guidelines</span>
-            </h4>
-            <div class="space-y-2 text-xs text-gray-700">
-              <p><strong>Approved Dosage for Pod Borer:</strong> Emamectin Benzoate 5% SG @ 4g in 10 Litres clean water OR Chlorantraniliprole 18.5% SC @ 3ml in 10 Litres.</p>
-              <p><strong>Water Volume:</strong> Always use at least <strong>150 to 200 Litres</strong> of clean water per acre with hollow-cone nozzles.</p>
-              <p><strong>Pre-Harvest Interval (PHI):</strong> Maintain mandatory <strong>11 days</strong> waiting period before pod harvest.</p>
-              <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 mt-2 font-semibold text-gray-800">
-                <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i>
-                Wear full PPE gear: mask, gloves, goggles. Spray with the wind at your back!
+          <div id="sprayDriftWarningsList" class="space-y-2 text-xs">
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 flex items-start space-x-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm mt-0.5"></i>
+              <div>
+                <strong class="block">CRITICAL DRIFT CONCERN: Apis cerana Beehives (120m away)</strong>
+                <span class="text-[11px]">Wind heading blows directly toward hives. Maintain mandatory 30m downwind buffer zone or pause spraying.</span>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- 72-Hour Color-Coded Hourly Suitability Strip -->
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="fa-solid fa-chart-simple text-emerald-600"></i>
+              <span>72-Hour Micro-Meteorological Forecast Strip</span>
+            </h4>
+            <div class="flex items-center space-x-2 text-[10px] font-semibold">
+              <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Optimal</span></span>
+              <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-green-500"></span><span>Suitable</span></span>
+              <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span><span>Caution</span></span>
+              <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span><span>Do Not Spray</span></span>
+            </div>
+          </div>
+
+          <!-- Hourly Scroll Strip Container -->
+          <div id="sprayHourlyStrip" class="overflow-x-auto pb-2 flex space-x-2 scrollbar-thin">
+            <!-- Dynamically populated 72 cards -->
+            <div class="p-3 clean-card flex-shrink-0 text-center w-20 text-xs text-gray-400">Loading forecast...</div>
+          </div>
+        </div>
+
+        <!-- Ranked Spray Windows & Verified Product Table -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          
+          <!-- Column 1: Ranked Spray Windows (Next 3 Days) -->
+          <div class="clean-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h4 class="font-bold text-sm text-gray-900 flex items-center space-x-2">
+                <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                <span>Ranked Spray Windows (Next 3 Days)</span>
+              </h4>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Auto-Ranked</span>
+            </div>
+
+            <div id="sprayWindowsList" class="space-y-3 text-xs text-gray-700">
+              <!-- Dynamically populated spray windows -->
+              <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 text-gray-500 text-center">
+                Computing consecutive spray windows...
+              </div>
+            </div>
+
+            <!-- Push Notification Simulation Banner -->
+            <div id="sprayPushNotificationCard" class="p-3.5 rounded-xl bg-gray-900 text-white space-y-1 text-xs">
+              <div class="flex items-center justify-between text-[10px] text-gray-400">
+                <span class="flex items-center space-x-1">
+                  <i class="fa-solid fa-bell text-amber-400"></i>
+                  <span>PUSH NOTIFICATION SIMULATOR</span>
+                </span>
+                <span>Automated Trigger</span>
+              </div>
+              <div id="sprayPushTitle" class="font-bold text-white text-xs">Good spray window opens tomorrow at 06:30 AM</div>
+              <div id="sprayPushBody" class="text-[11px] text-gray-300">Target pest: Gram Pod Borer. Window duration: 3h with calm wind 7.5 km/h.</div>
+            </div>
+          </div>
+
+          <!-- Column 2: CIBRC Approved Products & IPM Hierarchy -->
+          <div class="clean-card p-6 space-y-4 border border-amber-200">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h4 class="font-bold text-sm text-gray-900 flex items-center space-x-2">
+                <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                <span>Verified Product Table & IPM Hierarchy</span>
+              </h4>
+              <span class="text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full">IPM-First Order</span>
+            </div>
+
+            <!-- Dynamic Product List (Cultural -> Biological -> Chemical) -->
+            <div id="sprayProductList" class="space-y-3 text-xs text-gray-700 max-h-[380px] overflow-y-auto pr-1">
+              <!-- Dynamically generated from API data.value.verified_products -->
+            </div>
+
+            <!-- Statutory Disclaimers & Safety Protocol -->
+            <div class="space-y-2 pt-2 border-t border-gray-100 text-[11px] text-gray-600">
+              <div class="p-2.5 bg-gray-50 rounded-xl border border-gray-100 font-semibold text-gray-800 flex items-start space-x-2">
+                <i class="fa-solid fa-shield-virus text-emerald-600 mt-0.5"></i>
+                <span>Rotate insecticide Mode of Action (MoA) groups (e.g. Group 6 &rarr; Group 28) to prevent pest resistance.</span>
+              </div>
+              <div class="p-2.5 bg-gray-50 rounded-xl border border-gray-100 text-gray-600 flex items-start space-x-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                <span id="sprayDisclaimerText">Advisory strictly conforms to Central Insecticides Board & Registration Committee (CIB&RC) label registrations. Wear full PPE: mask, gloves, apron, eye protection.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1879,6 +2073,9 @@
         bnavMandi: "Mandi",
         bnavMap: "Parcels",
         bnavTools: "All Tools",
+        sprayTabTitle: "Smart Spraying Calendar & Meteorological Advisory",
+        sprayTabSub: "Auto-detected Open-Meteo 72h forecast · Stull (2011) Delta-T · CIB&RC Verified IPM envelope (non-NASA forecast).",
+        btnRefreshSpray: "Refresh Forecast",
         voiceAdvisory: "Nagpur weather is currently 28.4 degrees Celsius. SMAP soil moisture is at the 64th percentile, which is optimal for Chickpea seed drilling. Wind speed is 8.5 km/h, safe for foliar spraying.",
         speakDiagnosisLabel: "Diagnosis: Gram Pod Borer. Visible symptoms: Holes in pods. Recommended organic treatment: Spray 5% Neem Seed Kernel Extract and install pheromone traps."
       },
@@ -1892,6 +2089,9 @@
         bnavMandi: "मंडी",
         bnavMap: "खेत",
         bnavTools: "सभी साधन",
+        sprayTabTitle: "स्मार्ट कीटनाशक छिड़काव कैलेंडर एवं मौसम सलाह",
+        sprayTabSub: "ओपन-मेटियो 72 घंटे का मौसम पूर्वानुमान · स्टल (2011) डेल्टा-टी · सीआईबीआरसी सत्यापित आईपीएम ढांचा।",
+        btnRefreshSpray: "मौसम रीफ़्रेश करें",
         voiceAdvisory: "नागपुर का तापमान 28.4 डिग्री सेल्सियस है। नासा स्मॅप के अनुसार मिट्टी की नमी 64वें पर्सेंटाइल पर है, जो चना बुवाई के लिए बिल्कुल सही है। हवा की गति 8.5 किमी प्रति घंटा है, छिड़काव के लिए सुरक्षित है।",
         speakDiagnosisLabel: "निदान: चना घाटे अळी या पोड बोरर। 5 प्रतिशत नीम अर्क का छिड़काव करें और फेरोमोन ट्रैप लगाएं।"
       },
@@ -1905,6 +2105,9 @@
         bnavMandi: "बाजारभाव",
         bnavMap: "शेतजमीन",
         bnavTools: "सर्व साधने",
+        sprayTabTitle: "स्मार्ट फवारणी दिनदर्शिका आणि हवामान सल्ला",
+        sprayTabSub: "ओपन-मेटिओ 72 तास हवामान अंदाज · स्टल (2011) डेल्टा-टी · सीआयबीआरसी प्रमाणित एकात्मिक कीड व्यवस्थापन.",
+        btnRefreshSpray: "हवामान रिफ्रेश करा",
         voiceAdvisory: "नागपूरचे तापमान सध्या 28.4 अंश सेल्सिअस आहे. नासा स्मॅप उपग्रहाच्या माहितीनुसार जमिनीतील ओलावा 64 व्या पर्सेंटाईलवर आहे, जो हरभरा पेरणीसाठी अत्यंत पोषक आहे. हवेचा वेग 8.5 किमी प्रति तास असून फवारणीसाठी सुरक्षित आहे.",
         speakDiagnosisLabel: "रोग निदान: हरभरा घाटे अळी. उपाय: 5 टक्के निंबोळी अर्काची फवारणी करा आणि कामगंध सापळे लावा."
       }
@@ -1930,7 +2133,10 @@
         'bnav-doc-text': t.bnavDoc,
         'bnav-mandi-text': t.bnavMandi,
         'bnav-map-text': t.bnavMap,
-        'bnav-tools-text': t.bnavTools
+        'bnav-tools-text': t.bnavTools,
+        'sprayTabTitle': t.sprayTabTitle,
+        'sprayTabSub': t.sprayTabSub,
+        'btnRefreshSprayText': t.btnRefreshSpray
       };
       for (const [id, val] of Object.entries(map)) {
         const el = document.getElementById(id);
@@ -2040,6 +2246,9 @@
       if (viewId === 'view-field-detail') {
         setTimeout(initHistogramChart, 60);
       }
+      if (viewId === 'view-spraying') {
+        loadAutomaticSprayingAdvisory();
+      }
     }
 
     // Live NASA Weather & SMAP Fetch
@@ -2083,43 +2292,564 @@
       document.getElementById('fertTotalCost').innerText = '₹' + cost.toLocaleString('en-IN');
     }
 
-    // Smart Spraying Meteorological Evaluation
-    function evaluateSpraying() {
+    // ========================================================
+    // AUTOMATIC SMART SPRAYING ADVISORY CONTROLLER
+    // ========================================================
+    let currentSelectedParcel = 'p1';
+    let userCustomGps = null;
+    let lastSprayingAdvisoryData = null;
+    let isSprayingAdvisoryLoading = false;
+
+    async function loadAutomaticSprayingAdvisory(forceRefresh = false) {
+      if (isSprayingAdvisoryLoading) return;
+      isSprayingAdvisoryLoading = true;
+
+      const refreshIcon = document.getElementById('sprayRefreshIcon');
+      if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+      // Check offline cache first if not forceRefresh
+      const cachedStr = localStorage.getItem('agroverse_spray_advisory_cache_' + currentSelectedParcel);
+      if (!forceRefresh && cachedStr) {
+        try {
+          const cached = JSON.parse(cachedStr);
+          renderSprayingAdvisoryData(cached, false);
+        } catch (err) {
+          console.warn('Cache parse error:', err);
+        }
+      }
+
+      // Build request URL
+      let url = `/v1/spray/advisory?parcel_id=${encodeURIComponent(currentSelectedParcel)}&crop=chickpea&pest=pod_borer`;
+      if (userCustomGps && userCustomGps.lat && userCustomGps.lon) {
+        url += `&lat=${userCustomGps.lat}&lon=${userCustomGps.lon}`;
+      }
+
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          lastSprayingAdvisoryData = data;
+          localStorage.setItem('agroverse_spray_advisory_cache_' + currentSelectedParcel, JSON.stringify(data));
+          renderSprayingAdvisoryData(data, false);
+        } else {
+          console.warn('Spraying API responded with status', res.status);
+          if (!lastSprayingAdvisoryData && cachedStr) {
+            renderSprayingAdvisoryData(JSON.parse(cachedStr), false);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch live spraying advisory (using cached/offline state):', err);
+        if (cachedStr) {
+          renderSprayingAdvisoryData(JSON.parse(cachedStr), false);
+          const chip = document.getElementById('spraySourceChip');
+          const chipText = document.getElementById('spraySourceText');
+          if (chip && chipText) {
+            chip.className = 'text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2.5 py-0.5 rounded-full border border-amber-300 uppercase tracking-wider flex items-center space-x-1';
+            chipText.innerText = 'OFFLINE CACHE';
+          }
+        }
+      } finally {
+        isSprayingAdvisoryLoading = false;
+        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+      }
+    }
+
+    function renderSprayingAdvisoryData(data, isOverride = false) {
+      if (!data) return;
+      const adv = data.value || data;
+      const prov = data.provenance || {};
+
+      // 1. Location badge & text
+      const loc = adv.location || {};
+      const locTextEl = document.getElementById('sprayLocationText');
+      if (locTextEl) {
+        if (userCustomGps) {
+          locTextEl.innerText = `Device GPS (${userCustomGps.lat.toFixed(4)}° N, ${userCustomGps.lon.toFixed(4)}° E)`;
+        } else if (loc.source) {
+          locTextEl.innerText = `${loc.source} (${loc.latitude}° N, ${loc.longitude}° E)`;
+        } else {
+          locTextEl.innerText = `Wadi Main Gat 142/A (21.1458° N, 79.0882° E)`;
+        }
+      }
+
+      // 2. Source chip & observed timestamp
+      const chip = document.getElementById('spraySourceChip');
+      const chipText = document.getElementById('spraySourceText');
+      const observedEl = document.getElementById('sprayObservedAt');
+      const meta = adv.forecast_metadata || {};
+      const mode = (prov.mode || meta.mode || 'live').toLowerCase();
+
+      if (chip && chipText) {
+        if (isOverride) {
+          chip.className = 'text-[10px] bg-amber-500 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = 'MANUAL OVERRIDE';
+        } else if (mode === 'live') {
+          chip.className = 'text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1"></span>LIVE FORECAST';
+        } else if (mode === 'cached') {
+          chip.className = 'text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full border border-blue-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = `CACHED FORECAST (as of ${meta.observed_at || 'earlier'})`;
+        } else {
+          chip.className = 'text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2.5 py-0.5 rounded-full border border-amber-300 uppercase tracking-wider flex items-center space-x-1';
+          chipText.innerText = 'DEMO FORECAST';
+        }
+      }
+
+      if (observedEl) {
+        observedEl.innerText = `Observed: ${prov.observedAt || meta.observed_at || 'Current 72h'}`;
+      }
+
+      // 3. Current Hour Telemetry Gauges
+      const curr = adv.current_hour || {};
+      const tempVal = curr.temp_c !== undefined ? curr.temp_c : 28.5;
+      const rhVal = curr.rh_pct !== undefined ? curr.rh_pct : 55.0;
+      const windVal = curr.wind_kmh !== undefined ? curr.wind_kmh : 8.5;
+      const windDirVal = curr.wind_dir_deg !== undefined ? curr.wind_dir_deg : 270;
+      const rainVal = curr.rain_prob_pct !== undefined ? curr.rain_prob_pct : 5;
+      const wetBulbVal = curr.wet_bulb_c !== undefined ? curr.wet_bulb_c : 21.8;
+      const deltaTVal = curr.delta_t_c !== undefined ? curr.delta_t_c : 6.7;
+
+      const gTemp = document.getElementById('gaugeTemp');
+      if (gTemp) gTemp.innerText = `${tempVal.toFixed(1)}°C`;
+      const gWetBulb = document.getElementById('gaugeWetBulb');
+      if (gWetBulb) gWetBulb.innerText = `${wetBulbVal.toFixed(1)}°C`;
+      const gDeltaT = document.getElementById('gaugeDeltaT');
+      if (gDeltaT) gDeltaT.innerText = `${deltaTVal.toFixed(1)}°C`;
+      const gRh = document.getElementById('gaugeRh');
+      if (gRh) gRh.innerText = `${Math.round(rhVal)}%`;
+      const gWind = document.getElementById('gaugeWind');
+      if (gWind) gWind.innerText = `${windVal.toFixed(1)} km/h`;
+      const gWindDir = document.getElementById('gaugeWindDir');
+      if (gWindDir) gWindDir.innerText = `Dir: ${Math.round(windDirVal)}° (${getWindCompassDirection(windDirVal)})`;
+      const gRain = document.getElementById('gaugeRain');
+      if (gRain) gRain.innerText = `${Math.round(rainVal)}%`;
+
+      const gDtTarget = document.getElementById('gaugeDeltaTTarget');
+      if (gDtTarget) {
+        if (deltaTVal >= 2.0 && deltaTVal <= 8.0) {
+          gDtTarget.className = 'text-[10px] text-emerald-700 font-bold';
+          gDtTarget.innerText = 'Target: 2°–8°C (Optimal)';
+        } else if (deltaTVal > 8.0) {
+          gDtTarget.className = 'text-[10px] text-amber-700 font-bold';
+          gDtTarget.innerText = 'High Evap: > 8°C';
+        } else {
+          gDtTarget.className = 'text-[10px] text-blue-700 font-bold';
+          gDtTarget.innerText = 'Low Evap: < 2°C';
+        }
+      }
+
+      // Sync slider positions if not actively dragging
+      if (!isOverride) {
+        const sWind = document.getElementById('sprayWind');
+        if (sWind) sWind.value = windVal;
+        const sWindVal = document.getElementById('sprayWindVal');
+        if (sWindVal) sWindVal.innerText = `${windVal.toFixed(1)} km/h`;
+
+        const sRain = document.getElementById('sprayRain');
+        if (sRain) sRain.value = rainVal;
+        const sRainVal = document.getElementById('sprayRainVal');
+        if (sRainVal) sRainVal.innerText = `${Math.round(rainVal)}%`;
+
+        const sTemp = document.getElementById('sprayTemp');
+        if (sTemp) sTemp.value = tempVal;
+        const sTempVal = document.getElementById('sprayTempVal');
+        if (sTempVal) sTempVal.innerText = `${tempVal.toFixed(1)}°C`;
+
+        const sRh = document.getElementById('sprayRh');
+        if (sRh) sRh.value = rhVal;
+        const sRhVal = document.getElementById('sprayRhVal');
+        if (sRhVal) sRhVal.innerText = `${Math.round(rhVal)}%`;
+      }
+
+      // 4. Overall Banner
+      const banner = adv.overall_banner || {};
+      const bannerEl = document.getElementById('sprayOverallBanner');
+      const badgeEl = document.getElementById('sprayStatusBadge');
+      const reasonEl = document.getElementById('sprayOverallReason');
+      const bDeltaT = document.getElementById('bannerDeltaTVal');
+      const bannerIcon = document.getElementById('sprayBannerIcon');
+      const bannerIconBox = document.getElementById('sprayBannerIconBox');
+
+      if (bDeltaT) bDeltaT.innerText = `${deltaTVal.toFixed(1)}°C (${deltaTVal >= 2 && deltaTVal <= 8 ? 'Optimal' : deltaTVal > 8 ? 'High' : 'Low'})`;
+
+      if (bannerEl && badgeEl) {
+        const code = banner.status_code || 'suitable';
+        if (code === 'do_not_spray') {
+          bannerEl.className = 'p-4 sm:p-5 rounded-2xl bg-rose-50 border border-rose-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3';
+          badgeEl.className = 'text-xs bg-rose-200 text-rose-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide';
+          badgeEl.innerText = banner.headline || 'DO NOT SPRAY NOW';
+          if (bannerIconBox) bannerIconBox.className = 'w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg flex-shrink-0';
+          if (bannerIcon) bannerIcon.className = 'fa-solid fa-ban';
+          if (reasonEl) {
+            reasonEl.className = 'text-xs text-rose-950 font-medium leading-relaxed';
+            reasonEl.innerText = banner.reason || 'Adverse weather conditions present high risk of drift or chemical washoff.';
+          }
+        } else if (code === 'caution') {
+          bannerEl.className = 'p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3';
+          badgeEl.className = 'text-xs bg-amber-200 text-amber-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide';
+          badgeEl.innerText = banner.headline || 'CAUTION: BORDERLINE CONDITIONS';
+          if (bannerIconBox) bannerIconBox.className = 'w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg flex-shrink-0';
+          if (bannerIcon) bannerIcon.className = 'fa-solid fa-triangle-exclamation';
+          if (reasonEl) {
+            reasonEl.className = 'text-xs text-amber-950 font-medium leading-relaxed';
+            reasonEl.innerText = banner.reason || 'Conditions are borderline. Use coarse droplet nozzles and monitor wind shifts.';
+          }
+        } else if (code === 'optimal') {
+          bannerEl.className = 'p-4 sm:p-5 rounded-2xl bg-emerald-50 border border-emerald-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3';
+          badgeEl.className = 'text-xs bg-emerald-200 text-emerald-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide';
+          badgeEl.innerText = banner.headline || 'OPTIMAL CONDITIONS: SAFE TO SPRAY';
+          if (bannerIconBox) bannerIconBox.className = 'w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg flex-shrink-0';
+          if (bannerIcon) bannerIcon.className = 'fa-solid fa-circle-check';
+          if (reasonEl) {
+            reasonEl.className = 'text-xs text-emerald-950 font-medium leading-relaxed';
+            reasonEl.innerText = banner.reason || 'Atmospheric envelope is ideal: calm wind, moderate humidity, and perfect Delta-T.';
+          }
+        } else {
+          bannerEl.className = 'p-4 sm:p-5 rounded-2xl bg-green-50 border border-green-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3';
+          badgeEl.className = 'text-xs bg-green-200 text-green-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide';
+          badgeEl.innerText = banner.headline || 'SUITABLE CONDITIONS: SAFE TO SPRAY';
+          if (bannerIconBox) bannerIconBox.className = 'w-10 h-10 rounded-xl bg-green-100 text-green-800 flex items-center justify-center text-lg flex-shrink-0';
+          if (bannerIcon) bannerIcon.className = 'fa-solid fa-check';
+          if (reasonEl) {
+            reasonEl.className = 'text-xs text-green-950 font-medium leading-relaxed';
+            reasonEl.innerText = banner.reason || 'Conditions are suitable for application within label parameters.';
+          }
+        }
+      }
+
+      // 5. Pest & Disease Action Signal (IPM-first)
+      const pest = adv.pest_threshold_status || {};
+      const pestBox = document.getElementById('sprayPestSignalBox');
+      const pestTitle = document.getElementById('sprayPestSignalTitle');
+      const pestDesc = document.getElementById('sprayPestSignalDesc');
+      const pestTarget = document.getElementById('sprayTargetPestText');
+
+      if (pestTarget) pestTarget.innerText = (pest.target_pest || 'pod_borer').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+      if (pest.action_needed) {
+        if (pestBox) pestBox.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs';
+        if (pestTitle) {
+          pestTitle.className = 'block font-bold text-amber-950 text-xs';
+          pestTitle.innerText = pest.title || 'ACTION NEEDED: Pest Threshold Exceeded';
+        }
+        if (pestDesc) {
+          pestDesc.className = 'text-[11px] text-amber-900 leading-normal';
+          pestDesc.innerText = pest.description || 'Scouting count exceeds ETL threshold. Targeted IPM intervention is recommended.';
+        }
+      } else {
+        if (pestBox) pestBox.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs';
+        if (pestTitle) {
+          pestTitle.className = 'block font-bold text-emerald-950 text-xs';
+          pestTitle.innerText = pest.title || 'NO SPRAY NEEDED NOW: Keep Monitoring';
+        }
+        if (pestDesc) {
+          pestDesc.className = 'text-[11px] text-emerald-900 leading-normal';
+          pestDesc.innerText = pest.description || 'Pest population is below the Economic Threshold Level (ETL). Maintain monitoring traps and conserve natural predators.';
+        }
+      }
+
+      // 6. Sensitive Zone Downwind Drift Warnings
+      const drift = adv.sensitive_zone_drift || {};
+      const driftHeadingSummary = document.getElementById('sprayDriftHeadingSummary');
+      if (driftHeadingSummary) {
+        const windDir = drift.current_wind_heading_deg !== undefined ? drift.current_wind_heading_deg : 270;
+        const downwind = drift.downwind_drift_heading_deg !== undefined ? drift.downwind_drift_heading_deg : 90;
+        driftHeadingSummary.innerText = `Wind Dir: ${Math.round(windDir)}° (${getWindCompassDirection(windDir)}) · Downwind Drift: ${Math.round(downwind)}° (${getWindCompassDirection(downwind)})`;
+      }
+
+      const driftListEl = document.getElementById('sprayDriftWarningsList');
+      if (driftListEl) {
+        const warnings = drift.warnings || [];
+        if (warnings.length === 0) {
+          driftListEl.innerHTML = `
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 flex items-center space-x-2">
+              <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+              <span class="text-[11px] font-medium">Downwind buffer clear: wind is blowing safely away from all mapped beehives, canals, and organic parcels.</span>
+            </div>
+          `;
+        } else {
+          driftListEl.innerHTML = warnings.map(w => `
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 flex items-start space-x-2.5">
+              <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm mt-0.5"></i>
+              <div>
+                <strong class="block font-bold">${escapeHtml(w.zone_name)} (${w.distance_m}m away)</strong>
+                <span class="text-[11px]">${escapeHtml(w.warning_message)}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 7. 72-Hour Micro-Meteorological Strip
+      const hourlyList = adv.hourly_evaluations_72h || [];
+      const stripEl = document.getElementById('sprayHourlyStrip');
+      if (stripEl && hourlyList.length > 0) {
+        stripEl.innerHTML = hourlyList.map((h, i) => {
+          let bgClass = 'bg-gray-100 text-gray-800 border-gray-200';
+          let badgeText = 'DO NOT SPRAY';
+          let badgeDot = 'bg-rose-500';
+          if (h.status === 'optimal') {
+            bgClass = 'bg-emerald-50 text-emerald-900 border-emerald-300';
+            badgeText = 'OPTIMAL';
+            badgeDot = 'bg-emerald-500';
+          } else if (h.status === 'suitable') {
+            bgClass = 'bg-green-50 text-green-900 border-green-300';
+            badgeText = 'SUITABLE';
+            badgeDot = 'bg-green-500';
+          } else if (h.status === 'caution') {
+            bgClass = 'bg-amber-50 text-amber-900 border-amber-300';
+            badgeText = 'CAUTION';
+            badgeDot = 'bg-amber-400';
+          } else {
+            bgClass = 'bg-rose-50 text-rose-900 border-rose-200';
+            badgeText = 'NO SPRAY';
+            badgeDot = 'bg-rose-500';
+          }
+
+          const dayLabel = (h.hour_iso || '').substring(5, 10);
+          const timeLabel = h.time_label || (h.hour_iso || '').substring(11, 16);
+          const reasonTooltip = escapeHtml(h.primary_reason || 'Unsuitable conditions');
+
+          return `
+            <div title="${reasonTooltip}" class="p-2.5 clean-card flex-shrink-0 text-center w-24 border ${bgClass} rounded-xl space-y-1 cursor-help hover:shadow-md transition">
+              <div class="text-[9px] text-gray-500 font-semibold">${dayLabel}</div>
+              <div class="font-bold text-xs font-mono">${timeLabel}</div>
+              <div class="flex items-center justify-center space-x-1 my-0.5">
+                <span class="w-1.5 h-1.5 rounded-full ${badgeDot}"></span>
+                <span class="text-[9px] font-extrabold uppercase">${badgeText}</span>
+              </div>
+              <div class="text-[11px] font-mono font-bold">${h.temp_c !== undefined ? h.temp_c.toFixed(0) : '--'}°C</div>
+              <div class="text-[10px] text-gray-600 font-mono">${h.wind_kmh !== undefined ? h.wind_kmh.toFixed(0) : '--'} km/h</div>
+              <div class="text-[9px] text-gray-500 font-mono">ΔT ${h.delta_t_c !== undefined ? h.delta_t_c.toFixed(1) : '--'}°</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 8. Ranked Spray Windows (Next 3 Days)
+      const windows = adv.spray_windows || [];
+      const winContainer = document.getElementById('sprayWindowsList');
+      if (winContainer) {
+        if (windows.length === 0) {
+          winContainer.innerHTML = `
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-gray-600 text-center space-y-1">
+              <i class="fa-solid fa-cloud-sun-rain text-amber-500 text-lg"></i>
+              <div class="font-bold text-xs text-gray-800">No continuous suitable windows in next 72 hours</div>
+              <p class="text-[11px] text-gray-500">Persistent elevated wind, rain probability, or excessive temperatures preclude safe spraying. Keep monitoring hourly strip.</p>
+            </div>
+          `;
+        } else {
+          winContainer.innerHTML = windows.map((w, idx) => {
+            const isTop = idx === 0;
+            const rankBadge = isTop
+              ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">#1 Recommended</span>'
+              : `<span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">#${w.rank || idx + 1} Alternative</span>`;
+
+            return `
+              <div class="p-3.5 bg-gray-50 rounded-xl border ${isTop ? 'border-emerald-200 bg-emerald-50/20' : 'border-gray-100'} flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div class="space-y-0.5">
+                  <div class="flex items-center space-x-2">
+                    <strong class="text-gray-900 block font-bold text-xs">${escapeHtml(w.time_label || 'Window')}</strong>
+                    ${rankBadge}
+                  </div>
+                  <div class="text-[11px] text-gray-600 flex items-center space-x-3">
+                    <span><i class="fa-regular fa-clock text-gray-400 mr-1"></i>Duration: <strong>${w.duration_hours}h</strong></span>
+                    <span><i class="fa-solid fa-wind text-gray-400 mr-1"></i>Avg Wind: <strong>${w.avg_wind_kmh} km/h</strong></span>
+                    <span><i class="fa-solid fa-droplet text-gray-400 mr-1"></i>ΔT: <strong>${w.avg_delta_t_c}°C</strong></span>
+                  </div>
+                  <div class="text-[10px] text-gray-500 italic mt-0.5">Window closes: ${escapeHtml(w.closing_reason || 'Next hour unsuitable')}</div>
+                </div>
+                <div class="flex-shrink-0 self-end sm:self-center">
+                  <span class="text-xs bg-white text-emerald-700 font-bold px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">${w.status === 'optimal' ? 'Optimal Window' : 'Suitable Window'}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // 9. Push Notification Simulator Banner
+      const push = adv.push_notification;
+      const pushCard = document.getElementById('sprayPushNotificationCard');
+      const pushTitle = document.getElementById('sprayPushTitle');
+      const pushBody = document.getElementById('sprayPushBody');
+      if (pushCard && pushTitle && pushBody) {
+        if (push && !isOverride) {
+          pushCard.classList.remove('hidden');
+          pushTitle.innerText = push.title || 'Spray Window Opportunity';
+          pushBody.innerText = push.body || '';
+        } else if (isOverride) {
+          pushCard.classList.remove('hidden');
+          pushTitle.innerText = 'What-If Simulation Active';
+          pushBody.innerText = 'Manual what-if overrides do not dispatch push notifications to farmers.';
+        } else {
+          pushCard.classList.add('hidden');
+        }
+      }
+
+      // 10. Verified CIBRC Products (Strict IPM Hierarchy)
+      const products = adv.verified_products || [];
+      const prodListEl = document.getElementById('sprayProductList');
+      if (prodListEl && products.length > 0) {
+        // Group by category: cultural -> biological -> chemical
+        const cultural = products.filter(p => p.category === 'cultural');
+        const biological = products.filter(p => p.category === 'biological');
+        const chemical = products.filter(p => p.category === 'chemical');
+        const sorted = [...cultural, ...biological, ...chemical];
+
+        prodListEl.innerHTML = sorted.map(p => {
+          const isVerified = p.status === 'verified';
+          let categoryBadge = '';
+          if (p.category === 'cultural') {
+            categoryBadge = '<span class="text-[9px] bg-gray-200 text-gray-800 font-bold px-2 py-0.5 rounded uppercase">Tier 1: Cultural</span>';
+          } else if (p.category === 'biological') {
+            categoryBadge = '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded uppercase">Tier 2: Biological / Botanical</span>';
+          } else {
+            categoryBadge = '<span class="text-[9px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded uppercase">Tier 3: Targeted Chemical</span>';
+          }
+
+          const verifiedBadge = isVerified
+            ? '<span class="text-[9px] bg-emerald-600 text-white font-extrabold px-1.5 py-0.5 rounded flex items-center space-x-1"><i class="fa-solid fa-certificate text-[8px] mr-1"></i>CIB&RC Registered</span>'
+            : '<span class="text-[9px] bg-amber-500 text-white font-extrabold px-1.5 py-0.5 rounded flex items-center space-x-1"><i class="fa-solid fa-triangle-exclamation text-[8px] mr-1"></i>Unverified Compound</span>';
+
+          if (!isVerified) {
+            return `
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <div class="font-bold text-gray-900 text-xs">${escapeHtml(p.active_ingredient || 'Experimental Compound')}</div>
+                  ${verifiedBadge}
+                </div>
+                <p class="text-[11px] text-amber-800 font-semibold">
+                  Read product label or ask your local Krishi Vigyan Kendra (KVK). Dosage and Pre-Harvest Interval (PHI) are withheld for farmer safety.
+                </p>
+                <div class="text-[10px] text-gray-500 italic">${escapeHtml(p.notes || '')}</div>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2 hover:border-gray-200 transition">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-gray-900 text-xs">${escapeHtml(p.active_ingredient)}</div>
+                  <div class="text-[10px] text-gray-500">Trade Examples: ${escapeHtml(p.trade_name_examples || 'Standard CIBRC formulations')}</div>
+                </div>
+                <div class="flex flex-col items-end space-y-1">
+                  ${categoryBadge}
+                  ${verifiedBadge}
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] text-gray-600 border-t border-gray-200/60 pt-2 font-mono">
+                <div>Dose: <strong class="text-gray-900 font-sans">${escapeHtml(p.label_dose_l || p.label_dose_ha || 'Label recommendation')}</strong></div>
+                <div>Water: <strong class="text-gray-900 font-sans">${p.water_volume_l_ha ? p.water_volume_l_ha + ' L/ha (150–200 L/acre)' : 'N/A'}</strong></div>
+                <div>PHI: <strong class="text-gray-900 font-sans">${p.phi_days ? p.phi_days + ' days waiting' : '0 days'}</strong></div>
+                <div>Rainfast: <strong class="text-gray-900 font-sans">${p.rainfast_hours ? p.rainfast_hours + ' hours' : 'N/A'}</strong></div>
+                <div>REI: <strong class="text-gray-900 font-sans">${p.rei_hours ? p.rei_hours + ' hours re-entry' : '0 hours'}</strong></div>
+                <div>MoA Group: <strong class="text-gray-900 font-sans">${escapeHtml(p.resistance_group || 'Unclassified')}</strong></div>
+              </div>
+
+              ${p.notes ? `<div class="text-[10px] text-gray-500 border-t border-gray-200/40 pt-1.5 leading-snug"><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>${escapeHtml(p.notes)}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 11. Disclaimer
+      const discEl = document.getElementById('sprayDisclaimerText');
+      if (discEl && adv.disclaimer) {
+        discEl.innerText = adv.disclaimer;
+      }
+    }
+
+    // Helper: Wind degree to 16-point compass
+    function getWindCompassDirection(deg) {
+      if (deg === undefined || deg === null) return 'N';
+      const val = Math.floor((deg / 22.5) + 0.5);
+      const arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+      return arr[(val % 16)];
+    }
+
+    // HTML escape helper
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Manual What-If scenario handler
+    async function handleManualWhatIfInput() {
       const wind = parseFloat(document.getElementById('sprayWind')?.value || 8.5);
       const rain = parseInt(document.getElementById('sprayRain')?.value || 5);
       const temp = parseFloat(document.getElementById('sprayTemp')?.value || 28.5);
       const rh = parseInt(document.getElementById('sprayRh')?.value || 55);
 
-      document.getElementById('sprayWindVal').innerText = wind + ' km/h';
-      document.getElementById('sprayRainVal').innerText = rain + '%';
-      document.getElementById('sprayTempVal').innerText = temp + '°C';
-      document.getElementById('sprayRhVal').innerText = rh + '%';
+      const wVal = document.getElementById('sprayWindVal');
+      if (wVal) wVal.innerText = `${wind.toFixed(1)} km/h`;
+      const rVal = document.getElementById('sprayRainVal');
+      if (rVal) rVal.innerText = `${rain}%`;
+      const tVal = document.getElementById('sprayTempVal');
+      if (tVal) tVal.innerText = `${temp.toFixed(1)}°C`;
+      const rhVal = document.getElementById('sprayRhVal');
+      if (rhVal) rhVal.innerText = `${rh}%`;
 
-      const badge = document.getElementById('sprayStatusBadge');
-      const box = document.getElementById('sprayWarningBox');
-      const text = document.getElementById('sprayWarningText');
+      const badge = document.getElementById('manualOverrideBadge');
+      if (badge) badge.classList.remove('hidden');
 
-      if (wind > 15.0) {
-        badge.className = 'text-xs bg-red-100 text-red-800 font-bold px-3 py-1.5 rounded-full border border-red-300';
-        badge.innerText = 'HAZARDOUS: DO NOT SPRAY';
-        box.className = 'p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-900 flex items-start space-x-3';
-        text.innerText = 'CRITICAL DRIFT HAZARD: Wind speed (' + wind + ' km/h) exceeds safe 15 km/h limit. Chemical spray will drift off-target, damaging beneficial insects and wasting expensive product.';
-      } else if (rain > 35) {
-        badge.className = 'text-xs bg-red-100 text-red-800 font-bold px-3 py-1.5 rounded-full border border-red-300';
-        badge.innerText = 'WASHOFF RISK: DO NOT SPRAY';
-        box.className = 'p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-900 flex items-start space-x-3';
-        text.innerText = 'RAIN WASHOFF WARNING: Rain probability (' + rain + '%) is high within next 24 hours. Rain will wash off active chemical before minimum 4-6 hour rainfast absorption.';
-      } else if (temp > 33.0) {
-        badge.className = 'text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-full border border-amber-300';
-        badge.innerText = 'CAUTION: HIGH EVAPORATION';
-        box.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start space-x-3';
-        text.innerText = 'EVAPORATION WARNING: High temperature (' + temp + '°C) causes droplets to evaporate before canopy contact. Shift spraying to early morning or late evening.';
-      } else {
-        badge.className = 'text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1.5 rounded-full border border-emerald-300';
-        badge.innerText = 'SUITABLE FOR SPRAYING';
-        box.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start space-x-3';
-        text.innerText = 'Optimal atmospheric envelope: Gentle wind (' + wind + ' km/h), minimal rain probability (' + rain + '%), and safe temperature (' + temp + '°C). Ensure full PPE gear!';
+      // Call API with override parameters
+      let url = `/v1/spray/advisory?parcel_id=${encodeURIComponent(currentSelectedParcel)}&crop=chickpea&pest=pod_borer&wind_kmh=${wind}&rain_prob=${rain}&temp_c=${temp}&humidity=${rh}`;
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          renderSprayingAdvisoryData(data, true);
+        }
+      } catch (e) {
+        console.warn('What-if override calculation failed:', e);
       }
+    }
+
+    function resetManualWhatIf() {
+      const badge = document.getElementById('manualOverrideBadge');
+      if (badge) badge.classList.add('hidden');
+      loadAutomaticSprayingAdvisory(true);
+    }
+
+    // Device GPS detection
+    function detectUserGpsLocation() {
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser. Using Gat 142/A parcel location.");
+        return;
+      }
+
+      const locTextEl = document.getElementById('sprayLocationText');
+      if (locTextEl) locTextEl.innerText = "Requesting GPS coordinates...";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userCustomGps = {
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude
+          };
+          loadAutomaticSprayingAdvisory(true);
+        },
+        (err) => {
+          console.warn("GPS permission error:", err);
+          alert("Location access denied or unavailable. Falling back to Gat 142/A parcel centroid.");
+          userCustomGps = null;
+          loadAutomaticSprayingAdvisory(true);
+        },
+        { timeout: 8000 }
+      );
+    }
+
+    // Backward-compatible alias
+    function evaluateSpraying() {
+      loadAutomaticSprayingAdvisory();
     }
 
     // Genuine Disease Scanner File & Camera Upload
@@ -2300,6 +3030,7 @@
 
     // Parcel Selector
     function selectParcel(parcelId) {
+      currentSelectedParcel = parcelId;
       document.querySelectorAll('.parcel-polygon').forEach(p => p.classList.remove('selected'));
       const poly = document.getElementById('poly-' + parcelId);
       if (poly) poly.classList.add('selected');
@@ -2317,6 +3048,11 @@
       if (mapSub) mapSub.innerText = sel.sub;
       const mapScore = document.getElementById('mapCardScore');
       if (mapScore) mapScore.innerText = sel.score;
+
+      const sp = document.getElementById('view-spraying');
+      if (sp && !sp.classList.contains('hidden')) {
+        loadAutomaticSprayingAdvisory();
+      }
 
       switchView('view-map');
     }
@@ -2379,6 +3115,30 @@
       if (requestedView && ALL_VIEWS.includes(requestedView)) {
         switchView(requestedView);
       }
+
+      // Auto-refresh spraying advisory every 30 minutes
+      setInterval(() => {
+        const sp = document.getElementById('view-spraying');
+        if (sp && !sp.classList.contains('hidden')) {
+          loadAutomaticSprayingAdvisory();
+        }
+      }, 30 * 60 * 1000);
+
+      // Auto-refresh on window focus & document visibility change
+      window.addEventListener('focus', () => {
+        const sp = document.getElementById('view-spraying');
+        if (sp && !sp.classList.contains('hidden')) {
+          loadAutomaticSprayingAdvisory();
+        }
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          const sp = document.getElementById('view-spraying');
+          if (sp && !sp.classList.contains('hidden')) {
+            loadAutomaticSprayingAdvisory();
+          }
+        }
+      });
     });
 
   </script>

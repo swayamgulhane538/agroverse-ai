@@ -197,21 +197,37 @@ def get_fertilizer_recommendation(
 
 @app.get("/v1/spray/advisory")
 def get_spraying_advisory(
-    crop: str = Query("chickpea", description="Target crop"),
-    pest: str = Query("pod_borer", description="Target pest (pod_borer, wilt, sucking_pests)"),
-    wind_kmh: float = Query(8.5, description="Current/forecasted wind speed in km/h"),
-    rain_prob: int = Query(5, description="24-hour rainfall probability percentage"),
-    temp_c: float = Query(28.5, description="Ambient temperature in °C"),
-    humidity: float = Query(55.0, description="Relative humidity percentage")
+    parcel_id: Optional[str] = Query("p1", description="Parcel identifier (p1, p2, p3)"),
+    lat: Optional[float] = Query(None, description="Latitude"),
+    lon: Optional[float] = Query(None, description="Longitude"),
+    crop: Optional[str] = Query("chickpea", description="Target crop"),
+    pest: Optional[str] = Query("pod_borer", description="Target pest (pod_borer, wilt, sucking_pests)"),
+    scouting_count: Optional[float] = Query(1.5, description="Scouted larvae per meter row"),
+    disease_confidence: Optional[float] = Query(92.4, description="Disease doctor scan confidence %"),
+    wind_kmh: Optional[float] = Query(None, description="Manual what-if override: wind speed in km/h"),
+    rain_prob: Optional[int] = Query(None, description="Manual what-if override: 24h rainfall probability %"),
+    temp_c: Optional[float] = Query(None, description="Manual what-if override: ambient temperature in °C"),
+    humidity: Optional[float] = Query(None, description="Manual what-if override: relative humidity %")
 ):
-    """Weather-based Spraying Window Advisory with CIBRC IPM and chemical/organic guidelines."""
-    return SmartSprayingEngine.evaluate_spraying_conditions(
+    """Automatic Weather-based Spraying Window Advisory with 72h Open-Meteo forecast, Delta-T, and CIBRC IPM guidelines."""
+    override_weather = None
+    if any(v is not None for v in (wind_kmh, rain_prob, temp_c, humidity)):
+        override_weather = {
+            "wind_kmh": wind_kmh if wind_kmh is not None else 8.5,
+            "rain_prob_pct": rain_prob if rain_prob is not None else 5,
+            "temp_c": temp_c if temp_c is not None else 28.5,
+            "rh_pct": humidity if humidity is not None else 55.0
+        }
+
+    return SmartSprayingEngine.get_automatic_spraying_advisory(
+        parcel_id=parcel_id,
+        lat=lat,
+        lon=lon,
         crop=crop,
-        target_pest_or_disease=pest,
-        wind_speed_kmh=wind_kmh,
-        rain_prob_next_24h_pct=rain_prob,
-        temp_c=temp_c,
-        humidity_pct=humidity
+        target_pest=pest,
+        scouting_count=scouting_count,
+        disease_scan_confidence=disease_confidence,
+        override_weather=override_weather
     )
 
 @app.post("/v1/ml/disease-predict")
